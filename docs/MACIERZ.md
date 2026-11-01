@@ -6,7 +6,7 @@
 ## Podsumowanie
 | Etap | Wymagań | ZAIMPL. | ZWERYF. | Status etapu |
 |---|---|---|---|---|
-| 1 | 73 | 0 | 0 | NIEROZPOCZĘTY |
+| 1 | 73 | 0 | 0 | REALIZACJA |
 | 2 | 6 | 0 | 0 | NIEROZPOCZĘTY |
 | 3 | 13 | 0 | 0 | NIEROZPOCZĘTY |
 | 4 | 15 | 0 | 0 | NIEROZPOCZĘTY |
