@@ -21,7 +21,7 @@ mod tests {
         let context = super::context();
         let config = context.config();
         assert_eq!(config.product_name.as_deref(), Some("Tablica"));
-        assert_eq!(config.identifier, "io.github.arturwnuk.tablica");
+        assert_eq!(config.identifier, "io.github.arturmwnuk.tablica");
     }
 
     #[test]

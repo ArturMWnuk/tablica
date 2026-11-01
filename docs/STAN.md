@@ -44,17 +44,23 @@ Statusy: OCZEKUJE, W TOKU, UKOŃCZONY.
 | 1.14 | Wydanie i wydajność | NF-02, NF-03, NF-05, domknięcie PLAT-01–03, NF-01 | OCZEKUJE | |
 
 ## Następne działania
-1. Właściciel: utworzyć repozytorium `ArturWnuk/tablica` na GitHubie, połączyć je z lokalnym i zgodzić się na wypchnięcie gałęzi `etap-1`. Pierwszy przebieg CI potwierdzi warunek ukończenia kroku 1.0 (zielone kontrole, artefakty Windows/Linux/Android). Ewentualne poprawki CI jako `fix(PLAT-0x)`.
-2. Właściciel: podać dane sprzętu (P12), potrzebne do kroku 1.1.
+1. Sprawdzić pierwszy przebieg CI na `ArturMWnuk/tablica` (gałąź `etap-1`), który potwierdza warunek ukończenia kroku 1.0. Ewentualne poprawki jako `fix(PLAT-0x)`.
+2. Właściciel: podać brakujące dane sprzętu (P12), potrzebne do kroku 1.1.
 3. W **nowym wątku**: `/realizuj-krok 1.1`.
 
 ## Otwarte pytania
-- P12 (sprzęt testowy): model laptopa referencyjnego, dystrybucja Linuksa i sesja (X11/Wayland), tablet z Androidem i wersja systemu, model tabletu graficznego. **Potrzebne przed krokiem 1.1.**
+- P12 (sprzęt testowy), część otwarta: dystrybucja Linuksa i sesja (X11/Wayland), tablet z Androidem i wersja systemu, model tabletu graficznego, urządzenie z ekranem dotykowym do R12 (laptop referencyjny go nie ma). Laptop referencyjny zapisany w planie (P12). **Potrzebne przed krokiem 1.1.**
 
 ## Blokery
 Brak.
 
 ## Dziennik sesji
+### 2026-11-01: Repozytorium GitHub i sprzęt referencyjny
+- Repozytorium: `ArturMWnuk/tablica` (publiczne). Poprawiono adres w P13 i `Cargo.toml` oraz identyfikator aplikacji na `io.github.arturmwnuk.tablica`.
+- Zdalny `main` miał commit z plikiem LICENSE w wersji AGPL-3.0, niezgodny z NF-01 / ADR-003. Na polecenie właściciela nadpisano go lokalnym `main` (force push).
+- Wypchnięto `main` i `etap-1`; pierwszy przebieg CI uruchomiony.
+- P12: dane laptopa referencyjnego odczytane z systemu i zapisane w planie. Laptop nie ma ekranu dotykowego, nie jest podłączony tablet graficzny ani urządzenie z Androidem, nie ma natywnego Linuksa (WSL: tylko docker-desktop).
+
 ### 2026-11-01: Krok 1.0 — szkielet projektu i CI
 - Monorepo pnpm: `app/` (Svelte 5 + TypeScript strict + Vite), `src-tauri/` (Tauri 2), okno z pustą tablicą oraz przełącznikami języka i motywu; LICENSE GPL-3.0.
 - Jakość: ESLint (z regułą granic modułów `boundaries/dependencies` i własną regułą `tablica/no-raw-text` dla UI-01), Prettier, svelte-check, tsc, clippy, rustfmt.
