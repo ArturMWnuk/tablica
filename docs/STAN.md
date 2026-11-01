@@ -27,7 +27,7 @@ Statusy: OCZEKUJE, W TOKU, UKOŃCZONY.
 
 | Krok | Nazwa | Zakres (ID) | Status | Commit |
 |---|---|---|---|---|
-| 1.0 | Szkielet projektu i CI | PLAT-01–03 (K1), NF-01 (K1, K2 częściowo), UI-01, UI-02 (infrastruktura) | UKOŃCZONY lokalnie; CI do potwierdzenia po pierwszym push | (ten commit) |
+| 1.0 | Szkielet projektu i CI | PLAT-01–03 (K1), NF-01 (K1, K2 częściowo), UI-01, UI-02 (infrastruktura) | UKOŃCZONY (CI zielone: przebieg 41352386876) | 02efcb7, abae05a |
 | 1.1 | Prototypy ryzyk technicznych | przygotowanie: TLO-02, TLO-03, MM-02, MM-05, MM-09, WEJ-02, NF-04 | OCZEKUJE | |
 | 1.2 | Rdzeń dokumentu i API wtyczek | WAR-01, WAR-06, WAR-12 (v1) | OCZEKUJE | |
 | 1.3 | Historia i operacje na warstwach | DAN-03, WAR-02–05 | OCZEKUJE | |
@@ -44,9 +44,8 @@ Statusy: OCZEKUJE, W TOKU, UKOŃCZONY.
 | 1.14 | Wydanie i wydajność | NF-02, NF-03, NF-05, domknięcie PLAT-01–03, NF-01 | OCZEKUJE | |
 
 ## Następne działania
-1. Sprawdzić pierwszy przebieg CI na `ArturMWnuk/tablica` (gałąź `etap-1`), który potwierdza warunek ukończenia kroku 1.0. Ewentualne poprawki jako `fix(PLAT-0x)`.
-2. Właściciel: podać brakujące dane sprzętu (P12), potrzebne do kroku 1.1.
-3. W **nowym wątku**: `/realizuj-krok 1.1`.
+1. Właściciel: podać brakujące dane sprzętu (P12), potrzebne do kroku 1.1.
+2. W **nowym wątku**: `/realizuj-krok 1.1`.
 
 ## Otwarte pytania
 - P12 (sprzęt testowy), część otwarta: dystrybucja Linuksa i sesja (X11/Wayland), tablet z Androidem i wersja systemu, model tabletu graficznego, urządzenie z ekranem dotykowym do R12 (laptop referencyjny go nie ma). Laptop referencyjny zapisany w planie (P12). **Potrzebne przed krokiem 1.1.**
@@ -58,7 +57,8 @@ Brak.
 ### 2026-11-01: Repozytorium GitHub i sprzęt referencyjny
 - Repozytorium: `ArturMWnuk/tablica` (publiczne). Poprawiono adres w P13 i `Cargo.toml` oraz identyfikator aplikacji na `io.github.arturmwnuk.tablica`.
 - Zdalny `main` miał commit z plikiem LICENSE w wersji AGPL-3.0, niezgodny z NF-01 / ADR-003. Na polecenie właściciela nadpisano go lokalnym `main` (force push).
-- Wypchnięto `main` i `etap-1`; pierwszy przebieg CI uruchomiony.
+- Wypchnięto `main` i `etap-1`. Poprawki CI: skrypt `licenses` kolidował z `pnpm licenses` (nowa nazwa `check:licenses`), `setup-android` tylko z platform-tools, wersja robocza 0.0.1 (Android odrzuca 0.0.0).
+- CI zielone (przebieg 41352386876): kontrole, test dymny Linux, NSIS/MSI, AppImage/deb, APK arm64-v8a. Warunek ukończenia kroku 1.0 spełniony.
 - P12: dane laptopa referencyjnego odczytane z systemu i zapisane w planie. Laptop nie ma ekranu dotykowego, nie jest podłączony tablet graficzny ani urządzenie z Androidem, nie ma natywnego Linuksa (WSL: tylko docker-desktop).
 
 ### 2026-11-01: Krok 1.0 — szkielet projektu i CI

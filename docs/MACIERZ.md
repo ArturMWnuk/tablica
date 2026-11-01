@@ -18,9 +18,9 @@ Wykluczenia WYK-01 – WYK-05 nie są implementowane. Audytor sprawdza w każdym
 ## Etap 1
 | ID | Wymaganie | Status | Testy | Uwagi |
 |---|---|---|---|---|
-| PLAT-01 | Windows | W TOKU | `.github/workflows/ci.yml` (build-desktop: NSIS, MSI); `e2e/shell.spec.ts`; `src-tauri/src/lib.rs` (`plat_01_*`) | K1 przygotowane w kroku 1.0, niepotwierdzone w CI (brak repozytorium GitHub). Lokalnie: `tauri build` NSIS+MSI i test dymny `e2e-app/smoke.test.mjs` zaliczone na Windows 11. K2 ręczny R01. Domknięcie: 1.14 |
-| PLAT-02 | Linux | W TOKU | `.github/workflows/ci.yml` (build-desktop: AppImage, deb; smoke); `e2e-app/smoke.test.mjs` | K1 przygotowane w kroku 1.0, niepotwierdzone w CI (brak repozytorium GitHub). K2 ręczny R02. Domknięcie: 1.14 |
-| PLAT-03 | Android | W TOKU | `.github/workflows/ci.yml` (build-android: APK arm64-v8a) | K1 przygotowane w kroku 1.0, niepotwierdzone w CI (brak repozytorium GitHub, brak lokalnego Android SDK). APK debug do czasu klucza wydania (1.14). K2 ręczny R03. Domknięcie: 1.14 |
+| PLAT-01 | Windows | W TOKU | `.github/workflows/ci.yml` (build-desktop: NSIS, MSI); `e2e/shell.spec.ts`; `src-tauri/src/lib.rs` (`plat_01_*`) | K1 przygotowane w kroku 1.0, potwierdzone w CI (przebieg 41352386876). Lokalnie: `tauri build` NSIS+MSI i test dymny `e2e-app/smoke.test.mjs` zaliczone na Windows 11. K2 ręczny R01. Domknięcie: 1.14 |
+| PLAT-02 | Linux | W TOKU | `.github/workflows/ci.yml` (build-desktop: AppImage, deb; smoke); `e2e-app/smoke.test.mjs` | K1 przygotowane w kroku 1.0, potwierdzone w CI (przebieg 41352386876). K2 ręczny R02. Domknięcie: 1.14 |
+| PLAT-03 | Android | W TOKU | `.github/workflows/ci.yml` (build-android: APK arm64-v8a) | K1 przygotowane w kroku 1.0, potwierdzone w CI (przebieg 41352386876). APK debug do czasu klucza wydania (1.14). K2 ręczny R03. Domknięcie: 1.14 |
 | WEJ-01 | Tablet z Androidem i rysikiem | — | | |
 | WEJ-02 | Tablet graficzny | — | | |
 | WEJ-03 | Ekran dotykowy | — | | |
