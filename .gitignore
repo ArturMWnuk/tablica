@@ -1,0 +1,34 @@
+# Node / frontend
+node_modules/
+dist/
+build/
+.vite/
+coverage/
+*.log
+
+# Rust / Tauri
+target/
+src-tauri/gen/
+
+# Android
+.gradle/
+local.properties
+*.keystore
+*.jks
+
+# Testy e2e
+test-results/
+playwright-report/
+
+# Środowisko i system
+.env
+.env.*
+!.env.example
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# Claude Code: lokalne ustawienia użytkownika
+.claude/settings.local.json
