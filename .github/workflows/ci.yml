@@ -40,7 +40,7 @@ jobs:
       - run: pnpm typecheck
       - run: pnpm test
       - name: npm license check (NF-01)
-        run: pnpm licenses
+        run: pnpm check:licenses
       - name: Cargo license check (NF-01)
         uses: EmbarkStudios/cargo-deny-action@v2
         with:
@@ -136,6 +136,8 @@ jobs:
           distribution: temurin
           java-version: '17'
       - uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
       - name: Android NDK
         run: |
           sdkmanager --install "ndk;27.2.12479018"
