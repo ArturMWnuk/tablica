@@ -1,0 +1,21 @@
+{
+  "app": {
+    "title": "Tablica"
+  },
+  "board": {
+    "label": "Tablica do rysowania"
+  },
+  "settings": {
+    "language": "Język",
+    "theme": "Motyw"
+  },
+  "language": {
+    "pl": "Polski",
+    "en": "English"
+  },
+  "theme": {
+    "light": "Jasny",
+    "dark": "Ciemny",
+    "system": "Systemowy"
+  }
+}

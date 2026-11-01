@@ -1,0 +1,21 @@
+{
+  "app": {
+    "title": "Tablica"
+  },
+  "board": {
+    "label": "Drawing board"
+  },
+  "settings": {
+    "language": "Language",
+    "theme": "Theme"
+  },
+  "language": {
+    "pl": "Polski",
+    "en": "English"
+  },
+  "theme": {
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  }
+}

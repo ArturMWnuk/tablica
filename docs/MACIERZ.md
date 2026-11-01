@@ -18,9 +18,9 @@ Wykluczenia WYK-01 – WYK-05 nie są implementowane. Audytor sprawdza w każdym
 ## Etap 1
 | ID | Wymaganie | Status | Testy | Uwagi |
 |---|---|---|---|---|
-| PLAT-01 | Windows | — | | |
-| PLAT-02 | Linux | — | | |
-| PLAT-03 | Android | — | | |
+| PLAT-01 | Windows | W TOKU | `.github/workflows/ci.yml` (build-desktop: NSIS, MSI); `e2e/shell.spec.ts`; `src-tauri/src/lib.rs` (`plat_01_*`) | K1 przygotowane w kroku 1.0, niepotwierdzone w CI (brak repozytorium GitHub). Lokalnie: `tauri build` NSIS+MSI i test dymny `e2e-app/smoke.test.mjs` zaliczone na Windows 11. K2 ręczny R01. Domknięcie: 1.14 |
+| PLAT-02 | Linux | W TOKU | `.github/workflows/ci.yml` (build-desktop: AppImage, deb; smoke); `e2e-app/smoke.test.mjs` | K1 przygotowane w kroku 1.0, niepotwierdzone w CI (brak repozytorium GitHub). K2 ręczny R02. Domknięcie: 1.14 |
+| PLAT-03 | Android | W TOKU | `.github/workflows/ci.yml` (build-android: APK arm64-v8a) | K1 przygotowane w kroku 1.0, niepotwierdzone w CI (brak repozytorium GitHub, brak lokalnego Android SDK). APK debug do czasu klucza wydania (1.14). K2 ręczny R03. Domknięcie: 1.14 |
 | WEJ-01 | Tablet z Androidem i rysikiem | — | | |
 | WEJ-02 | Tablet graficzny | — | | |
 | WEJ-03 | Ekran dotykowy | — | | |
@@ -72,8 +72,8 @@ Wykluczenia WYK-01 – WYK-05 nie są implementowane. Audytor sprawdza w każdym
 | MM-07 | Sterowanie odtwarzaniem | — | | |
 | MM-08 | Rysowanie po multimediach | — | | |
 | MM-09 | Zrzut fragmentu ekranu | — | | |
-| UI-01 | Język PL/EN | — | | |
-| UI-02 | Motywy interfejsu | — | | |
+| UI-01 | Język PL/EN | W TOKU | `app/src/lib/i18n/core.test.ts`; `tools/eslint-rules/no-raw-text.test.ts`; `e2e/shell.spec.ts` | Krok 1.0: infrastruktura (pliki tłumaczeń, test parytetu kluczy, reguła lint `tablica/no-raw-text`, przełączanie bez restartu, D10). Pełne tłumaczenia: 1.11 |
+| UI-02 | Motywy interfejsu | W TOKU | `app/src/lib/theme/tokens.test.ts`; `e2e/shell.spec.ts` | Krok 1.0: infrastruktura (tokeny kolorów, jasny/ciemny/systemowy D11, test kontrastu tokenów). Domknięcie: 1.11 |
 | UI-03 | Szybki pasek ulubionych | — | | |
 | UI-04 | Konfigurowalne skróty | — | | |
 | UI-05 | Tryb standardowy | — | | |
@@ -86,7 +86,7 @@ Wykluczenia WYK-01 – WYK-05 nie są implementowane. Audytor sprawdza w każdym
 | DAN-04 | Eksport PDF | — | | |
 | DAN-05 | Eksport PNG | — | | |
 | INT-01 | Zgodność z udostępnianiem ekranu | — | | |
-| NF-01 | GPL-3.0, zgodne licencje | — | | Weryfikowane w każdym etapie |
+| NF-01 | GPL-3.0, zgodne licencje | W TOKU | `scripts/license-policy.test.ts`; `scripts/check-licenses.mjs`; `src-tauri/deny.toml`; `src-tauri/src/lib.rs` (`nf_01_*`) | Weryfikowane w każdym etapie. Krok 1.0: K1 (kontrola npm i Cargo w CI), K2 bez listy w „O programie”. Domknięcie: 1.14 |
 | NF-02 | Instalatory na GitHub Releases | — | | |
 | NF-03 | Płynność na sprzęcie docelowym | — | | Weryfikowane w każdym etapie |
 | NF-04 | Brak opóźnienia rysowania | — | | Próg w planie etapu 1 |
