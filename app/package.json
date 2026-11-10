@@ -10,7 +10,14 @@
     "preview": "vite preview",
     "typecheck": "svelte-check --tsconfig ./tsconfig.json --fail-on-warnings"
   },
+  "dependencies": {
+    "@tablica/layer-background": "workspace:*",
+    "@tablica/layer-drawing": "workspace:*",
+    "@tablica/layer-media": "workspace:*",
+    "@tablica/plugin-api": "workspace:*"
+  },
   "devDependencies": {
+    "@tablica/test-fixture-layer": "workspace:*",
     "@sveltejs/vite-plugin-svelte": "7.3.1",
     "svelte": "5.57.3",
     "svelte-check": "4.7.8",

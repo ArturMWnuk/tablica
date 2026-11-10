@@ -17,5 +17,15 @@
     "light": "Jasny",
     "dark": "Ciemny",
     "system": "Systemowy"
+  },
+  "notice": {
+    "region": "Komunikaty",
+    "dismiss": "Zamknij komunikat",
+    "pluginInvalid": "Nie można wczytać warstwy „{name}”: pakiet wtyczki jest nieprawidłowy.",
+    "pluginIncompatible": "Warstwa „{name}” wymaga API wtyczek w wersji {required}, a program udostępnia wersję {provided}. Warstwa nie została wczytana.",
+    "pluginDuplicate": "Warstwa „{name}” jest już wczytana. Drugi egzemplarz wtyczki został pominięty.",
+    "pluginFailed": "Warstwa „{name}” przestała działać z powodu błędu we wtyczce. Pozostałe warstwy działają, a dane tej warstwy zostaną zachowane przy zapisie.",
+    "layerBroken": "Warstwa „{name}” została oznaczona jako uszkodzona po błędzie we wtyczce. Pozostałe warstwy działają, a dane tej warstwy zostaną zachowane przy zapisie.",
+    "shortcutConflict": "Skrót {keys} warstwy „{name}” jest już zajęty i nie został przypisany."
   }
 }

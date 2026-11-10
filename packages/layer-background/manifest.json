@@ -1,0 +1,15 @@
+{
+  "id": "layer-background",
+  "version": "0.1.0",
+  "apiVersion": "1.0.0",
+  "translations": {
+    "pl": {
+      "name": "Tło",
+      "description": "Tło tablicy: kolor, kratka, linie, papier milimetrowy, układ współrzędnych lub własny obraz."
+    },
+    "en": {
+      "name": "Background",
+      "description": "Board background: colour, grid, lines, graph paper, coordinate system or your own image."
+    }
+  }
+}

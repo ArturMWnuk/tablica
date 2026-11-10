@@ -1,0 +1,10 @@
+{
+  "name": "@tablica/plugin-api",
+  "version": "1.0.0",
+  "description": "Public API for Tablica layer plugins (the only dependency a layer plugin may have on the program).",
+  "license": "GPL-3.0-only",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  }
+}

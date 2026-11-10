@@ -1,0 +1,20 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "entryPoints": ["packages/plugin-api/src/index.ts"],
+  "tsconfig": "packages/tsconfig.json",
+  "out": "docs/api/referencja",
+  "plugin": ["typedoc-plugin-markdown"],
+  "name": "@tablica/plugin-api",
+  "readme": "none",
+  "excludePrivate": true,
+  "excludeExternals": true,
+  "disableSources": true,
+  "hideGenerator": true,
+  "validation": {
+    "notExported": true,
+    "invalidLink": true,
+    "notDocumented": true
+  },
+  "treatValidationWarningsAsErrors": true,
+  "treatWarningsAsErrors": true
+}

@@ -1,0 +1,37 @@
+{
+  "id": "test-fixture-layer",
+  "version": "0.1.0",
+  "apiVersion": "1.0.0",
+  "translations": {
+    "pl": {
+      "name": "Warstwa testowa",
+      "description": "Wtyczka testowa do sprawdzania API wtyczek.",
+      "tool": {
+        "box": "Kwadrat",
+        "clear": "Wyczyść warstwę"
+      },
+      "shortcut": {
+        "addBox": "Dodaj kwadrat"
+      },
+      "panel": {
+        "title": "Podsumowanie",
+        "count": "Kwadraty: {count}"
+      }
+    },
+    "en": {
+      "name": "Test layer",
+      "description": "Test plugin for checking the plugin API.",
+      "tool": {
+        "box": "Square",
+        "clear": "Clear layer"
+      },
+      "shortcut": {
+        "addBox": "Add square"
+      },
+      "panel": {
+        "title": "Summary",
+        "count": "Squares: {count}"
+      }
+    }
+  }
+}

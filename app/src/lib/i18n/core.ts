@@ -45,7 +45,7 @@ export function translate(
   catalogs: Catalogs,
   locale: Locale,
   key: string,
-  params?: Record<string, string | number>,
+  params?: Readonly<Record<string, string | number>>,
 ): string {
   const fallback: Locale = locale === 'pl' ? 'en' : 'pl';
   const text = lookup(catalogs[locale], key) ?? lookup(catalogs[fallback], key) ?? key;
@@ -62,4 +62,19 @@ export function addNamespace(catalogs: Catalogs, namespace: string, added: Catal
     result[locale] = { ...catalogs[locale], [namespace]: added[locale] };
   }
   return result;
+}
+
+/** Like {@link addNamespace}, but returns undefined when the namespace already exists. */
+export function addNamespaceIfFree(
+  catalogs: Catalogs,
+  namespace: string,
+  added: Catalogs,
+): Catalogs | undefined {
+  if (LOCALES.some((locale) => namespace in catalogs[locale])) return undefined;
+  return addNamespace(catalogs, namespace, added);
+}
+
+/** Tells whether a key has a translation in the locale or the fallback locale. */
+export function hasTranslation(catalogs: Catalogs, key: string): boolean {
+  return LOCALES.some((locale) => lookup(catalogs[locale], key) !== undefined);
 }

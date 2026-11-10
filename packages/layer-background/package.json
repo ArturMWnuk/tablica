@@ -1,0 +1,16 @@
+{
+  "name": "@tablica/layer-background",
+  "version": "0.1.0",
+  "description": "Background layer of the Tablica board (built-in plugin).",
+  "private": true,
+  "license": "GPL-3.0-only",
+  "type": "module",
+  "main": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./manifest.json": "./manifest.json"
+  },
+  "dependencies": {
+    "@tablica/plugin-api": "workspace:*"
+  }
+}

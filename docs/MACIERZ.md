@@ -6,12 +6,12 @@
 ## Podsumowanie
 | Etap | Wymagań | ZAIMPL. | ZWERYF. | Status etapu |
 |---|---|---|---|---|
-| 1 | 73 | 0 | 0 | REALIZACJA |
+| 1 | 73 | 1 | 0 | REALIZACJA |
 | 2 | 6 | 0 | 0 | NIEROZPOCZĘTY |
 | 3 | 13 | 0 | 0 | NIEROZPOCZĘTY |
 | 4 | 15 | 0 | 0 | NIEROZPOCZĘTY |
 | 5 | 3 | 0 | 0 | NIEROZPOCZĘTY |
-| **Razem** | **110** | **0** | **0** | |
+| **Razem** | **110** | **1** | **0** | |
 
 Wykluczenia WYK-01 – WYK-05 nie są implementowane. Audytor sprawdza w każdym etapie, czy nie zostały naruszone.
 
@@ -27,18 +27,18 @@ Wykluczenia WYK-01 – WYK-05 nie są implementowane. Audytor sprawdza w każdym
 | WEJ-04 | Mysz i klawiatura | — | | |
 | WEJ-05 | Nacisk, nachylenie, gumka rysika | — | | |
 | WEJ-06 | Odrzucanie dotyku dłoni | — | | |
-| WAR-01 | Wiele warstw nałożonych | — | | |
+| WAR-01 | Wiele warstw nałożonych | ZAIMPL. | `app/src/composition/layers.test.ts` (WAR-01); `app/src/lib/core/core.test.ts` (WAR-01); `e2e/shell.spec.ts` (WAR-01) | Krok 1.2: K1–K3 (dokument z uporządkowaną listą warstw, wspólna kamera, stos kontenerów DOM, dowolna liczba warstw jednego typu wg P3) |
 | WAR-02 | Ukrywanie/pokazywanie warstwy | — | | |
 | WAR-03 | Blokowanie warstwy | — | | |
 | WAR-04 | Zmiana kolejności warstw | — | | |
 | WAR-05 | Przezroczystość warstwy | — | | |
-| WAR-06 | Izolacja warstw | — | | |
+| WAR-06 | Izolacja warstw | W TOKU | `app/src/composition/layers.test.ts` (WAR-06); `app/src/lib/core/core.test.ts` (WAR-06) | Krok 1.2: K2 i K3 spełnione. K1: mechanizm sprawdzony narzędziem „wyczyść warstwę” wtyczki testowej (porównanie serializacji pozostałych warstw); test z gumką (oba tryby) i zaznaczaniem możliwy dopiero w kroku 1.6, gdy te narzędzia powstaną. Odstępstwo od kolumny „Krok” planu (1.2): pytanie P16 w `docs/STAN.md` |
 | WAR-07 | Wybór instalowanych warstw | — | | |
 | WAR-08 | Dodawanie warstw bez reinstalacji | — | | |
 | WAR-09 | Instalacja warstwy z pliku | — | | |
 | WAR-10 | Katalog warstw online | — | | |
 | WAR-11 | Niezależne wersje i aktualizacje warstw | — | | |
-| WAR-12 | Stabilne, udokumentowane API wtyczek | — | | |
+| WAR-12 | Stabilne, udokumentowane API wtyczek | W TOKU | `packages/plugin-api/src/api.test.ts`; `tools/eslint-rules/boundaries.test.ts`; `tools/api-docs.test.ts`; `app/src/composition/layers.test.ts` (WAR-12); `app/src/lib/core/core.test.ts` (WAR-12) | Krok 1.2: K1–K4 w wersji v1 (API 1.0.0, `docs/api/`, wtyczka testowa `packages/test-fixture-layer`). Domknięcie (dokumentacja końcowa): 1.13 |
 | RYS-01 | Pióro z naciskiem | — | | |
 | RYS-02 | Zakreślacz | — | | |
 | RYS-03 | Gumka: cała kreska | — | | |
@@ -72,7 +72,7 @@ Wykluczenia WYK-01 – WYK-05 nie są implementowane. Audytor sprawdza w każdym
 | MM-07 | Sterowanie odtwarzaniem | — | | |
 | MM-08 | Rysowanie po multimediach | — | | |
 | MM-09 | Zrzut fragmentu ekranu | — | | Krok 1.1 (prototyp, bez zmiany statusu): Windows OK, `docs/etapy/ETAP-1-prototypy.md`; Linux/Android czekają na P12 |
-| UI-01 | Język PL/EN | W TOKU | `app/src/lib/i18n/core.test.ts`; `tools/eslint-rules/no-raw-text.test.ts`; `e2e/shell.spec.ts` | Krok 1.0: infrastruktura (pliki tłumaczeń, test parytetu kluczy, reguła lint `tablica/no-raw-text`, przełączanie bez restartu, D10). Pełne tłumaczenia: 1.11 |
+| UI-01 | Język PL/EN | W TOKU | `app/src/lib/i18n/core.test.ts`; `tools/eslint-rules/no-raw-text.test.ts`; `e2e/shell.spec.ts`; `app/src/composition/layers.test.ts` (UI-01) | Krok 1.2: tłumaczenia wtyczek w manifestach, test parytetu PL/EN manifestów. Krok 1.0: infrastruktura (pliki tłumaczeń, test parytetu kluczy, reguła lint `tablica/no-raw-text`, przełączanie bez restartu, D10). Pełne tłumaczenia: 1.11 |
 | UI-02 | Motywy interfejsu | W TOKU | `app/src/lib/theme/tokens.test.ts`; `e2e/shell.spec.ts` | Krok 1.0: infrastruktura (tokeny kolorów, jasny/ciemny/systemowy D11, test kontrastu tokenów). Domknięcie: 1.11 |
 | UI-03 | Szybki pasek ulubionych | — | | |
 | UI-04 | Konfigurowalne skróty | — | | |
@@ -88,7 +88,7 @@ Wykluczenia WYK-01 – WYK-05 nie są implementowane. Audytor sprawdza w każdym
 | INT-01 | Zgodność z udostępnianiem ekranu | — | | |
 | NF-01 | GPL-3.0, zgodne licencje | W TOKU | `scripts/license-policy.test.ts`; `scripts/check-licenses.mjs`; `src-tauri/deny.toml`; `src-tauri/src/lib.rs` (`nf_01_*`) | Weryfikowane w każdym etapie. Krok 1.0: K1 (kontrola npm i Cargo w CI), K2 bez listy w „O programie”. Domknięcie: 1.14 |
 | NF-02 | Instalatory na GitHub Releases | — | | |
-| NF-03 | Płynność na sprzęcie docelowym | — | | Weryfikowane w każdym etapie |
+| NF-03 | Płynność na sprzęcie docelowym | — | | Weryfikowane w każdym etapie. Krok 1.2: moduły wtyczek ładowane leniwie, przy pierwszej warstwie danego typu (test w `app/src/composition/layers.test.ts`) |
 | NF-04 | Brak opóźnienia rysowania | — | | Próg w planie etapu 1. Krok 1.1 (prototyp, bez zmiany statusu): Windows OK, `docs/etapy/ETAP-1-prototypy.md`; Linux/Android czekają na P12 (WebView2: p95 0,7 ms) |
 | NF-05 | Praca offline | — | | Weryfikowane w każdym etapie |
 

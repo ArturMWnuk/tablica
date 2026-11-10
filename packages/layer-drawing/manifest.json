@@ -1,0 +1,15 @@
+{
+  "id": "layer-drawing",
+  "version": "0.1.0",
+  "apiVersion": "1.0.0",
+  "translations": {
+    "pl": {
+      "name": "Rysunek",
+      "description": "Odręczne pisanie i rysowanie, figury, przyrządy i tekst."
+    },
+    "en": {
+      "name": "Drawing",
+      "description": "Handwriting and drawing, shapes, instruments and text."
+    }
+  }
+}

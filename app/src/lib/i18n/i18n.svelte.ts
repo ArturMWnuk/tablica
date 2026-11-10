@@ -2,7 +2,14 @@
 // immediately, without restarting the program (UI-01).
 import { loadSetting, saveSetting } from '../settings/storage';
 import { coreCatalogs } from './catalogs';
-import { type Catalogs, detectLocale, isLocale, type Locale, translate } from './core';
+import {
+  addNamespaceIfFree,
+  type Catalogs,
+  detectLocale,
+  isLocale,
+  type Locale,
+  translate,
+} from './core';
 
 const SETTING_KEY = 'locale';
 
@@ -17,8 +24,16 @@ class I18n {
     saveSetting(SETTING_KEY, locale);
   }
 
-  t = (key: string, params?: Record<string, string | number>): string =>
+  t = (key: string, params?: Readonly<Record<string, string | number>>): string =>
     translate(this.catalogs, this.locale, key, params);
+
+  /** Adds a plugin catalog under the plugin id (WAR-12); false if the namespace is taken. */
+  addTranslations = (manifest: { id: string; translations: Catalogs }): boolean => {
+    const result = addNamespaceIfFree(this.catalogs, manifest.id, manifest.translations);
+    if (!result) return false;
+    this.catalogs = result;
+    return true;
+  };
 }
 
 export const i18n = new I18n();

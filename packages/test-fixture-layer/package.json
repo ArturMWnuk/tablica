@@ -1,0 +1,16 @@
+{
+  "name": "@tablica/test-fixture-layer",
+  "version": "0.1.0",
+  "description": "Test plugin written only from the Tablica plugin API documentation (not shipped with the program).",
+  "private": true,
+  "license": "GPL-3.0-only",
+  "type": "module",
+  "main": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./manifest.json": "./manifest.json"
+  },
+  "dependencies": {
+    "@tablica/plugin-api": "workspace:*"
+  }
+}

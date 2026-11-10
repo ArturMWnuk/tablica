@@ -1,0 +1,15 @@
+{
+  "id": "layer-media",
+  "version": "0.1.0",
+  "apiVersion": "1.0.0",
+  "translations": {
+    "pl": {
+      "name": "Multimedia",
+      "description": "Obrazy, wideo, dźwięk, dokumenty PDF i filmy YouTube na tablicy."
+    },
+    "en": {
+      "name": "Multimedia",
+      "description": "Images, video, audio, PDF documents and YouTube videos on the board."
+    }
+  }
+}

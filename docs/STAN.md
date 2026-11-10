@@ -10,7 +10,7 @@
 | Bieżący etap | 1 |
 | Status etapu | REALIZACJA |
 | Plan etapu | `docs/etapy/ETAP-1-plan.md` (ZATWIERDZONY 2026-11-01) |
-| Bieżący krok | 1.1 (część Windows ukończona; Linux i Android czekają na P12) |
+| Bieżący krok | 1.3 (następny); 1.1 W TOKU (Linux i Android czekają na P12) |
 | Gałąź robocza | `etap-1` |
 
 ## Etapy
@@ -29,7 +29,7 @@ Statusy: OCZEKUJE, W TOKU, UKOŃCZONY.
 |---|---|---|---|---|
 | 1.0 | Szkielet projektu i CI | PLAT-01–03 (K1), NF-01 (K1, K2 częściowo), UI-01, UI-02 (infrastruktura) | UKOŃCZONY (CI zielone: przebieg 41352386876) | 02efcb7, abae05a |
 | 1.1 | Prototypy ryzyk technicznych | przygotowanie: TLO-02, TLO-03, MM-02, MM-05, MM-09, WEJ-02, NF-04 | W TOKU (Windows gotowy: 14/14 sprawdzeń; Linux i Android po P12) | (ten commit) |
-| 1.2 | Rdzeń dokumentu i API wtyczek | WAR-01, WAR-06, WAR-12 (v1) | OCZEKUJE | |
+| 1.2 | Rdzeń dokumentu i API wtyczek | WAR-01, WAR-06, WAR-12 (v1) | UKOŃCZONY (WAR-06 K1 dla gumki i zaznaczania w 1.6, P16) | (ten commit) |
 | 1.3 | Historia i operacje na warstwach | DAN-03, WAR-02–05 | OCZEKUJE | |
 | 1.4 | Wejście i pisanie | WEJ-01–06, RYS-01, RYS-02, NF-04 | OCZEKUJE | |
 | 1.5 | Zapis i odczyt lekcji | DAN-01, DAN-02 | OCZEKUJE | |
@@ -44,18 +44,31 @@ Statusy: OCZEKUJE, W TOKU, UKOŃCZONY.
 | 1.14 | Wydanie i wydajność | NF-02, NF-03, NF-05, domknięcie PLAT-01–03, NF-01 | OCZEKUJE | |
 
 ## Następne działania
-1. W **nowym wątku**: `/realizuj-krok 1.2` (P15 rozstrzygnięte: krok 1.2 może się zacząć przed domknięciem 1.1).
-2. Właściciel: naprawić środowisko laptopa: Visual Studio Installer → Build Tools 2022 → Napraw (brak `oldnames.lib`) oraz `pnpm exec playwright install chromium --force` (brak `icudtl.dat`).
-3. Właściciel: podać brakujące dane sprzętu (P12), potem dokończyć krok 1.1 (Linux, Android, tablet graficzny).
-4. Po P12: `/realizuj-krok 1.1` (Linux, Android, tablet graficzny); kroki 1.9 i 1.10 dopiero po domknięciu 1.1.
+1. Właściciel: odpowiedzieć na P16 (WAR-06 K1 z gumką i zaznaczaniem w kroku 1.6).
+2. W **nowym wątku**: `/realizuj-krok 1.3` (opcjonalnie wcześniej `/weryfikuj-etap 1 krok 1.2`).
+3. Właściciel: naprawić środowisko laptopa: Visual Studio Installer → Build Tools 2022 → Napraw (brak `oldnames.lib`) oraz `pnpm exec playwright install chromium --force` (brak `icudtl.dat`).
+4. Właściciel: podać brakujące dane sprzętu (P12), potem dokończyć krok 1.1 (Linux, Android, tablet graficzny).
+5. Po P12: `/realizuj-krok 1.1` (Linux, Android, tablet graficzny); kroki 1.9 i 1.10 dopiero po domknięciu 1.1.
 
 ## Otwarte pytania
 - P12 (sprzęt testowy), część otwarta: dystrybucja Linuksa i sesja (X11/Wayland), tablet z Androidem i wersja systemu, model tabletu graficznego, urządzenie z ekranem dotykowym do R12 (laptop referencyjny go nie ma). Laptop referencyjny zapisany w planie (P12). **Potrzebne do dokończenia kroku 1.1** (część Windows wykonana 2026-11-10 za zgodą właściciela).
+
+- P16 (krok 1.2, WAR-06 K1): kryterium wymaga testu gumki (oba tryby) i zaznaczania na warstwie rysunkowej, a te narzędzia powstają w kroku 1.6 (RYS-03, RYS-04, RYS-14). W kroku 1.2 mechanizm izolacji sprawdzono narzędziem „wyczyść warstwę” wtyczki testowej (porównanie serializacji pozostałych warstw). **Propozycja:** test K1 z gumką i zaznaczaniem w kroku 1.6, wtedy WAR-06 dostaje ZAIMPL.; do tego czasu W TOKU. Nie blokuje kroku 1.3.
 
 ## Blokery
 Brak.
 
 ## Dziennik sesji
+### 2026-11-10: Krok 1.2 — rdzeń dokumentu i API wtyczek
+- `packages/plugin-api` (`@tablica/plugin-api` 1.0.0): manifest i jego walidacja, zgodność wersji API (SemVer: ta sama wersja główna, poboczna nie nowsza), `LayerPlugin` (cykl życia `activate` / `mountLayer` / `render` / `unmount`), serializacja z `schemaVersion` i migracją w `deserialize`, polecenia cofania, narzędzia, skróty, panele, tłumaczenia, `LayerAccessError`.
+- Rdzeń `app/src/lib/core/`: `BoardDocument`, `Camera`, `History` (minimalna: wykonaj / cofnij / ponów; limit, scalanie i interfejs w 1.3), `PluginManager` (walidacja, zgodność API, leniwe ładowanie), `LayerHost` (stos kontenerów DOM), rejestry narzędzi, skrótów i paneli, komunikaty dla użytkownika (`Notices.svelte`), klasa `Board` spinająca całość. Błąd wtyczki oznacza warstwę (albo całą wtyczkę) jako uszkodzoną, dane zostają do zapisu.
+- Szkielety wtyczek `layer-background`, `layer-media`, `layer-drawing` (bez funkcji, tylko kontenery) oraz wtyczka testowa `test-fixture-layer` (narzędzia, skrót, panel, tłumaczenia, migracja formatu 1 → 2, polecenia cofania).
+- Punkt wejścia przeniesiony do `app/src/composition/` (`main.ts`, `builtin.ts`): jedyne miejsce, które zna konkretne warstwy. Reguła lint: element `composition` może importować rdzeń i warstwy; rdzeń i API nie importują warstw; warstwy tylko `@tablica/plugin-api` (granice ścieżek + `no-restricted-imports` dla nazw pakietów).
+- Dokumentacja API: `docs/api/README.md`, przewodnik `docs/api/jak-napisac-warstwe.md`, referencja `docs/api/referencja/` generowana z typów (`pnpm docs:api`, TypeDoc z kontrolą braku opisów). Test pilnuje aktualności referencji.
+- Nowe zależności deweloperskie (licencje sprawdzone, kontrola licencji zielona): `happy-dom` (MIT, środowisko DOM dla testów), `typedoc` (Apache-2.0), `typedoc-plugin-markdown` (MIT).
+- Kontrole: lint, typy, Vitest 89/89, licencje npm, build web, Playwright WebKit 8/8; Chromium 0/8 (znany brak `icudtl.dat`, środowisko); dla porównania te same testy na systemowym Edge (silnik WebView2, jednorazowa konfiguracja poza repozytorium) 8/8; rustfmt, clippy i cargo test 2/2 zielone (z obejściem `oldnames.lib` przez zmienną `LIB`).
+- Odstępstwo: WAR-06 K1 (P16). WAR-12 zostaje W TOKU zgodnie z planem (domknięcie w 1.13).
+
 ### 2026-11-10: Decyzja P15
 - Właściciel zgodził się rozpocząć krok 1.2 przed domknięciem kroku 1.1 na Linuksie i Androidzie (krok 1.2 nie zależy od wyników prototypów).
 

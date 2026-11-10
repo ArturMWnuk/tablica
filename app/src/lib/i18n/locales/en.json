@@ -17,5 +17,15 @@
     "light": "Light",
     "dark": "Dark",
     "system": "System"
+  },
+  "notice": {
+    "region": "Messages",
+    "dismiss": "Close message",
+    "pluginInvalid": "The layer “{name}” cannot be loaded: the plugin package is invalid.",
+    "pluginIncompatible": "The layer “{name}” requires plugin API version {required}, but the program provides version {provided}. The layer was not loaded.",
+    "pluginDuplicate": "The layer “{name}” is already loaded. The second copy of the plugin was skipped.",
+    "pluginFailed": "The layer “{name}” stopped working because of an error in its plugin. Other layers keep working, and the data of this layer will be kept when saving.",
+    "layerBroken": "The layer “{name}” was marked as broken after an error in its plugin. Other layers keep working, and the data of this layer will be kept when saving.",
+    "shortcutConflict": "The shortcut {keys} of the layer “{name}” is already taken and was not assigned."
   }
 }
