@@ -22,7 +22,7 @@ Wykluczenia WYK-01 – WYK-05 nie są implementowane. Audytor sprawdza w każdym
 | PLAT-02 | Linux | W TOKU | `.github/workflows/ci.yml` (build-desktop: AppImage, deb; smoke); `e2e-app/smoke.test.mjs` | K1 przygotowane w kroku 1.0, potwierdzone w CI (przebieg 41352386876). K2 ręczny R02. Domknięcie: 1.14 |
 | PLAT-03 | Android | W TOKU | `.github/workflows/ci.yml` (build-android: APK arm64-v8a) | K1 przygotowane w kroku 1.0, potwierdzone w CI (przebieg 41352386876). APK debug do czasu klucza wydania (1.14). K2 ręczny R03. Domknięcie: 1.14 |
 | WEJ-01 | Tablet z Androidem i rysikiem | — | | |
-| WEJ-02 | Tablet graficzny | — | | |
+| WEJ-02 | Tablet graficzny | — | | Krok 1.1 (prototyp, bez zmiany statusu): Windows OK, `docs/etapy/ETAP-1-prototypy.md`; Linux/Android czekają na P12 (pióro syntetyczne Windows Ink; tablet ręcznie R11) |
 | WEJ-03 | Ekran dotykowy | — | | |
 | WEJ-04 | Mysz i klawiatura | — | | |
 | WEJ-05 | Nacisk, nachylenie, gumka rysika | — | | |
@@ -54,8 +54,8 @@ Wykluczenia WYK-01 – WYK-05 nie są implementowane. Audytor sprawdza w każdym
 | RYS-13 | Tekst z klawiatury | — | | |
 | RYS-14 | Zaznaczanie i edycja elementów | — | | |
 | TLO-01 | Jednolity kolor | — | | |
-| TLO-02 | Przezroczyste (Windows/Linux, 2 tryby) | — | | |
-| TLO-03 | Przezroczyste (Android, zrzut ekranu) | — | | |
+| TLO-02 | Przezroczyste (Windows/Linux, 2 tryby) | — | | Krok 1.1 (prototyp, bez zmiany statusu): Windows OK, `docs/etapy/ETAP-1-prototypy.md`; Linux/Android czekają na P12 |
+| TLO-03 | Przezroczyste (Android, zrzut ekranu) | — | | Krok 1.1: prototyp MediaProjection czeka na P12 (tablet z Androidem) |
 | TLO-04 | Kratka | — | | |
 | TLO-05 | Linie | — | | |
 | TLO-06 | Papier milimetrowy | — | | |
@@ -64,14 +64,14 @@ Wykluczenia WYK-01 – WYK-05 nie są implementowane. Audytor sprawdza w każdym
 | OBS-01 | Nieskończone płótno | — | | |
 | OBS-02 | Tryb stron | — | | |
 | MM-01 | PNG, JPG, SVG, GIF | — | | |
-| MM-02 | MP4 | — | | |
+| MM-02 | MP4 | — | | Krok 1.1 (prototyp, bez zmiany statusu): Windows OK, `docs/etapy/ETAP-1-prototypy.md`; Linux/Android czekają na P12 |
 | MM-03 | MP3, WAV | — | | |
 | MM-04 | PDF | — | | |
-| MM-05 | YouTube | — | | |
+| MM-05 | YouTube | — | | Krok 1.1 (prototyp, bez zmiany statusu): Windows OK, `docs/etapy/ETAP-1-prototypy.md`; Linux/Android czekają na P12 |
 | MM-06 | Transformacje multimediów | — | | |
 | MM-07 | Sterowanie odtwarzaniem | — | | |
 | MM-08 | Rysowanie po multimediach | — | | |
-| MM-09 | Zrzut fragmentu ekranu | — | | |
+| MM-09 | Zrzut fragmentu ekranu | — | | Krok 1.1 (prototyp, bez zmiany statusu): Windows OK, `docs/etapy/ETAP-1-prototypy.md`; Linux/Android czekają na P12 |
 | UI-01 | Język PL/EN | W TOKU | `app/src/lib/i18n/core.test.ts`; `tools/eslint-rules/no-raw-text.test.ts`; `e2e/shell.spec.ts` | Krok 1.0: infrastruktura (pliki tłumaczeń, test parytetu kluczy, reguła lint `tablica/no-raw-text`, przełączanie bez restartu, D10). Pełne tłumaczenia: 1.11 |
 | UI-02 | Motywy interfejsu | W TOKU | `app/src/lib/theme/tokens.test.ts`; `e2e/shell.spec.ts` | Krok 1.0: infrastruktura (tokeny kolorów, jasny/ciemny/systemowy D11, test kontrastu tokenów). Domknięcie: 1.11 |
 | UI-03 | Szybki pasek ulubionych | — | | |
@@ -89,7 +89,7 @@ Wykluczenia WYK-01 – WYK-05 nie są implementowane. Audytor sprawdza w każdym
 | NF-01 | GPL-3.0, zgodne licencje | W TOKU | `scripts/license-policy.test.ts`; `scripts/check-licenses.mjs`; `src-tauri/deny.toml`; `src-tauri/src/lib.rs` (`nf_01_*`) | Weryfikowane w każdym etapie. Krok 1.0: K1 (kontrola npm i Cargo w CI), K2 bez listy w „O programie”. Domknięcie: 1.14 |
 | NF-02 | Instalatory na GitHub Releases | — | | |
 | NF-03 | Płynność na sprzęcie docelowym | — | | Weryfikowane w każdym etapie |
-| NF-04 | Brak opóźnienia rysowania | — | | Próg w planie etapu 1 |
+| NF-04 | Brak opóźnienia rysowania | — | | Próg w planie etapu 1. Krok 1.1 (prototyp, bez zmiany statusu): Windows OK, `docs/etapy/ETAP-1-prototypy.md`; Linux/Android czekają na P12 (WebView2: p95 0,7 ms) |
 | NF-05 | Praca offline | — | | Weryfikowane w każdym etapie |
 
 ## Etap 2

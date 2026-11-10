@@ -13,6 +13,8 @@ export default ts.config(
       '**/dist/',
       'src-tauri/target/',
       'src-tauri/gen/',
+      'spikes/*/target/',
+      'spikes/*/gen/',
       'test-results/',
       'playwright-report/',
     ],

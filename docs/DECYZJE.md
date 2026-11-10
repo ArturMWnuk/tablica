@@ -121,7 +121,7 @@ Plik `.tablica` to ZIP (biblioteka fflate, MIT): `manifest.json`, `document.json
 - **Katalog z plikami:** łatwo zgubić zasoby.
 
 ## ADR-010: Funkcje systemowe
-- Status: PRZYJĘTA (szczegóły do uzupełnienia po prototypach z kroku 1.1)
+- Status: PRZYJĘTA (Windows potwierdzony w kroku 1.1; Linux i Android do uzupełnienia po P12)
 - Data: 2026-11-01
 - Dotyczy wymagań: TLO-02, TLO-03, MM-09, UI-08, INT-01
 ### Decyzja
@@ -130,6 +130,10 @@ Po stronie Rust: wiele okien Tauri (tablica, sterowanie, mini-pasek), `set_ignor
 - **`getDisplayMedia`:** systemowy wybór okna przy każdym zrzucie, słabsze UX.
 ### Konsekwencje
 Możliwe ograniczenia na Wayland. Wynik prototypu może wymagać zmiany wymagań przez `/zmiana-wymagan`.
+### Wyniki prototypów (krok 1.1, `docs/etapy/ETAP-1-prototypy.md`)
+- **Windows (2026-11-10):** potwierdzone bez zmian architektury. Przezroczyste okno `transparent`, przepuszczanie kliknięć, kółka i klawiatury przez `set_ignore_cursor_events`, mini-pasek w osobnym oknie klikalny w trybie przepuszczania. Zrzut xcap około 30 ms dla 1920×1080, schowanie okien i zrzut około 290 ms.
+- **Uzupełnienie decyzji:** globalny skrót trybu (D9) przez `tauri-plugin-global-shortcut` (Apache-2.0 OR MIT). Okno zaznaczania fragmentu przyjmuje zamrożony zrzut; w kroku 1.10 przesyłanie obrazu bez kodowania całego ekranu do PNG.
+- **Linux X11, Wayland i Android:** nie sprawdzone, czekają na sprzęt z P12.
 
 ## ADR-011: Narzędzia i CI
 - Status: PRZYJĘTA
@@ -139,7 +143,7 @@ Możliwe ograniczenia na Wayland. Wynik prototypu może wymagać zmiany wymagań
 Monorepo pnpm workspaces; Vitest, Playwright, cargo test, tauri-driver; ESLint z eslint-plugin-boundaries (granice API wtyczek), Prettier, svelte-check, clippy, rustfmt; kontrola licencji: license-checker i cargo-deny; GitHub Actions + tauri-action.
 
 ## ADR-012: Biblioteki multimediów i eksportu
-- Status: PRZYJĘTA (do potwierdzenia po prototypach z kroku 1.1)
+- Status: PRZYJĘTA (Windows potwierdzony w kroku 1.1; Linux i Android do potwierdzenia po P12)
 - Data: 2026-11-01
 - Dotyczy wymagań: MM-01–09, DAN-04, DAN-05
 ### Decyzja
@@ -147,3 +151,6 @@ PDF.js (Apache-2.0) do wyświetlania PDF, pdf-lib (MIT) do eksportu PDF, YouTube
 ### Rozważane alternatywy
 - **pdfium:** cięższe, natywne.
 - **jsPDF:** słabsza kontrola nad strukturą dokumentu.
+### Wyniki prototypów (krok 1.1, `docs/etapy/ETAP-1-prototypy.md`)
+- **Windows (2026-11-10):** YouTube IFrame API odtwarza z pochodzenia `http://tauri.localhost` zarówno z `youtube.com`, jak i z `youtube-nocookie.com`; domyślnie `youtube-nocookie.com`. CSP programu musi dopuścić skrypt API i ramkę odtwarzacza. WebView2 odtwarza MP4 H.264 w `<video>`.
+- **WebKitGTK i Android WebView:** nie sprawdzone, czekają na sprzęt z P12 (plik testowy `spikes/platform/ui/media/sample-h264.mp4`).

@@ -32,3 +32,8 @@ Thumbs.db
 
 # Claude Code: lokalne ustawienia użytkownika
 .claude/settings.local.json
+
+# Prototypy kroku 1.1: pliki generowane i wyniki binarne (zrzuty ekranu nie trafiają do repozytorium)
+spikes/platform/gen/
+spikes/platform/results/*.png
+spikes/platform/results/*.mp4

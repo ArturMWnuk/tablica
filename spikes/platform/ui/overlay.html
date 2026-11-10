@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Tablica: nakładka</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+        overflow: hidden;
+        background: transparent;
+      }
+      canvas {
+        display: block;
+        width: 100vw;
+        height: 100vh;
+        touch-action: none;
+      }
+      body.drawing {
+        outline: 3px solid rgba(255, 0, 0, 0.35);
+        outline-offset: -3px;
+      }
+    </style>
+  </head>
+  <body class="drawing">
+    <canvas id="ink"></canvas>
+    <script type="module">
+      import { listen, params, report } from './common.js';
+
+      const canvas = document.getElementById('ink');
+      const ctx = canvas.getContext('2d');
+      const dpr = window.devicePixelRatio;
+      canvas.width = innerWidth * dpr;
+      canvas.height = innerHeight * dpr;
+      ctx.scale(dpr, dpr);
+      ctx.lineCap = 'round';
+      ctx.strokeStyle = '#ff0000';
+
+      let last = null;
+      canvas.addEventListener('pointerdown', (e) => {
+        canvas.setPointerCapture(e.pointerId);
+        last = { x: e.offsetX, y: e.offsetY };
+        report('pointerdown', { x: e.offsetX, y: e.offsetY, pointerType: e.pointerType });
+      });
+      canvas.addEventListener('pointermove', (e) => {
+        if (!last) return;
+        ctx.lineWidth = 2 + 6 * (e.pressure || 0.5);
+        ctx.beginPath();
+        ctx.moveTo(last.x, last.y);
+        ctx.lineTo(e.offsetX, e.offsetY);
+        ctx.stroke();
+        last = { x: e.offsetX, y: e.offsetY };
+      });
+      canvas.addEventListener('pointerup', () => {
+        last = null;
+      });
+
+      listen('mode', (e) => document.body.classList.toggle('drawing', !e.payload));
+
+      if (params.get('auto')) {
+        // A fixed "drawing" the automatic run looks for in the screen capture.
+        ctx.fillStyle = '#ff0000';
+        ctx.fillRect(20, 20, 80, 80);
+      }
+      requestAnimationFrame(() => requestAnimationFrame(() => report('ready')));
+    </script>
+  </body>
+</html>

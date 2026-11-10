@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Program pod spodem</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+        background: #00c000;
+        font-family: system-ui, sans-serif;
+      }
+      p {
+        margin: 0;
+        padding: 12px;
+        font-size: 14px;
+      }
+    </style>
+  </head>
+  <body>
+    <p id="log">Program pod spodem: kliknij, przewiń, naciśnij klawisz.</p>
+    <script type="module">
+      import { report } from './common.js';
+
+      const log = document.getElementById('log');
+      const note = (kind, data) => {
+        log.textContent = `${kind} ${JSON.stringify(data)}`;
+        report(kind, data);
+      };
+      addEventListener('pointerdown', (e) => note('pointerdown', { x: e.clientX, y: e.clientY }));
+      addEventListener('wheel', (e) => note('wheel', { deltaY: e.deltaY }));
+      addEventListener('keydown', (e) => note('keydown', { key: e.key }));
+      report('ready');
+    </script>
+  </body>
+</html>

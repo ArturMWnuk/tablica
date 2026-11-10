@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Tablica: mini-pasek</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+        overflow: hidden;
+        background: #2b2b2b;
+        font-family: system-ui, sans-serif;
+        user-select: none;
+      }
+      .bar {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        height: 100%;
+        padding: 0 8px;
+        box-sizing: border-box;
+      }
+      button {
+        height: 40px;
+        border: 0;
+        border-radius: 6px;
+        background: #4a4a4a;
+        color: #fff;
+        font-size: 13px;
+      }
+      #toggle {
+        width: 112px;
+      }
+      #toggle.pass {
+        background: #1f6feb;
+      }
+      .grip {
+        flex: 1;
+        height: 40px;
+        cursor: move;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="bar">
+      <button id="toggle">Rysowanie</button>
+      <button id="capture">Zrzut</button>
+      <button id="close">Zamknij</button>
+      <div class="grip" data-tauri-drag-region></div>
+    </div>
+    <script type="module">
+      import { invoke, listen, report } from './common.js';
+
+      const toggle = document.getElementById('toggle');
+      const show = (passthrough) => {
+        toggle.textContent = passthrough ? 'Przepuszczanie' : 'Rysowanie';
+        toggle.classList.toggle('pass', passthrough);
+      };
+      invoke('get_mode').then(show);
+      listen('mode', (e) => show(e.payload));
+
+      toggle.onclick = async () => {
+        await report('toggle-click');
+        await invoke('toggle_mode');
+      };
+      document.getElementById('capture').onclick = () => invoke('start_region_capture');
+      document.getElementById('close').onclick = () => invoke('close_overlay');
+      report('ready');
+    </script>
+  </body>
+</html>

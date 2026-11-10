@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Wideo MP4 H.264</title>
+    <style>
+      body {
+        font-family: system-ui, sans-serif;
+        margin: 12px;
+      }
+      video {
+        max-width: 100%;
+        background: #000;
+      }
+    </style>
+  </head>
+  <body>
+    <p>Plik MP4 do sprawdzenia: <input id="file" type="file" accept="video/mp4" /></p>
+    <video id="video" controls muted playsinline width="480"></video>
+    <pre id="out"></pre>
+    <script type="module">
+      import { blobToBase64, invoke, params, report } from './common.js';
+
+      const video = document.getElementById('video');
+      const out = document.getElementById('out');
+      const H264 = 'video/mp4; codecs="avc1.42E01E"';
+
+      const canPlay = {
+        mp4: video.canPlayType('video/mp4'),
+        h264Baseline: video.canPlayType(H264),
+        h264High: video.canPlayType('video/mp4; codecs="avc1.640028"'),
+        aac: video.canPlayType('video/mp4; codecs="avc1.42E01E, mp4a.40.2"'),
+      };
+
+      function play(src, timeoutMs = 8000) {
+        return new Promise((resolve) => {
+          const done = (played, extra = {}) => {
+            clearTimeout(timer);
+            video.ontimeupdate = video.onerror = null;
+            resolve({
+              played,
+              videoWidth: video.videoWidth,
+              videoHeight: video.videoHeight,
+              ...extra,
+            });
+          };
+          const timer = setTimeout(() => done(false, { reason: 'timeout' }), timeoutMs);
+          video.ontimeupdate = () => video.currentTime > 0.3 && done(true);
+          video.onerror = () => done(false, { reason: `error ${video.error?.code}` });
+          video.src = src;
+          video.play().catch((e) => done(false, { reason: String(e) }));
+        });
+      }
+
+      // Records a short H.264 MP4 from an animated canvas (where MediaRecorder supports it).
+      async function recordMp4() {
+        const type = ['video/mp4;codecs=avc1.42E01E', 'video/mp4;codecs=avc1', 'video/mp4'].find(
+          (t) => window.MediaRecorder?.isTypeSupported(t),
+        );
+        if (!type) return { recorderType: null };
+        const canvas = Object.assign(document.createElement('canvas'), { width: 320, height: 240 });
+        const ctx = canvas.getContext('2d');
+        let frame = 0;
+        const timer = setInterval(() => {
+          ctx.fillStyle = `hsl(${(frame * 6) % 360} 80% 50%)`;
+          ctx.fillRect(0, 0, 320, 240);
+          ctx.fillStyle = '#fff';
+          ctx.font = '48px sans-serif';
+          ctx.fillText(String(frame++), 120, 140);
+        }, 33);
+        const recorder = new MediaRecorder(canvas.captureStream(30), { mimeType: type });
+        const chunks = [];
+        recorder.ondataavailable = (e) => chunks.push(e.data);
+        const stopped = new Promise((r) => (recorder.onstop = r));
+        recorder.start();
+        await new Promise((r) => setTimeout(r, 2000));
+        recorder.stop();
+        await stopped;
+        clearInterval(timer);
+        return { recorderType: type, blob: new Blob(chunks, { type: 'video/mp4' }) };
+      }
+
+      async function auto() {
+        const result = { canPlay };
+        // A sample file shipped with the prototypes (recorded on Windows), for Linux / Android.
+        const bundled = await fetch('media/sample-h264.mp4').catch(() => null);
+        const isVideo = bundled?.ok && bundled.headers.get('content-type')?.startsWith('video/');
+        if (isVideo) result.bundled = await play('media/sample-h264.mp4');
+
+        const recorded = await recordMp4();
+        result.recorderType = recorded.recorderType;
+        if (recorded.blob) {
+          result.recordedBytes = recorded.blob.size;
+          result.savedTo = await invoke('save_result', {
+            name: 'sample-h264.mp4',
+            base64Data: await blobToBase64(recorded.blob),
+          }).catch((e) => String(e));
+          result.recorded = await play(URL.createObjectURL(recorded.blob));
+        }
+        result.played = Boolean(result.bundled?.played || result.recorded?.played);
+        out.textContent = JSON.stringify(result, null, 1);
+        report('result', result);
+      }
+
+      document.getElementById('file').onchange = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const result = { canPlay, file: file.name, ...(await play(URL.createObjectURL(file))) };
+        out.textContent = JSON.stringify(result, null, 1);
+        report('result', result);
+      };
+
+      out.textContent = JSON.stringify({ canPlay }, null, 1);
+      if (params.get('auto')) auto();
+    </script>
+  </body>
+</html>

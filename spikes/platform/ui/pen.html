@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Rysik: nacisk i opóźnienie</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+        overflow: hidden;
+        background: #fff;
+        font-family: system-ui, sans-serif;
+      }
+      canvas {
+        position: fixed;
+        inset: 0;
+        width: 100vw;
+        height: 100vh;
+        touch-action: none;
+      }
+      pre {
+        position: fixed;
+        left: 8px;
+        top: 8px;
+        margin: 0;
+        font-size: 12px;
+        pointer-events: none;
+        background: rgba(255, 255, 255, 0.8);
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="ink"></canvas>
+    <pre id="stats">Rysuj rysikiem, palcem lub myszą.</pre>
+    <script type="module">
+      import { percentile, report } from './common.js';
+
+      const canvas = document.getElementById('ink');
+      const stats = document.getElementById('stats');
+      const ctx = canvas.getContext('2d', { desynchronized: true });
+      const dpr = window.devicePixelRatio;
+      canvas.width = innerWidth * dpr;
+      canvas.height = innerHeight * dpr;
+      ctx.scale(dpr, dpr);
+      ctx.lineCap = 'round';
+      ctx.strokeStyle = '#1a1a1a';
+
+      const proto = window.PointerEvent ? PointerEvent.prototype : {};
+      const caps = {
+        getCoalescedEvents: 'getCoalescedEvents' in proto,
+        getPredictedEvents: 'getPredictedEvents' in proto,
+        desynchronized: Boolean(ctx.getContextAttributes?.().desynchronized),
+        maxTouchPoints: navigator.maxTouchPoints,
+        devicePixelRatio: dpr,
+        userAgent: navigator.userAgent,
+      };
+      report('caps', caps);
+
+      let stroke = null;
+      let pending = [];
+
+      const segment = (from, to, pressure) => {
+        ctx.lineWidth = 1 + 7 * pressure;
+        ctx.beginPath();
+        ctx.moveTo(from.x, from.y);
+        ctx.lineTo(to.x, to.y);
+        ctx.stroke();
+      };
+
+      const frame = () => {
+        if (!stroke) return;
+        const now = performance.now();
+        for (const t of pending) stroke.frameLatency.push(now - t);
+        pending = [];
+        requestAnimationFrame(frame);
+      };
+
+      canvas.addEventListener('pointerdown', (e) => {
+        canvas.setPointerCapture(e.pointerId);
+        stroke = {
+          pointerType: e.pointerType,
+          last: { x: e.offsetX, y: e.offsetY },
+          events: 0,
+          coalesced: 0,
+          predicted: 0,
+          pressures: [e.pressure],
+          latency: [],
+          frameLatency: [],
+        };
+        requestAnimationFrame(frame);
+      });
+
+      canvas.addEventListener('pointermove', (e) => {
+        if (!stroke) return;
+        // Fallback path: without getCoalescedEvents only the event itself is drawn.
+        const list = caps.getCoalescedEvents ? e.getCoalescedEvents() : [e];
+        const points = list.length ? list : [e];
+        for (const p of points) {
+          const to = { x: p.offsetX, y: p.offsetY };
+          segment(stroke.last, to, p.pressure || 0.5);
+          stroke.last = to;
+          stroke.pressures.push(p.pressure);
+        }
+        if (caps.getPredictedEvents) stroke.predicted += e.getPredictedEvents().length;
+        // NF-04 K1: time from the pointer event to the drawn segment in the buffer.
+        stroke.latency.push(performance.now() - e.timeStamp);
+        pending.push(e.timeStamp);
+        stroke.events += 1;
+        stroke.coalesced += points.length;
+      });
+
+      canvas.addEventListener('pointerup', () => {
+        if (!stroke) return;
+        const s = stroke;
+        stroke = null;
+        const summary = {
+          pointerType: s.pointerType,
+          events: s.events,
+          coalescedPoints: s.coalesced,
+          predictedPoints: s.predicted,
+          pressureMin: Math.min(...s.pressures),
+          pressureMax: Math.max(...s.pressures),
+          latencyP50: percentile(s.latency, 50),
+          latencyP95: percentile(s.latency, 95),
+          latencyMax: percentile(s.latency, 100),
+          frameLatencyP50: percentile(s.frameLatency, 50),
+          frameLatencyP95: percentile(s.frameLatency, 95),
+        };
+        stats.textContent = JSON.stringify({ ...caps, userAgent: undefined, ...summary }, null, 1);
+        report('summary', summary);
+      });
+    </script>
+  </body>
+</html>

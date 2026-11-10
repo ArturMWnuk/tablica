@@ -1,0 +1,466 @@
+{
+  "checks": [
+    {
+      "detail": {
+        "capture_ms": 35.833400000000005,
+        "overlay_ready": true,
+        "pixel_of_drawing": [255, 0, 0, 255],
+        "pixel_under_overlay": [0, 192, 0, 255]
+      },
+      "feature": "transparent overlay shows the program underneath and the drawing",
+      "id": "TLO-02",
+      "ok": true
+    },
+    {
+      "detail": {
+        "overlay": true,
+        "target": false
+      },
+      "feature": "drawing mode: overlay captures the click",
+      "id": "TLO-02",
+      "ok": true
+    },
+    {
+      "detail": {
+        "click": true,
+        "drawing_visible": true,
+        "key": true,
+        "overlay_got_click": false,
+        "wheel": true
+      },
+      "feature": "pass-through: click, wheel and key reach the program underneath, drawing stays",
+      "id": "TLO-02",
+      "ok": true
+    },
+    {
+      "detail": {
+        "minibar_click": true,
+        "passthrough_after": false
+      },
+      "feature": "mini-bar clickable in pass-through, button switches to drawing",
+      "id": "TLO-02",
+      "ok": true
+    },
+    {
+      "detail": {
+        "after_first": true,
+        "after_second": false,
+        "before": false
+      },
+      "feature": "global shortcut Ctrl+Shift+Space toggles the mode",
+      "id": "TLO-02",
+      "ok": true
+    },
+    {
+      "detail": {
+        "capture_ms": 28.3161,
+        "fragment": [400, 300],
+        "fragment_center": [0, 192, 0, 255],
+        "hide_and_capture_ms": 287.6249,
+        "screen": [1920, 1080],
+        "tablica_hidden_in_capture": true
+      },
+      "feature": "hide Tablica, capture the screen with xcap, crop a fragment",
+      "id": "MM-09",
+      "ok": true
+    },
+    {
+      "detail": {
+        "fragment": {
+          "h": 100,
+          "w": 200
+        },
+        "select_ready_ms": 631.7085
+      },
+      "feature": "region selection: drag a rectangle on the frozen screen, fragment 200x100 returned",
+      "id": "MM-09",
+      "ok": true
+    },
+    {
+      "detail": {
+        "cancelled": true,
+        "overlay_visible_again": true
+      },
+      "feature": "region selection: Esc cancels and Tablica comes back",
+      "id": "MM-09",
+      "ok": true
+    },
+    {
+      "detail": {
+        "desynchronized": true,
+        "devicePixelRatio": 1,
+        "getCoalescedEvents": true,
+        "getPredictedEvents": true,
+        "maxTouchPoints": 0,
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Safari/537.36 Edg/157.0.0.0"
+      },
+      "feature": "WebView pointer capabilities (coalesced, predicted, desynchronized canvas)",
+      "id": "NF-04",
+      "ok": true
+    },
+    {
+      "detail": {
+        "inject_error": null,
+        "summary": {
+          "coalescedPoints": 79,
+          "events": 79,
+          "frameLatencyP50": 3.8,
+          "frameLatencyP95": 4.8,
+          "latencyMax": 0.7,
+          "latencyP50": 0.3,
+          "latencyP95": 0.5,
+          "pointerType": "pen",
+          "predictedPoints": 229,
+          "pressureMax": 0.9765625,
+          "pressureMin": 0.09765625
+        }
+      },
+      "feature": "synthetic pen (Windows Ink): pressure reaches the WebView, latency p95 <= 4 ms",
+      "id": "WEJ-02/NF-04",
+      "ok": true
+    },
+    {
+      "detail": {
+        "coalescedPoints": 80,
+        "events": 80,
+        "frameLatencyP50": 4.2,
+        "frameLatencyP95": 8.5,
+        "latencyMax": 0.9,
+        "latencyP50": 0.5,
+        "latencyP95": 0.7,
+        "pointerType": "mouse",
+        "predictedPoints": 154,
+        "pressureMax": 0.5,
+        "pressureMin": 0.5
+      },
+      "feature": "mouse stroke: event-to-segment latency p95 <= 4 ms",
+      "id": "NF-04",
+      "ok": true
+    },
+    {
+      "detail": {
+        "bundled": {
+          "played": true,
+          "videoHeight": 240,
+          "videoWidth": 320
+        },
+        "canPlay": {
+          "aac": "probably",
+          "h264Baseline": "probably",
+          "h264High": "probably",
+          "mp4": "maybe"
+        },
+        "played": true,
+        "recorded": {
+          "played": true,
+          "videoHeight": 240,
+          "videoWidth": 320
+        },
+        "recordedBytes": 86677,
+        "recorderType": "video/mp4;codecs=avc1.42E01E",
+        "savedTo": "D:\\CLAUDE\\Tablica\\.claude\\worktrees\\realizuj-krok-1-1-1a275c\\spikes\\platform\\results\\sample-h264.mp4"
+      },
+      "feature": "MP4 H.264: record with MediaRecorder, play back in <video>",
+      "id": "MM-02",
+      "ok": true
+    },
+    {
+      "detail": {
+        "host": "www.youtube.com",
+        "origin": "http://tauri.localhost",
+        "playing": true,
+        "referrer": "",
+        "states": [1]
+      },
+      "feature": "YouTube IFrame API (youtube.com) plays in the WebView",
+      "id": "MM-05",
+      "ok": true
+    },
+    {
+      "detail": {
+        "host": "www.youtube-nocookie.com",
+        "origin": "http://tauri.localhost",
+        "playing": true,
+        "referrer": "",
+        "states": [1]
+      },
+      "feature": "YouTube IFrame API (youtube-nocookie.com) plays in the WebView",
+      "id": "MM-05",
+      "ok": true
+    }
+  ],
+  "events": [
+    {
+      "at_ms": 711,
+      "data": null,
+      "kind": "ready",
+      "window": "main"
+    },
+    {
+      "at_ms": 2351,
+      "data": null,
+      "kind": "ready",
+      "window": "target"
+    },
+    {
+      "at_ms": 2995,
+      "data": null,
+      "kind": "ready",
+      "window": "overlay"
+    },
+    {
+      "at_ms": 3058,
+      "data": {
+        "passthrough": false
+      },
+      "kind": "mode",
+      "window": "rust"
+    },
+    {
+      "at_ms": 3131,
+      "data": null,
+      "kind": "ready",
+      "window": "minibar"
+    },
+    {
+      "at_ms": 3975,
+      "data": {
+        "pointerType": "mouse",
+        "x": 300,
+        "y": 250
+      },
+      "kind": "pointerdown",
+      "window": "overlay"
+    },
+    {
+      "at_ms": 4601,
+      "data": {
+        "passthrough": true
+      },
+      "kind": "mode",
+      "window": "rust"
+    },
+    {
+      "at_ms": 5084,
+      "data": {
+        "x": 242,
+        "y": 169
+      },
+      "kind": "pointerdown",
+      "window": "target"
+    },
+    {
+      "at_ms": 5672,
+      "data": {
+        "deltaY": 200
+      },
+      "kind": "wheel",
+      "window": "target"
+    },
+    {
+      "at_ms": 6186,
+      "data": {
+        "key": "a"
+      },
+      "kind": "keydown",
+      "window": "target"
+    },
+    {
+      "at_ms": 6912,
+      "data": null,
+      "kind": "toggle-click",
+      "window": "minibar"
+    },
+    {
+      "at_ms": 6922,
+      "data": {
+        "passthrough": false
+      },
+      "kind": "mode",
+      "window": "rust"
+    },
+    {
+      "at_ms": 7614,
+      "data": null,
+      "kind": "shortcut",
+      "window": "rust"
+    },
+    {
+      "at_ms": 7619,
+      "data": {
+        "passthrough": true
+      },
+      "kind": "mode",
+      "window": "rust"
+    },
+    {
+      "at_ms": 8219,
+      "data": null,
+      "kind": "shortcut",
+      "window": "rust"
+    },
+    {
+      "at_ms": 8223,
+      "data": {
+        "passthrough": false
+      },
+      "kind": "mode",
+      "window": "rust"
+    },
+    {
+      "at_ms": 9389,
+      "data": {
+        "h": 1080,
+        "ms": 29.3049,
+        "w": 1920
+      },
+      "kind": "capture-full",
+      "window": "rust"
+    },
+    {
+      "at_ms": 9700,
+      "data": null,
+      "kind": "ready",
+      "window": "select"
+    },
+    {
+      "at_ms": 10299,
+      "data": {
+        "h": 100,
+        "w": 200
+      },
+      "kind": "capture-fragment",
+      "window": "rust"
+    },
+    {
+      "at_ms": 10614,
+      "data": {
+        "h": 1080,
+        "ms": 45.983799999999995,
+        "w": 1920
+      },
+      "kind": "capture-full",
+      "window": "rust"
+    },
+    {
+      "at_ms": 11086,
+      "data": null,
+      "kind": "ready",
+      "window": "select"
+    },
+    {
+      "at_ms": 11436,
+      "data": null,
+      "kind": "capture-cancelled",
+      "window": "rust"
+    },
+    {
+      "at_ms": 11916,
+      "data": {
+        "desynchronized": true,
+        "devicePixelRatio": 1,
+        "getCoalescedEvents": true,
+        "getPredictedEvents": true,
+        "maxTouchPoints": 0,
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Safari/537.36 Edg/157.0.0.0"
+      },
+      "kind": "caps",
+      "window": "pen"
+    },
+    {
+      "at_ms": 13134,
+      "data": {
+        "coalescedPoints": 79,
+        "events": 79,
+        "frameLatencyP50": 3.8,
+        "frameLatencyP95": 4.8,
+        "latencyMax": 0.7,
+        "latencyP50": 0.3,
+        "latencyP95": 0.5,
+        "pointerType": "pen",
+        "predictedPoints": 229,
+        "pressureMax": 0.9765625,
+        "pressureMin": 0.09765625
+      },
+      "kind": "summary",
+      "window": "pen"
+    },
+    {
+      "at_ms": 15385,
+      "data": {
+        "coalescedPoints": 80,
+        "events": 80,
+        "frameLatencyP50": 4.2,
+        "frameLatencyP95": 8.5,
+        "latencyMax": 0.9,
+        "latencyP50": 0.5,
+        "latencyP95": 0.7,
+        "pointerType": "mouse",
+        "predictedPoints": 154,
+        "pressureMax": 0.5,
+        "pressureMin": 0.5
+      },
+      "kind": "summary",
+      "window": "pen"
+    },
+    {
+      "at_ms": 18826,
+      "data": {
+        "bundled": {
+          "played": true,
+          "videoHeight": 240,
+          "videoWidth": 320
+        },
+        "canPlay": {
+          "aac": "probably",
+          "h264Baseline": "probably",
+          "h264High": "probably",
+          "mp4": "maybe"
+        },
+        "played": true,
+        "recorded": {
+          "played": true,
+          "videoHeight": 240,
+          "videoWidth": 320
+        },
+        "recordedBytes": 86677,
+        "recorderType": "video/mp4;codecs=avc1.42E01E",
+        "savedTo": "D:\\CLAUDE\\Tablica\\.claude\\worktrees\\realizuj-krok-1-1-1a275c\\spikes\\platform\\results\\sample-h264.mp4"
+      },
+      "kind": "result",
+      "window": "video"
+    },
+    {
+      "at_ms": 19923,
+      "data": {
+        "host": "www.youtube.com",
+        "origin": "http://tauri.localhost",
+        "playing": true,
+        "referrer": "",
+        "states": [1]
+      },
+      "kind": "result",
+      "window": "youtube"
+    },
+    {
+      "at_ms": 21085,
+      "data": {
+        "host": "www.youtube-nocookie.com",
+        "origin": "http://tauri.localhost",
+        "playing": true,
+        "referrer": "",
+        "states": [1]
+      },
+      "kind": "result",
+      "window": "youtube-nocookie"
+    }
+  ],
+  "generated_ms": 21111,
+  "monitor": {
+    "scale": 1.0,
+    "size": [1920, 1080]
+  },
+  "os": "windows",
+  "os_version": "Microsoft Windows [Version 10.0.26200.9711]",
+  "webview": "157.0.4341.42"
+}

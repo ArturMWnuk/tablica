@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Tablica: prototypy kroku 1.1</title>
+    <style>
+      body {
+        font-family: system-ui, sans-serif;
+        margin: 16px;
+        background: #f4f4f4;
+        color: #222;
+      }
+      button {
+        margin: 4px 4px 4px 0;
+        padding: 8px 12px;
+        font-size: 14px;
+      }
+      section {
+        margin-bottom: 14px;
+      }
+      #fragment img {
+        max-width: 100%;
+        border: 2px solid #444;
+      }
+      small {
+        color: #555;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Prototypy kroku 1.1</h1>
+    <p><small>Narzędzie deweloperskie, nie jest częścią programu Tablica.</small></p>
+
+    <section>
+      <h2>1. Tło przezroczyste (TLO-02)</h2>
+      <button id="overlay-open">Otwórz nakładkę</button>
+      <button id="overlay-close">Zamknij nakładkę</button>
+      <p>
+        Tryb: <strong id="mode">—</strong>.
+        <small
+          >Przełączanie: przycisk na mini-pasku albo Ctrl+Shift+Spacja. W trybie rysowania rysuj
+          myszą lub rysikiem po ekranie.</small
+        >
+      </p>
+    </section>
+
+    <section>
+      <h2>2. Zrzut fragmentu ekranu (MM-09)</h2>
+      <button id="capture">Zrzut fragmentu</button>
+      <small>Tablica się chowa, zaznacz prostokąt myszą, Esc anuluje.</small>
+      <div id="fragment"></div>
+    </section>
+
+    <section>
+      <h2>3–5. WebView: YouTube, MP4, rysik</h2>
+      <button data-probe="youtube.html?host=www.youtube.com">YouTube (youtube.com)</button>
+      <button data-probe="youtube.html?host=www.youtube-nocookie.com">
+        YouTube (youtube-nocookie.com)
+      </button>
+      <button data-probe="video.html">Wideo MP4 H.264</button>
+      <button data-probe="pen.html">Rysik: nacisk i opóźnienie</button>
+    </section>
+
+    <script type="module">
+      import { invoke, listen, report } from './common.js';
+
+      const mode = document.getElementById('mode');
+      const showMode = (passthrough) => {
+        mode.textContent = passthrough ? 'przepuszczanie' : 'rysowanie';
+      };
+      invoke('get_mode').then(showMode);
+      listen('mode', (e) => showMode(e.payload));
+
+      document.getElementById('overlay-open').onclick = () => invoke('open_overlay');
+      document.getElementById('overlay-close').onclick = () => invoke('close_overlay');
+      document.getElementById('capture').onclick = () => invoke('start_region_capture');
+      for (const button of document.querySelectorAll('[data-probe]')) {
+        button.onclick = () => invoke('open_probe', { page: button.dataset.probe });
+      }
+
+      listen('captured', (e) => {
+        const box = document.getElementById('fragment');
+        box.replaceChildren();
+        if (!e.payload) {
+          box.textContent = 'Anulowano.';
+          return;
+        }
+        const img = document.createElement('img');
+        img.src = e.payload.dataUrl;
+        img.alt = `${e.payload.w}×${e.payload.h}`;
+        box.append(img);
+      });
+      report('ready');
+    </script>
+  </body>
+</html>

@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Tablica: zaznacz fragment</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+        overflow: hidden;
+        cursor: crosshair;
+        user-select: none;
+      }
+      #shot {
+        position: fixed;
+        inset: 0;
+        width: 100vw;
+        height: 100vh;
+      }
+      #shade {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.25);
+      }
+      #rect {
+        position: fixed;
+        border: 2px dashed #fff;
+        box-shadow: 0 0 0 1px #000;
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <img id="shot" alt="" />
+    <div id="shade"></div>
+    <div id="rect"></div>
+    <script type="module">
+      import { invoke, report } from './common.js';
+
+      const shot = document.getElementById('shot');
+      const rect = document.getElementById('rect');
+      shot.src = await invoke('get_capture_image');
+      await shot.decode();
+      report('ready');
+
+      let start = null;
+      const box = (e) => ({
+        x: Math.min(start.x, e.clientX),
+        y: Math.min(start.y, e.clientY),
+        w: Math.abs(e.clientX - start.x),
+        h: Math.abs(e.clientY - start.y),
+      });
+      addEventListener('pointerdown', (e) => {
+        start = { x: e.clientX, y: e.clientY };
+        rect.style.display = 'block';
+      });
+      addEventListener('pointermove', (e) => {
+        if (!start) return;
+        const b = box(e);
+        Object.assign(rect.style, {
+          left: `${b.x}px`,
+          top: `${b.y}px`,
+          width: `${b.w}px`,
+          height: `${b.h}px`,
+        });
+      });
+      addEventListener('pointerup', (e) => {
+        if (!start) return;
+        const b = box(e);
+        start = null;
+        if (b.w < 4 || b.h < 4) return;
+        // The image is shown at window size; convert CSS pixels to image pixels.
+        const k = shot.naturalWidth / innerWidth;
+        const r = [b.x, b.y, b.w, b.h].map((v) => Math.round(v * k));
+        invoke('finish_region_capture', { rect: r });
+      });
+      addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') invoke('finish_region_capture', { rect: null });
+      });
+    </script>
+  </body>
+</html>

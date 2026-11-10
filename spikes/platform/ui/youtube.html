@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <title>YouTube w WebView</title>
+    <style>
+      body {
+        font-family: system-ui, sans-serif;
+        margin: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="player"></div>
+    <pre id="out"></pre>
+    <script type="module">
+      import { params, report } from './common.js';
+
+      // Sample video from the YouTube IFrame API documentation.
+      const VIDEO_ID = 'M7lc1UVf-VE';
+      const host = params.get('host') || 'www.youtube.com';
+      const out = document.getElementById('out');
+      const states = [];
+      let finished = false;
+
+      function done(playing, extra = {}) {
+        if (finished) return;
+        finished = true;
+        const result = {
+          host,
+          playing,
+          states,
+          origin: location.origin,
+          referrer: document.referrer,
+          ...extra,
+        };
+        out.textContent = JSON.stringify(result, null, 1);
+        report('result', result);
+      }
+
+      setTimeout(() => done(false, { reason: 'timeout' }), 25000);
+
+      window.onYouTubeIframeAPIReady = () => {
+        new window.YT.Player('player', {
+          host: `https://${host}`,
+          videoId: VIDEO_ID,
+          width: 640,
+          height: 360,
+          playerVars: { autoplay: 1, mute: 1, playsinline: 1, origin: location.origin },
+          events: {
+            onReady: (e) => {
+              e.target.mute();
+              e.target.playVideo();
+            },
+            onStateChange: (e) => {
+              states.push(e.data);
+              if (e.data === window.YT.PlayerState.PLAYING) done(true);
+            },
+            // 2: bad parameter, 5: HTML5 error, 100: not found, 101/150: embedding not
+            // allowed, 152/153: missing or rejected client identity (Referer).
+            onError: (e) => done(false, { error: e.data }),
+          },
+        });
+      };
+
+      const script = document.createElement('script');
+      script.src = 'https://www.youtube.com/iframe_api';
+      script.onerror = () => done(false, { reason: 'iframe_api script failed to load (offline?)' });
+      document.head.append(script);
+    </script>
+  </body>
+</html>

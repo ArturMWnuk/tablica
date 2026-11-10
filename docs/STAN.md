@@ -10,7 +10,7 @@
 | Bieżący etap | 1 |
 | Status etapu | REALIZACJA |
 | Plan etapu | `docs/etapy/ETAP-1-plan.md` (ZATWIERDZONY 2026-11-01) |
-| Bieżący krok | 1.1 (nierozpoczęty; wymaga odpowiedzi na P12) |
+| Bieżący krok | 1.1 (część Windows ukończona; Linux i Android czekają na P12) |
 | Gałąź robocza | `etap-1` |
 
 ## Etapy
@@ -28,7 +28,7 @@ Statusy: OCZEKUJE, W TOKU, UKOŃCZONY.
 | Krok | Nazwa | Zakres (ID) | Status | Commit |
 |---|---|---|---|---|
 | 1.0 | Szkielet projektu i CI | PLAT-01–03 (K1), NF-01 (K1, K2 częściowo), UI-01, UI-02 (infrastruktura) | UKOŃCZONY (CI zielone: przebieg 41352386876) | 02efcb7, abae05a |
-| 1.1 | Prototypy ryzyk technicznych | przygotowanie: TLO-02, TLO-03, MM-02, MM-05, MM-09, WEJ-02, NF-04 | OCZEKUJE | |
+| 1.1 | Prototypy ryzyk technicznych | przygotowanie: TLO-02, TLO-03, MM-02, MM-05, MM-09, WEJ-02, NF-04 | W TOKU (Windows gotowy: 14/14 sprawdzeń; Linux i Android po P12) | (ten commit) |
 | 1.2 | Rdzeń dokumentu i API wtyczek | WAR-01, WAR-06, WAR-12 (v1) | OCZEKUJE | |
 | 1.3 | Historia i operacje na warstwach | DAN-03, WAR-02–05 | OCZEKUJE | |
 | 1.4 | Wejście i pisanie | WEJ-01–06, RYS-01, RYS-02, NF-04 | OCZEKUJE | |
@@ -44,16 +44,28 @@ Statusy: OCZEKUJE, W TOKU, UKOŃCZONY.
 | 1.14 | Wydanie i wydajność | NF-02, NF-03, NF-05, domknięcie PLAT-01–03, NF-01 | OCZEKUJE | |
 
 ## Następne działania
-1. Właściciel: podać brakujące dane sprzętu (P12), potrzebne do kroku 1.1.
-2. W **nowym wątku**: `/realizuj-krok 1.1`.
+1. Właściciel: zdecydować (P15), czy krok 1.2 może się zacząć, zanim krok 1.1 zostanie domknięty na Linuksie i Androidzie.
+2. Właściciel: naprawić środowisko laptopa: Visual Studio Installer → Build Tools 2022 → Napraw (brak `oldnames.lib`) oraz `pnpm exec playwright install chromium --force` (brak `icudtl.dat`).
+3. Właściciel: podać brakujące dane sprzętu (P12), potem dokończyć krok 1.1 (Linux, Android, tablet graficzny).
+4. W **nowym wątku**: `/realizuj-krok 1.2` (po decyzji P15) albo `/realizuj-krok 1.1` (po P12).
 
 ## Otwarte pytania
-- P12 (sprzęt testowy), część otwarta: dystrybucja Linuksa i sesja (X11/Wayland), tablet z Androidem i wersja systemu, model tabletu graficznego, urządzenie z ekranem dotykowym do R12 (laptop referencyjny go nie ma). Laptop referencyjny zapisany w planie (P12). **Potrzebne przed krokiem 1.1.**
+- P12 (sprzęt testowy), część otwarta: dystrybucja Linuksa i sesja (X11/Wayland), tablet z Androidem i wersja systemu, model tabletu graficznego, urządzenie z ekranem dotykowym do R12 (laptop referencyjny go nie ma). Laptop referencyjny zapisany w planie (P12). **Potrzebne do dokończenia kroku 1.1** (część Windows wykonana 2026-11-10 za zgodą właściciela).
+- P15 (kolejność kroków): czy można rozpocząć krok 1.2 przy kroku 1.1 domkniętym tylko dla Windows? Krok 1.2 (rdzeń dokumentu i API wtyczek) nie zależy od wyników prototypów; zależą od nich kroki 1.4 (częściowo), 1.9 i 1.10.
 
 ## Blokery
 Brak.
 
 ## Dziennik sesji
+### 2026-11-10: Krok 1.1, część Windows — prototypy ryzyk technicznych
+- Decyzja właściciela: przy otwartym P12 najpierw część Windows; Linux i Android po uzupełnieniu sprzętu. Krok pozostaje W TOKU.
+- `spikes/platform/`: osobny crate Tauri (poza programem) z prototypami: przezroczysta nakładka z trybem przepuszczania, mini-pasek w osobnym oknie, skrót Ctrl+Shift+Spacja, zrzut fragmentu (xcap) z zaznaczaniem i Esc, YouTube IFrame API, MP4 H.264, rysik i opóźnienie.
+- Przebieg automatyczny na Windows (prawdziwe wejście: SendInput, syntetyczne pióro Windows Ink): 14/14 sprawdzeń zaliczonych. Opóźnienie zdarzenie → segment p95 0,7 ms (próg NF-04: 4 ms). Raport: `docs/etapy/ETAP-1-prototypy.md`; ADR-010 i ADR-012 uzupełnione o wyniki Windows.
+- Nowe zależności (tylko w prototypie, licencje sprawdzone cargo-deny): `tauri-plugin-global-shortcut`, `xcap`, `windows-sys`, `base64`, `serde_json`. `tauri-plugin-global-shortcut` zapisany w ADR-010 jako rozwiązanie dla D9.
+- ESLint ignoruje katalogi `spikes/*/target` i `spikes/*/gen`; `.gitignore`: zrzuty i nagrania z `spikes/platform/results` nie trafiają do repozytorium.
+- Problemy środowiska: brak `oldnames.lib` (x64) w MSVC Build Tools (obejście w sesji: pusty plik przez zmienną `LIB`), brak `icudtl.dat` w Playwright Chromium 1248 (7 testów e2e Chromium nie startuje; WebKit 7/7 zaliczone). Pozostałe kontrole zielone: lint, typy, Vitest 42/42, licencje, build, clippy, rustfmt, cargo test 2/2.
+- Gałąź `etap-1` jest pobrana w głównym katalogu, więc praca na gałęzi worktree `claude/realizuj-krok-1-1-1a275c` (z `etap-1`); do przeniesienia na `etap-1` przez fast-forward.
+
 ### 2026-11-01: Repozytorium GitHub i sprzęt referencyjny
 - Repozytorium: `ArturMWnuk/tablica` (publiczne). Poprawiono adres w P13 i `Cargo.toml` oraz identyfikator aplikacji na `io.github.arturmwnuk.tablica`.
 - Zdalny `main` miał commit z plikiem LICENSE w wersji AGPL-3.0, niezgodny z NF-01 / ADR-003. Na polecenie właściciela nadpisano go lokalnym `main` (force push).

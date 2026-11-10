@@ -1,0 +1,27 @@
+[package]
+name = "tablica-spike-platform"
+version = "0.0.0"
+description = "Step 1.1 prototypes: platform risks (not part of the application)"
+license = "GPL-3.0-only"
+edition = "2021"
+publish = false
+
+[workspace]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+base64 = "0.23.1"
+serde = { version = "1.0.229", features = ["derive"] }
+serde_json = "1.0.154"
+tauri = { version = "2", features = ["custom-protocol"] }
+tauri-plugin-global-shortcut = "2"
+xcap = "0.9.10"
+
+[target."cfg(windows)".dependencies]
+windows-sys = { version = "0.61.2", features = ["Win32_Foundation", "Win32_UI_Input_KeyboardAndMouse", "Win32_UI_Input_Pointer", "Win32_UI_Controls", "Win32_UI_WindowsAndMessaging", "Win32_Graphics_Gdi"] }
+
+# Image encoding and capture are slow without optimisation.
+[profile.dev.package."*"]
+opt-level = 2
