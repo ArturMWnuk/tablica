@@ -44,19 +44,21 @@ Statusy: OCZEKUJE, W TOKU, UKOŃCZONY.
 | 1.14 | Wydanie i wydajność | NF-02, NF-03, NF-05, domknięcie PLAT-01–03, NF-01 | OCZEKUJE | |
 
 ## Następne działania
-1. Właściciel: zdecydować (P15), czy krok 1.2 może się zacząć, zanim krok 1.1 zostanie domknięty na Linuksie i Androidzie.
+1. W **nowym wątku**: `/realizuj-krok 1.2` (P15 rozstrzygnięte: krok 1.2 może się zacząć przed domknięciem 1.1).
 2. Właściciel: naprawić środowisko laptopa: Visual Studio Installer → Build Tools 2022 → Napraw (brak `oldnames.lib`) oraz `pnpm exec playwright install chromium --force` (brak `icudtl.dat`).
 3. Właściciel: podać brakujące dane sprzętu (P12), potem dokończyć krok 1.1 (Linux, Android, tablet graficzny).
-4. W **nowym wątku**: `/realizuj-krok 1.2` (po decyzji P15) albo `/realizuj-krok 1.1` (po P12).
+4. Po P12: `/realizuj-krok 1.1` (Linux, Android, tablet graficzny); kroki 1.9 i 1.10 dopiero po domknięciu 1.1.
 
 ## Otwarte pytania
 - P12 (sprzęt testowy), część otwarta: dystrybucja Linuksa i sesja (X11/Wayland), tablet z Androidem i wersja systemu, model tabletu graficznego, urządzenie z ekranem dotykowym do R12 (laptop referencyjny go nie ma). Laptop referencyjny zapisany w planie (P12). **Potrzebne do dokończenia kroku 1.1** (część Windows wykonana 2026-11-10 za zgodą właściciela).
-- P15 (kolejność kroków): czy można rozpocząć krok 1.2 przy kroku 1.1 domkniętym tylko dla Windows? Krok 1.2 (rdzeń dokumentu i API wtyczek) nie zależy od wyników prototypów; zależą od nich kroki 1.4 (częściowo), 1.9 i 1.10.
 
 ## Blokery
 Brak.
 
 ## Dziennik sesji
+### 2026-11-10: Decyzja P15
+- Właściciel zgodził się rozpocząć krok 1.2 przed domknięciem kroku 1.1 na Linuksie i Androidzie (krok 1.2 nie zależy od wyników prototypów).
+
 ### 2026-11-10: Krok 1.1, część Windows — prototypy ryzyk technicznych
 - Decyzja właściciela: przy otwartym P12 najpierw część Windows; Linux i Android po uzupełnieniu sprzętu. Krok pozostaje W TOKU.
 - `spikes/platform/`: osobny crate Tauri (poza programem) z prototypami: przezroczysta nakładka z trybem przepuszczania, mini-pasek w osobnym oknie, skrót Ctrl+Shift+Spacja, zrzut fragmentu (xcap) z zaznaczaniem i Esc, YouTube IFrame API, MP4 H.264, rysik i opóźnienie.
