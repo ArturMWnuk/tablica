@@ -31,7 +31,7 @@ Statusy: OCZEKUJE, W TOKU, UKOŃCZONY.
 | 1.1 | Prototypy ryzyk technicznych | przygotowanie: TLO-02, TLO-03, MM-02, MM-05, MM-09, WEJ-02, NF-04 | W TOKU (Windows gotowy: 14/14 sprawdzeń; Linux i Android po P12) | (ten commit) |
 | 1.2 | Rdzeń dokumentu i API wtyczek | WAR-01, WAR-06, WAR-12 (v1) | UKOŃCZONY (WAR-06 K1 dla gumki i zaznaczania w 1.6, P16) | 655784b |
 | 1.3 | Historia i operacje na warstwach | DAN-03, WAR-02–05 | UKOŃCZONY (weryfikacja: WARUNKOWO, `docs/raporty/ETAP-1-krok-1.3-weryfikacja.md`) | 0bdd68b |
-| 1.3-poprawka | Domknięcie WAR-02 po weryfikacji | WAR-02 (K1), porządki DAN-03 | OCZEKUJE | |
+| 1.3-poprawka | Domknięcie WAR-02 i DAN-03 po weryfikacji | WAR-02 (K1), WAR-03 (P17 a), DAN-03 (P17 b: dodawanie i usuwanie warstw), WAR-01 K3 (interfejs) | OCZEKUJE | |
 | 1.4 | Wejście i pisanie | WEJ-01–06, RYS-01, RYS-02, NF-04 | OCZEKUJE | |
 | 1.5 | Zapis i odczyt lekcji | DAN-01, DAN-02 | OCZEKUJE | |
 | 1.6 | Edycja rysunku | RYS-03, RYS-04, RYS-12–14, domknięcie WAR-06 (K1, P16) | OCZEKUJE | |
@@ -46,20 +46,22 @@ Statusy: OCZEKUJE, W TOKU, UKOŃCZONY.
 
 ## Następne działania
 1. W **nowym wątku**: `/realizuj-krok 1.3-poprawka`, potem `/realizuj-krok 1.4`.
-2. Właściciel: potwierdzić interpretację kroku 1.3 (sekcja „Otwarte pytania”, P17).
-3. Właściciel: naprawić środowisko laptopa: Visual Studio Installer → Build Tools 2022 → Napraw (brak `oldnames.lib`) oraz `pnpm exec playwright install chromium --force` (brak `icudtl.dat`).
-4. Właściciel: podać brakujące dane sprzętu (P12), potem dokończyć krok 1.1 (Linux, Android, tablet graficzny).
-5. Po P12: `/realizuj-krok 1.1` (Linux, Android, tablet graficzny); kroki 1.9 i 1.10 dopiero po domknięciu 1.1.
+2. Właściciel: naprawić środowisko laptopa: Visual Studio Installer → Build Tools 2022 → Napraw (brak `oldnames.lib`) oraz `pnpm exec playwright install chromium --force` (brak `icudtl.dat`).
+3. Właściciel: podać brakujące dane sprzętu (P12), potem dokończyć krok 1.1 (Linux, Android, tablet graficzny).
+4. Po P12: `/realizuj-krok 1.1` (Linux, Android, tablet graficzny); kroki 1.9 i 1.10 dopiero po domknięciu 1.1.
 
 ## Otwarte pytania
 - P12 (sprzęt testowy), część otwarta: dystrybucja Linuksa i sesja (X11/Wayland), tablet z Androidem i wersja systemu, model tabletu graficznego, urządzenie z ekranem dotykowym do R12 (laptop referencyjny go nie ma). Laptop referencyjny zapisany w planie (P12). **Potrzebne do dokończenia kroku 1.1** (część Windows wykonana 2026-11-10 za zgodą właściciela).
-
-- P17 (krok 1.3, nieblokujące, przyjęto interpretację do potwierdzenia): (a) blokada warstwy (WAR-03) chroni przed narzędziami i poleceniami wtyczki, ale **cofanie i ponawianie** we wspólnej historii działa także na zablokowanej i ukrytej warstwie (inaczej trzeba by przerywać chronologię P4); (b) dodawanie warstwy (`Board.addLayer`) nie trafia do historii, bo nie ma jeszcze interfejsu dodawania i usuwania warstw; plan nie wskazuje kroku, w którym taki interfejs powstaje (P3). Czy tak zostawić, a dodawanie / usuwanie warstw z cofaniem zaplanować (np. w kroku 1.13)?
 
 ## Blokery
 Brak.
 
 ## Dziennik sesji
+### 2026-11-19: Decyzja P17
+- (a) Właściciel: cofanie i ponawianie **nie** działa na zablokowanej ani ukrytej warstwie. Ustalono sposób: krok zmieniający zawartość takiej warstwy jest wstrzymany z komunikatem (historia i jej chronologia P4 bez zmian); kolejność i krycie cofają się normalnie.
+- (b) Właściciel powierzył decyzję: dodawanie i usuwanie warstw z cofaniem w panelu warstw, w kroku 1.3-poprawka (zasady w planie).
+- DAN-03 i WAR-03 wracają do W TOKU do czasu kroku 1.3-poprawka. Zapisano w planie (krok 1.3-poprawka, tabela pytań) i w MACIERZ.
+
 ### 2026-11-19: Weryfikacja kroku 1.3
 - Audytor: wynik **WARUNKOWO** (`docs/raporty/ETAP-1-krok-1.3-weryfikacja.md`). DAN-03, WAR-03, WAR-04, WAR-05 OK; WAR-02 CZĘŚCIOWO: ukryta warstwa przyjmuje polecenia wtyczki ze skrótów i paneli (blokowane jest tylko wejście wskaźnika). Kontrole zielone (Vitest 132/132, WebKit 19/19).
 - Uwagi audytora: P17 a uznana za rozsądną (do potwierdzenia), P17 b to luka planu (brak kroku z dodawaniem i usuwaniem warstw); kryterium „test każdego narzędzia na zablokowanej warstwie” warto dziedziczyć w krokach 1.4–1.7; drobne: pusty krok cofania po powrocie suwaka, progi stuknięcia poza tabelą D.

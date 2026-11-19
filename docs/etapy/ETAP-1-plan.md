@@ -536,14 +536,16 @@ Każdy krok to jedna sesja (`/realizuj-krok`), kończy się działającym progra
 - **Zakres prac:** `History` (polecenia, scalanie, limit, ustawienie limitu), panel warstw, przyciski cofnij/ponów, gesty D3.
 - **Testy:** limit 50/51, cofanie każdej operacji na warstwach wg D12, blokada dla narzędzi wtyczki testowej.
 
-### Krok 1.3-poprawka: Domknięcie WAR-02 po weryfikacji kroku 1.3
-- **Podstawa:** raport `docs/raporty/ETAP-1-krok-1.3-weryfikacja.md` (wynik WARUNKOWO); zgoda właściciela 2026-11-19.
-- **ID:** WAR-02 (K1); porządki DAN-03.
+### Krok 1.3-poprawka: Domknięcie WAR-02 i DAN-03 po weryfikacji kroku 1.3
+- **Podstawa:** raport `docs/raporty/ETAP-1-krok-1.3-weryfikacja.md` (wynik WARUNKOWO); zgoda właściciela 2026-11-19; decyzja P17.
+- **ID:** WAR-02 (K1), WAR-03 (K1, P17 a), DAN-03 (K1, P17 b), WAR-01 K3 (interfejs dodawania warstw).
 - **Zakres prac:**
   1. Ukryta warstwa odrzuca polecenia wtyczki (`execute`), także ze skrótów i paneli, tak jak zablokowana (WAR-02 K1); uzupełnienie dokumentacji API.
-  2. Przesunięcie suwaka krycia, które kończy się na wartości początkowej, nie zostawia pustego kroku w historii (DAN-03).
-  3. Progi rozpoznawania stuknięcia z D3 (350 ms, 12 px) dopisane do tabeli D jako parametr do zatwierdzenia przez właściciela.
-- **Testy:** polecenie ze skrótu wtyczki testowej na ukrytej warstwie nic nie zmienia i nie trafia do historii; suwak przesunięty i cofnięty do wartości początkowej nie tworzy kroku cofania.
+  2. P17 a: cofanie i ponawianie kroku, który zmienia **zawartość** zablokowanej albo ukrytej warstwy (polecenie wtyczki), nie jest wykonywane. Historia zostaje bez zmian (chronologia P4), a użytkownik dostaje komunikat z nazwą warstwy i informacją, że trzeba ją odblokować lub pokazać. Kroki zmieniające kolejność i krycie (ustawienia z panelu) cofają się normalnie.
+  3. P17 b: dodawanie i usuwanie warstw w panelu warstw, przez wspólną historię (DAN-03 K1). Dodanie: wybór typu spośród dostępnych wtyczek, nowa warstwa nad aktywną i staje się aktywna (WAR-01 K3, P3). Usunięcie: bez okna potwierdzenia (można cofnąć); dane usuniętej warstwy, także uszkodzonej lub bez wtyczki, wracają po cofnięciu bez strat; zablokowanej warstwy nie da się usunąć; lekcja ma zawsze co najmniej jedną warstwę.
+  4. Przesunięcie suwaka krycia, które kończy się na wartości początkowej, nie zostawia pustego kroku w historii (DAN-03).
+  5. Progi rozpoznawania stuknięcia z D3 (350 ms, 12 px) dopisane do tabeli D jako parametr do zatwierdzenia przez właściciela.
+- **Testy:** polecenie ze skrótu wtyczki testowej na ukrytej warstwie nic nie zmienia i nie trafia do historii; cofnięcie i ponowienie kroku na zablokowanej i ukrytej warstwie jest wstrzymane z komunikatem, a po odblokowaniu lub pokazaniu działa; dodanie i usunięcie warstwy (także uszkodzonej) cofa się i ponawia z zachowaniem danych (porównanie serializacji); zablokowanej warstwy nie można usunąć; ostatniej warstwy nie można usunąć; suwak przesunięty i cofnięty do wartości początkowej nie tworzy kroku cofania; e2e panelu: dodanie i usunięcie warstwy.
 
 ### Krok 1.4: Wejście i pisanie
 - **ID:** WEJ-01–06, RYS-01, RYS-02, NF-04.
@@ -653,6 +655,7 @@ Szczegółowe procedury audytor przeniesie do raportu weryfikacji.
 | P12 | Sprzęt testowy: model laptopa (sprzęt referencyjny NF-03), dystrybucja Linuksa i sesja (X11 czy Wayland), tablet z Androidem i wersja systemu, model tabletu graficznego. Minimalna wersja Androida? | Android 10 lub nowszy | Przyjęto: Android 10+. Laptop referencyjny (odczyt z systemu 2026-11-01): Dell Inspiron 15 3535, AMD Ryzen 5 7530U (6 rdzeni / 12 wątków), 16 GB RAM, AMD Radeon (zintegrowana), ekran 1920×1080 120 Hz bez obsługi dotyku, NVMe 512 GB, Windows 11 Home 25H2 (build 26200). **Do podania przez właściciela:** dystrybucja Linuksa i sesja (X11/Wayland), tablet z Androidem (model, wersja), tablet graficzny (model), urządzenie z ekranem dotykowym do R12 |
 | P13 | Nazwa i właściciel repozytorium GitHub (adres katalogu warstw i wydań)? Klucz podpisu APK utworzysz według instrukcji w kroku 1.14? | `ArturWnuk/tablica` | Przyjęto: `ArturMWnuk/tablica` (poprawka 2026-11-01: faktyczna nazwa konta GitHub; identyfikator aplikacji `io.github.arturmwnuk.tablica`); klucz APK właściciel tworzy w kroku 1.14 |
 | P14 | Instalacja warstwy z pliku: wystarczy ostrzeżenie, czy blokować pakiety spoza katalogu? | Ostrzeżenie | Przyjęto rekomendację |
+| P17 | (a) Czy cofanie i ponawianie ma działać na zablokowanej i ukrytej warstwie? (b) W którym kroku dodawanie i usuwanie warstw z cofaniem (P3, DAN-03 K1)? | (a) Nie: krok zmieniający zawartość takiej warstwy jest wstrzymany z komunikatem, chronologia historii zostaje; (b) w kroku 1.3-poprawka, w panelu warstw | (a) Nie (właściciel, 2026-11-19); (b) właściciel powierzył decyzję, przyjęto rekomendację (2026-11-19) |
 | P16 | WAR-06 K1 wymaga testu gumki i zaznaczania, które powstają dopiero w kroku 1.6. Kiedy domknąć WAR-06? | W kroku 1.2 mechanizm izolacji sprawdzony narzędziem wtyczki testowej; test K1 z gumką i zaznaczaniem w kroku 1.6, wtedy WAR-06 dostaje ZAIMPL. | Przyjęto rekomendację (2026-11-19) |
 
 ### Tabela D: parametry domyślne (zatwierdzone 2026-11-01)
