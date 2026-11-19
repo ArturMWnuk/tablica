@@ -47,10 +47,9 @@ Statusy: OCZEKUJE, W TOKU, UKOŃCZONY.
 
 ## Następne działania
 1. W **nowym wątku**: `/realizuj-krok 1.3-poprawka-2`, potem `/realizuj-krok 1.4`.
-2. Właściciel: zatwierdzić parametr D18 (progi stuknięcia: 350 ms, 12 px) w tabeli D planu.
-3. Właściciel: naprawić środowisko laptopa: Visual Studio Installer → Build Tools 2022 → Napraw (brak `oldnames.lib`) oraz `pnpm exec playwright install chromium --force` (brak `icudtl.dat`).
-4. Właściciel: podać brakujące dane sprzętu (P12), potem dokończyć krok 1.1 (Linux, Android, tablet graficzny).
-5. Po P12: `/realizuj-krok 1.1` (Linux, Android, tablet graficzny); kroki 1.9 i 1.10 dopiero po domknięciu 1.1.
+2. Właściciel: naprawić środowisko laptopa: Visual Studio Installer → Build Tools 2022 → Napraw (brak `oldnames.lib`) oraz `pnpm exec playwright install chromium --force` (brak `icudtl.dat`).
+3. Właściciel: podać brakujące dane sprzętu (P12), potem dokończyć krok 1.1 (Linux, Android, tablet graficzny).
+4. Po P12: `/realizuj-krok 1.1` (Linux, Android, tablet graficzny); kroki 1.9 i 1.10 dopiero po domknięciu 1.1.
 
 ## Otwarte pytania
 - P12 (sprzęt testowy), część otwarta: dystrybucja Linuksa i sesja (X11/Wayland), tablet z Androidem i wersja systemu, model tabletu graficznego, urządzenie z ekranem dotykowym do R12 (laptop referencyjny go nie ma). Laptop referencyjny zapisany w planie (P12). **Potrzebne do dokończenia kroku 1.1** (część Windows wykonana 2026-11-10 za zgodą właściciela).
@@ -59,6 +58,9 @@ Statusy: OCZEKUJE, W TOKU, UKOŃCZONY.
 Brak.
 
 ## Dziennik sesji
+### 2026-11-19: Zatwierdzenie D18
+- Właściciel zatwierdził D18: stuknięcie wieloma palcami = wszystkie palce podniesione do 350 ms od pierwszego dotknięcia, ruch żadnego palca ≤ 12 px. Zapisano w tabeli D planu. Sprawdzenie na urządzeniu dotykowym nadal w testach ręcznych (M1, po P12).
+
 ### 2026-11-19: Weryfikacja kroku 1.3-poprawka
 - Audytor: wynik **WARUNKOWO** (`docs/raporty/ETAP-1-krok-1.3-poprawka-weryfikacja.md`). WAR-02 K1 i WAR-01 K3 OK; WAR-03 (P17 a) i DAN-03 (P17 b) CZĘŚCIOWO; kryteria kroku 1.3 bez regresji. Kontrole zielone (Vitest 146/146, WebKit 21/21).
 - Braki: awaria wtyczki przy usuniętej (cofalnej) warstwie gubi dane z sesji; warstwa dodana i cofnięta przed nieudanym wczytaniem wtyczki zostaje „Wczytywanie”; komunikat P17 a bez numeru warstwy; luki w testach (ponowienie na ukrytej warstwie, ponowienie dodania/usunięcia z porównaniem serializacji, e2e ostatniej warstwy).

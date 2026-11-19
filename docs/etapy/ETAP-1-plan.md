@@ -687,4 +687,4 @@ Szczegółowe procedury audytor przeniesie do raportu weryfikacji.
 | D15 | RYS-11 | Oś liczbowa: punkty i przedziały z końcami otwartymi (puste kółko) i zamkniętymi (pełne kółko) |
 | D16 | OBS-02, TLO-01 | Strony: dodawanie, usuwanie, duplikowanie i zmiana kolejności w panelu miniatur; tło ustawiane dla całej lekcji z możliwością zmiany na pojedynczej stronie |
 | D17 | TLO-03, MM-09 | Android: po zgodzie Tablica przechodzi w tło, pojawia się pływający przycisk „Zrzut”; dotknięcie wykonuje zrzut i wraca do Tablicy (dla MM-09 z kadrowaniem) |
-| D18 | DAN-03, WEJ-03 (D3) | **Propozycja do zatwierdzenia** (krok 1.3-poprawka): stuknięcie wieloma palcami = wszystkie palce podniesione najpóźniej 350 ms po dotknięciu pierwszym, żaden nie przesunął się o więcej niż 12 px; inaczej to inny gest (np. przesuwanie widoku) |
+| D18 | DAN-03, WEJ-03 (D3) | (Zatwierdzone przez właściciela 2026-11-19.) Stuknięcie wieloma palcami = wszystkie palce podniesione najpóźniej 350 ms po dotknięciu pierwszym, żaden nie przesunął się o więcej niż 12 px; inaczej to inny gest (np. przesuwanie widoku) |
