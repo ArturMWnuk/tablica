@@ -10,7 +10,7 @@
 | Bieżący etap | 1 |
 | Status etapu | REALIZACJA |
 | Plan etapu | `docs/etapy/ETAP-1-plan.md` (ZATWIERDZONY 2026-11-01) |
-| Bieżący krok | 1.3-poprawka-2 (następny), potem 1.4; 1.1 W TOKU (Linux i Android czekają na P12) |
+| Bieżący krok | 1.4 (następny); 1.1 W TOKU (Linux i Android czekają na P12) |
 | Gałąź robocza | `etap-1` |
 
 ## Etapy
@@ -32,7 +32,7 @@ Statusy: OCZEKUJE, W TOKU, UKOŃCZONY.
 | 1.2 | Rdzeń dokumentu i API wtyczek | WAR-01, WAR-06, WAR-12 (v1) | UKOŃCZONY (WAR-06 K1 dla gumki i zaznaczania w 1.6, P16) | 655784b |
 | 1.3 | Historia i operacje na warstwach | DAN-03, WAR-02–05 | UKOŃCZONY (weryfikacja: WARUNKOWO, `docs/raporty/ETAP-1-krok-1.3-weryfikacja.md`) | 0bdd68b |
 | 1.3-poprawka | Domknięcie WAR-02 i DAN-03 po weryfikacji | WAR-02 (K1), WAR-03 (P17 a), DAN-03 (P17 b: dodawanie i usuwanie warstw), WAR-01 K3 (interfejs) | UKOŃCZONY (weryfikacja: WARUNKOWO, `docs/raporty/ETAP-1-krok-1.3-poprawka-weryfikacja.md`) | f6fd8e4 |
-| 1.3-poprawka-2 | Przypadki brzegowe historii warstw | DAN-03 (P17 b), WAR-03 (P17 a) | OCZEKUJE | |
+| 1.3-poprawka-2 | Przypadki brzegowe historii warstw | DAN-03 (P17 b), WAR-03 (P17 a) | UKOŃCZONY | (ten commit) |
 | 1.4 | Wejście i pisanie | WEJ-01–06, RYS-01, RYS-02, NF-04 | OCZEKUJE | |
 | 1.5 | Zapis i odczyt lekcji | DAN-01, DAN-02 | OCZEKUJE | |
 | 1.6 | Edycja rysunku | RYS-03, RYS-04, RYS-12–14, domknięcie WAR-06 (K1, P16) | OCZEKUJE | |
@@ -46,7 +46,7 @@ Statusy: OCZEKUJE, W TOKU, UKOŃCZONY.
 | 1.14 | Wydanie i wydajność | NF-02, NF-03, NF-05, domknięcie PLAT-01–03, NF-01 | OCZEKUJE | |
 
 ## Następne działania
-1. W **nowym wątku**: `/realizuj-krok 1.3-poprawka-2`, potem `/realizuj-krok 1.4`.
+1. W **nowym wątku**: `/weryfikuj-etap 1 krok 1.3-poprawka-2` (opcjonalnie), potem `/realizuj-krok 1.4`.
 2. Właściciel: naprawić środowisko laptopa: Visual Studio Installer → Build Tools 2022 → Napraw (brak `oldnames.lib`) oraz `pnpm exec playwright install chromium --force` (brak `icudtl.dat`).
 3. Właściciel: podać brakujące dane sprzętu (P12), potem dokończyć krok 1.1 (Linux, Android, tablet graficzny).
 4. Po P12: `/realizuj-krok 1.1` (Linux, Android, tablet graficzny); kroki 1.9 i 1.10 dopiero po domknięciu 1.1.
@@ -58,6 +58,13 @@ Statusy: OCZEKUJE, W TOKU, UKOŃCZONY.
 Brak.
 
 ## Dziennik sesji
+### 2026-11-19: Krok 1.3-poprawka-2 — przypadki brzegowe historii warstw
+- Awaria wtyczki (`Board.breakPlugin`) obejmuje też warstwy poza dokumentem, które historia może przywrócić (rekordy z `LayerStructureEntry`, nowy getter `History.entries`): dostają najnowsze dane w `stored` i stan „uszkodzona”, więc po cofnięciu usunięcia zapis zawiera dane sprzed awarii (P17 b, WAR-06 K3).
+- `breakLayer` ustawia stan przez `setRecordStatus`, więc warstwa dodana i cofnięta przed wczytaniem wtyczki dostaje właściwy stan także przy błędzie `createData` / `deserialize`; po ponowieniu nie zostaje „Wczytywanie”.
+- Komunikaty `notice.historyLocked` i `notice.historyHidden` podają nazwę warstwy z numerem jak panel: numer liczy `BoardDocument.numberOf` (używa go też panel), a nazwę składa wspólna funkcja `layerTitle`; `addOnce` rozróżnia warstwy po numerze.
+- Testy: 9 nowych w `history-layers.test.ts` (sprawdzone, że 4 z nich nie przechodzą bez poprawki), 2 nowe e2e (wyłączone usuwanie ostatniej warstwy, nazwa z numerem w komunikacie).
+- Kontrole: lint, typy, Vitest 155/155, licencje (225 pakietów), build web, Playwright WebKit 23/23; Chromium nieuruchamialny (znany brak danych ICU); rustfmt, clippy, cargo test 2/2 (obejście `oldnames.lib`).
+
 ### 2026-11-19: Zatwierdzenie D18
 - Właściciel zatwierdził D18: stuknięcie wieloma palcami = wszystkie palce podniesione do 350 ms od pierwszego dotknięcia, ruch żadnego palca ≤ 12 px. Zapisano w tabeli D planu. Sprawdzenie na urządzeniu dotykowym nadal w testach ręcznych (M1, po P12).
 

@@ -218,6 +218,18 @@ export class BoardDocument {
     this.changed.emit();
   }
 
+  /**
+   * Number of the layer among layers of the same type, from the bottom (1, 2, …); 0 when its
+   * type occurs once or the layer is not in the document. The layer panel and the messages name
+   * layers with it ("Drawing 2").
+   */
+  numberOf(id: string): number {
+    const record = this.getLayer(id);
+    if (!record) return 0;
+    const same = this.records.filter((layer) => layer.pluginId === record.pluginId);
+    return same.length > 1 ? same.indexOf(record) + 1 : 0;
+  }
+
   /** Makes the layer active; it also becomes the active layer of its type (WAR-06 K2). */
   setActiveLayer(id: string): void {
     const record = this.getLayer(id);

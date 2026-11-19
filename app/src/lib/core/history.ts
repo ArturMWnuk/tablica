@@ -146,6 +146,11 @@ export class History {
     }
   }
 
+  /** All recorded entries (undo and redo stacks), e.g. to find layers kept only in the history. */
+  get entries(): readonly HistoryEntry[] {
+    return [...this.done, ...this.undone];
+  }
+
   /** Drops entries matching the predicate (e.g. of a layer whose plugin stopped working). */
   discard(predicate: (entry: HistoryEntry) => boolean): void {
     this.done = this.done.filter((entry) => !predicate(entry));

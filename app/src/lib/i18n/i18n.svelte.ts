@@ -45,3 +45,12 @@ export function layerName(pluginId: string): string {
   const key = `${pluginId}.name`;
   return hasTranslation(i18n.catalogs, key) ? t(key) : pluginId;
 }
+
+/**
+ * Name of one layer as the layer panel shows it: the type name, with the number among layers of
+ * the same type when there are several ("Drawing 2"); `number` 0 means the type occurs once.
+ */
+export function layerTitle(pluginId: string, number: number): string {
+  const name = layerName(pluginId);
+  return number > 0 ? t('layers.numbered', { name, number }) : name;
+}

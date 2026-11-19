@@ -103,7 +103,8 @@ class LayerStructureEntry implements HistoryEntry {
 
   constructor(
     private readonly document: BoardDocument,
-    private readonly record: LayerRecord,
+    /** The layer; outside the document while the addition is undone or the removal is done. */
+    readonly record: LayerRecord,
     private readonly index: number,
     private readonly kind: 'add' | 'remove',
   ) {
@@ -374,12 +375,14 @@ export class Board {
     if (!content && !(entry instanceof LayerStructureEntry)) return false;
     const record = this.document.getLayer(entry.layerId);
     if (!record) return false;
+    // The message names the layer as the panel does ("Drawing 2" when the type occurs twice).
+    const params = { number: this.document.numberOf(record.id) };
     if (record.locked) {
-      this.notices.addOnce('notice.historyLocked', record.pluginId);
+      this.notices.addOnce('notice.historyLocked', record.pluginId, params);
       return true;
     }
     if (content && !record.visible) {
-      this.notices.addOnce('notice.historyHidden', record.pluginId);
+      this.notices.addOnce('notice.historyHidden', record.pluginId, params);
       return true;
     }
     return false;
@@ -511,7 +514,8 @@ export class Board {
     this.history.discard(
       (entry) => entry instanceof LayerHistoryEntry && entry.layerId === record.id,
     );
-    this.document.setStatus(record.id, 'broken');
+    // The record may be outside the document (an undone addition or a removal that can be undone).
+    this.document.setRecordStatus(record, 'broken');
     record.data = undefined;
     if (notify) this.notices.add('notice.layerBroken', record.pluginId);
   }
@@ -520,12 +524,22 @@ export class Board {
   breakPlugin(pluginId: string, error: unknown): void {
     console.error(`Plugin ${pluginId} failed`, error);
     this.removeContributions(pluginId);
-    // Layers first, while the plugin can still serialize their newest data.
-    for (const record of this.document.layers) {
+    // Layers first, while the plugin can still serialize their newest data. This includes layers
+    // kept only in the history (removed or undone additions): undo can bring them back (P17 b).
+    for (const record of this.layerRecords()) {
       if (record.pluginId === pluginId) this.breakLayer(record, error, false);
     }
     this.plugins.markBroken(pluginId);
     this.notices.add('notice.pluginFailed', pluginId);
+  }
+
+  /** Layers of the document and layers outside it that the history can bring back. */
+  private layerRecords(): Set<LayerRecord> {
+    const records = new Set<LayerRecord>(this.document.layers);
+    for (const entry of this.history.entries) {
+      if (entry instanceof LayerStructureEntry) records.add(entry.record);
+    }
+    return records;
   }
 
   private removeContributions(pluginId: string): void {

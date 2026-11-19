@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { Board } from '../lib/core/board';
   import type { Notice } from '../lib/core/notices';
-  import { layerName, t } from '../lib/i18n/i18n.svelte';
+  import { layerTitle, t } from '../lib/i18n/i18n.svelte';
 
   interface Props {
     board: Board;
@@ -22,7 +22,12 @@
   <section class="notices" aria-label={t('notice.region')} data-testid="notices">
     {#each notices as notice (notice.id)}
       <div class="notice" role="alert" data-notice={notice.key}>
-        <p>{t(notice.key, { ...notice.params, name: layerName(notice.pluginId) })}</p>
+        <p>
+          {t(notice.key, {
+            ...notice.params,
+            name: layerTitle(notice.pluginId, Number(notice.params['number'] ?? 0)),
+          })}
+        </p>
         <button
           type="button"
           aria-label={t('notice.dismiss')}

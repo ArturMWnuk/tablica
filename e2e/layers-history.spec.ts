@@ -252,4 +252,33 @@ test.describe('DAN-03: adding and removing layers in the panel (P17 b)', () => {
     await row(page, 'layer-media').getByTestId('layer-locked').click();
     await expect(remove).toBeDisabled();
   });
+
+  test('DAN-03: the remove button of the last layer is disabled', async ({ page }) => {
+    await openBoard(page);
+    await row(page, 'layer-drawing').getByTestId('layer-remove').click();
+    await row(page, 'layer-media').getByTestId('layer-remove').click();
+    await expect.poll(() => stack(page)).toEqual(['layer-background']);
+    await expect(row(page, 'layer-background').getByTestId('layer-remove')).toBeDisabled();
+    await page.getByTestId('undo').click();
+    await expect(row(page, 'layer-background').getByTestId('layer-remove')).toBeEnabled();
+  });
+
+  test('WAR-03: a held-back step names the layer with its number, as the panel does (P17 a)', async ({
+    page,
+  }) => {
+    await openBoard(page);
+    await row(page, 'layer-background').getByTestId('layer-select').click();
+    await panel(page).getByTestId('layer-add-type').selectOption('layer-drawing');
+    await panel(page).getByTestId('layer-add').click();
+    const added = panel(page).locator('li.active');
+    await expect(added).toHaveAttribute('data-plugin-id', 'layer-drawing');
+    const name = (await added.getByTestId('layer-select').innerText()).trim();
+    // Two drawing layers: the panel numbers them; the new one is the lower one.
+    expect(name).toMatch(/ 1$/);
+    await added.getByTestId('layer-locked').click();
+    await page.getByTestId('undo').click();
+    const notice = page.locator('[data-notice="notice.historyLocked"]');
+    await expect(notice).toHaveCount(1);
+    await expect(notice).toContainText(name);
+  });
 });

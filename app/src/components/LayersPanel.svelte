@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { LayerStatus } from '@tablica/plugin-api';
   import type { Board } from '../lib/core/board';
-  import { layerName, t } from '../lib/i18n/i18n.svelte';
+  import { layerName, layerTitle, t } from '../lib/i18n/i18n.svelte';
 
   interface Props {
     board: Board;
@@ -40,24 +40,16 @@
 
   // The panel lists layers from the top to the bottom, like the stack seen on the board.
   function snapshot(): void {
-    const layers = board.document.layers;
-    const counts: Record<string, number> = {};
-    for (const layer of layers) counts[layer.pluginId] = (counts[layer.pluginId] ?? 0) + 1;
-    const seen: Record<string, number> = {};
-    const result = layers.map((layer, index) => {
-      const number = (seen[layer.pluginId] ?? 0) + 1;
-      seen[layer.pluginId] = number;
-      return {
-        id: layer.id,
-        pluginId: layer.pluginId,
-        status: layer.status,
-        visible: layer.visible,
-        locked: layer.locked,
-        percent: Math.round(layer.opacity * 100),
-        index,
-        number: (counts[layer.pluginId] ?? 0) > 1 ? number : 0,
-      };
-    });
+    const result = board.document.layers.map((layer, index) => ({
+      id: layer.id,
+      pluginId: layer.pluginId,
+      status: layer.status,
+      visible: layer.visible,
+      locked: layer.locked,
+      percent: Math.round(layer.opacity * 100),
+      index,
+      number: board.document.numberOf(layer.id),
+    }));
     rows = result.reverse();
     activeId = board.document.activeLayerId;
     types = board.plugins
@@ -81,8 +73,7 @@
   });
 
   function nameOf(row: Row): string {
-    const name = layerName(row.pluginId);
-    return row.number > 0 ? t('layers.numbered', { name, number: row.number }) : name;
+    return layerTitle(row.pluginId, row.number);
   }
 
   /** WAR-04 K1: moves a layer one place up (towards the top of the stack) or down. */

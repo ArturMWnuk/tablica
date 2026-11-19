@@ -642,4 +642,219 @@ describe('DAN-03: adding and removing layers (P17 b)', () => {
     board.removeLayer('b');
     expect(board.document.activeLayerId).toBe('drawing');
   });
+
+  it('DAN-03: redoing the addition and removal of layers keeps their data (serialization)', async () => {
+    const { board, root } = await lessonBoard();
+    const added = await board.addLayer('test-fixture-layer', 1);
+    addBoxOn(board, added, 4);
+    addBoxOn(board, 'a', 6);
+    const withAdded = JSON.stringify(board.serialize());
+    board.removeLayer('a');
+    const withoutA = JSON.stringify(board.serialize());
+
+    while (board.undo()) {
+      // undo everything
+    }
+    expect(order(root)).toEqual(['bg', 'a', 'b', 'drawing']);
+    for (let step = 0; step < 3; step += 1) board.redo();
+    expect(JSON.stringify(board.serialize())).toBe(withAdded);
+    board.redo();
+    expect(JSON.stringify(board.serialize())).toBe(withoutA);
+    expect(order(root)).toEqual(['bg', added, 'b', 'drawing']);
+    expect(container(root, added).querySelectorAll('.fixture-box')).toHaveLength(1);
+    board.undo();
+    expect(JSON.stringify(board.serialize())).toBe(withAdded);
+  });
+});
+
+describe('DAN-03: edge cases of adding and removing layers (P17 b)', () => {
+  const brokenPlugin = defineLayerPlugin<{ n: number }>({
+    schemaVersion: 1,
+    createData: () => ({ n: 0 }),
+    serialize: (data) => ({ n: data.n }),
+    deserialize: () => {
+      throw new Error('cannot read');
+    },
+    mountLayer: () => ({ render: () => undefined }),
+  });
+  const brokenSource: PluginSource = {
+    manifest: {
+      id: 'broken-one',
+      version: '1.0.0',
+      apiVersion: '1.0.0',
+      translations: {
+        pl: { name: 'Zepsuta', description: 'Opis.' },
+        en: { name: 'Broken', description: 'Description.' },
+      },
+    },
+    load: () => Promise.resolve({ default: brokenPlugin }),
+  };
+
+  it('DAN-03: removing and re-adding a broken layer or one without its plugin keeps its data on redo', async () => {
+    const lesson = documentOf(
+      { ...layerOf('broken-one', 'x'), schemaVersion: 1, data: { n: 5 } },
+      { ...layerOf('unknown-plugin', 'y'), schemaVersion: 3, data: { kept: true } },
+      layerOf('test-fixture-layer', 'z'),
+    );
+    const board = createTestBoard([...allSources, brokenSource], lesson);
+    await board.loadLayers();
+    attachToBody(board);
+    const full = JSON.stringify(board.serialize());
+    board.removeLayer('x');
+    board.removeLayer('y');
+    const reduced = JSON.stringify(board.serialize());
+
+    board.undo();
+    board.undo();
+    expect(JSON.stringify(board.serialize())).toBe(full);
+    board.redo();
+    board.redo();
+    expect(JSON.stringify(board.serialize())).toBe(reduced);
+    board.undo();
+    board.undo();
+    expect(JSON.stringify(board.serialize())).toBe(full);
+    expect(board.document.getLayer('x')?.status).toBe('broken');
+    expect(board.document.getLayer('y')?.status).toBe('missing');
+  });
+
+  it('DAN-03: a plugin failure keeps the newest data of a removed layer; undo brings it back broken', async () => {
+    const { board, root } = await lessonBoard();
+    const added = await board.addLayer('test-fixture-layer');
+    addBoxOn(board, added, 2);
+    addBoxOn(board, added, 8);
+    addBoxOn(board, 'a', 5);
+    // Live data only: the lesson is not saved before the failure, so nothing was stored yet.
+    const live = (id: string) => structuredClone(board.document.getLayer(id)?.data);
+    const addedData = live(added);
+    const aData = live('a');
+    const layerData = (id: string) =>
+      board.serialize().layers.find((layer) => layer.id === id)?.data;
+
+    board.removeLayer(added);
+    board.removeLayer('a');
+    vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    board.breakPlugin('test-fixture-layer', new Error('plugin failed'));
+
+    board.undo();
+    board.undo();
+    expect(board.document.getLayer(added)?.status).toBe('broken');
+    expect(board.document.getLayer('a')?.status).toBe('broken');
+    expect(container(root, added).dataset['status']).toBe('broken');
+    expect(layerData(added)).toEqual(addedData);
+    expect(layerData('a')).toEqual(aData);
+    expect((layerData(added) as unknown as FixtureData).boxes).toHaveLength(2);
+  });
+
+  /** A plugin whose loading waits until the test releases it. */
+  function slowSource(load: () => Promise<{ default: unknown }>) {
+    let release: () => void = () => undefined;
+    const gate = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+    const source: PluginSource = {
+      manifest: {
+        id: 'slow-one',
+        version: '1.0.0',
+        apiVersion: '1.0.0',
+        translations: {
+          pl: { name: 'Wolna', description: 'Opis.' },
+          en: { name: 'Slow', description: 'Description.' },
+        },
+      },
+      load: () => gate.then(load),
+    };
+    return { source, release: () => release() };
+  }
+
+  const slowPlugin = (createData: () => { n: number }) =>
+    defineLayerPlugin<{ n: number }>({
+      schemaVersion: 1,
+      createData,
+      serialize: (data) => ({ n: data.n }),
+      deserialize: (data) => data as { n: number },
+      mountLayer: () => ({ render: () => undefined }),
+    });
+
+  it.each([
+    ['ready', () => Promise.resolve({ default: slowPlugin(() => ({ n: 1 })) })],
+    [
+      'broken',
+      () =>
+        Promise.resolve({
+          default: slowPlugin(() => {
+            throw new Error('cannot create');
+          }),
+        }),
+    ],
+    ['broken', () => Promise.reject(new Error('cannot load'))],
+  ] as const)(
+    'DAN-03: a layer added and undone before its plugin is loaded is %s after redo',
+    async (status, load) => {
+      vi.spyOn(console, 'error').mockImplementation(() => undefined);
+      const slow = slowSource(load);
+      const board = createTestBoard(
+        [...allSources, slow.source],
+        documentOf(layerOf('test-fixture-layer', 'a')),
+      );
+      await board.loadLayers();
+      const root = attachToBody(board);
+      const adding = board.addLayer('slow-one');
+      const id = board.document.activeLayerId ?? '';
+      expect(board.document.getLayer(id)?.status).toBe('loading');
+      expect(board.undo()).toBe(true);
+      expect(board.document.getLayer(id)).toBeUndefined();
+
+      slow.release();
+      await adding;
+      expect(board.redo()).toBe(true);
+      expect(board.document.getLayer(id)?.status).toBe(status);
+      expect(container(root, id).dataset['status']).toBe(status);
+    },
+  );
+});
+
+describe('WAR-03: messages about held-back steps name the layer (P17 a)', () => {
+  it('WAR-03: the message gives the number of the layer when its type occurs several times', async () => {
+    const { board } = await lessonBoard();
+    addBoxOn(board, 'a');
+    addBoxOn(board, 'b');
+    board.setLayerLocked('b', true);
+    expect(board.undo()).toBe(false);
+    // "a" is the first and "b" the second test layer from the bottom, as in the layer panel.
+    expect(board.notices.list.map((notice) => [notice.key, notice.params])).toEqual([
+      ['notice.historyLocked', { number: 2 }],
+    ]);
+    board.setLayerLocked('b', false);
+    expect(board.undo()).toBe(true);
+    board.setLayerVisible('a', false);
+    expect(board.undo()).toBe(false);
+    expect(board.notices.list.map((notice) => [notice.key, notice.params])).toEqual([
+      ['notice.historyLocked', { number: 2 }],
+      ['notice.historyHidden', { number: 1 }],
+    ]);
+  });
+
+  it('WAR-03: the message gives no number when the type of the layer occurs once', async () => {
+    const { board } = await lessonBoard(
+      documentOf(layerOf('layer-background', 'bg'), layerOf('test-fixture-layer', 'only')),
+    );
+    addBoxOn(board, 'only');
+    board.setLayerLocked('only', true);
+    board.undo();
+    expect(board.notices.list.map((notice) => notice.params)).toEqual([{ number: 0 }]);
+  });
+
+  it('DAN-03: redo of a change of a hidden layer is held back with a notice and works once it is shown', async () => {
+    const { board } = await lessonBoard();
+    addBoxOn(board, 'b');
+    board.undo();
+    board.setLayerVisible('b', false);
+    expect(board.redo()).toBe(false);
+    expect(boxes(board, 'b')).toBe(0);
+    expect(board.history.redoCount).toBe(1);
+    expect(board.notices.list.map((notice) => notice.key)).toEqual(['notice.historyHidden']);
+    board.setLayerVisible('b', true);
+    expect(board.redo()).toBe(true);
+    expect(boxes(board, 'b')).toBe(1);
+  });
 });

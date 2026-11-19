@@ -6,6 +6,10 @@ export interface Notice {
   readonly id: number;
   readonly key: string;
   readonly pluginId: string;
+  /**
+   * Message parameters. `number` (when given) is the number of the layer among layers of the
+   * same type, so the interface names the layer as the layer panel does ("Drawing 2").
+   */
   readonly params: Readonly<Record<string, string | number>>;
 }
 

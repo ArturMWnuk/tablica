@@ -19,3 +19,8 @@ Każdy wpis zawiera identyfikatory wymagań z `docs/DOKUMENTACJA.md`.
 - Dodawanie warstwy wybranego typu (nad aktywną) i usuwanie warstwy w panelu warstw; obie operacje można cofnąć, a usunięta warstwa wraca z danymi; zablokowanej i ostatniej warstwy nie da się usunąć (DAN-03, WAR-01, WAR-03).
 - Ukryta warstwa nie przyjmuje poleceń wtyczki także ze skrótów i paneli (WAR-02); cofanie i ponawianie zmian zablokowanej lub ukrytej warstwy jest wstrzymane z komunikatem (WAR-03, DAN-03); przesunięcie suwaka krycia z powrotem do wartości początkowej nie zostawia kroku cofania (DAN-03).
 - Prototypy ryzyk technicznych kroku 1.1 w `spikes/platform/` (poza programem) i raport `docs/etapy/ETAP-1-prototypy.md`: część Windows (przygotowanie TLO-02, TLO-03, MM-02, MM-05, MM-09, WEJ-02, NF-04).
+
+### Poprawiono
+- Awaria wtyczki zachowuje najnowsze dane także warstw usuniętych, które można przywrócić cofnięciem; po cofnięciu usunięcia warstwa jest oznaczona jako uszkodzona i zapisuje się z tymi danymi (DAN-03).
+- Warstwa dodana i cofnięta, zanim wtyczka zdążyła się wczytać, po ponowieniu nie zostaje w stanie „Wczytywanie”, także gdy wczytanie się nie powiedzie (DAN-03).
+- Komunikat o wstrzymanym cofaniu na zablokowanej lub ukrytej warstwie podaje nazwę warstwy tak jak panel warstw, z numerem przy kilku warstwach jednego typu (WAR-03).
