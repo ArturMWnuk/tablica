@@ -32,7 +32,7 @@ Etap 1 obejmuje 73 wymagania (sekcja 10 dokumentacji: PLAT, WEJ, WAR, RYS, TLO, 
 | WAR-03 | Blokowanie | 1.3 |
 | WAR-04 | Kolejność | 1.3 |
 | WAR-05 | Przezroczystość | 1.3 |
-| WAR-06 | Izolacja warstw | 1.2 |
+| WAR-06 | Izolacja warstw | 1.2 → 1.6 (P16) |
 | WAR-07 | Wybór instalowanych warstw | 1.13 |
 | WAR-08 | Dodawanie bez reinstalacji | 1.13 |
 | WAR-09 | Instalacja z pliku | 1.13 |
@@ -547,8 +547,9 @@ Każdy krok to jedna sesja (`/realizuj-krok`), kończy się działającym progra
 - **Testy:** round-trip wszystkich istniejących elementów, uszkodzony plik, plik z nowszej wersji, zegar autozapisu.
 
 ### Krok 1.6: Edycja rysunku
-- **ID:** RYS-03, RYS-04, RYS-12, RYS-13, RYS-14.
+- **ID:** RYS-03, RYS-04, RYS-12, RYS-13, RYS-14; domknięcie WAR-06 (K1, P16).
 - **Zakres prac:** dwie gumki, zaznaczanie (klik, prostokąt, lasso), transformacje, tekst, wskaźnik laserowy.
+- **Testy (WAR-06 K1):** gumka (oba tryby) i zaznaczanie na warstwie rysunkowej nie zmieniają danych warstw tła i multimediów (porównanie serializacji przed i po).
 
 ### Krok 1.7: Figury, przyrządy i narzędzia matematyczne
 - **ID:** RYS-05–RYS-11.
@@ -643,6 +644,7 @@ Szczegółowe procedury audytor przeniesie do raportu weryfikacji.
 | P12 | Sprzęt testowy: model laptopa (sprzęt referencyjny NF-03), dystrybucja Linuksa i sesja (X11 czy Wayland), tablet z Androidem i wersja systemu, model tabletu graficznego. Minimalna wersja Androida? | Android 10 lub nowszy | Przyjęto: Android 10+. Laptop referencyjny (odczyt z systemu 2026-11-01): Dell Inspiron 15 3535, AMD Ryzen 5 7530U (6 rdzeni / 12 wątków), 16 GB RAM, AMD Radeon (zintegrowana), ekran 1920×1080 120 Hz bez obsługi dotyku, NVMe 512 GB, Windows 11 Home 25H2 (build 26200). **Do podania przez właściciela:** dystrybucja Linuksa i sesja (X11/Wayland), tablet z Androidem (model, wersja), tablet graficzny (model), urządzenie z ekranem dotykowym do R12 |
 | P13 | Nazwa i właściciel repozytorium GitHub (adres katalogu warstw i wydań)? Klucz podpisu APK utworzysz według instrukcji w kroku 1.14? | `ArturWnuk/tablica` | Przyjęto: `ArturMWnuk/tablica` (poprawka 2026-11-01: faktyczna nazwa konta GitHub; identyfikator aplikacji `io.github.arturmwnuk.tablica`); klucz APK właściciel tworzy w kroku 1.14 |
 | P14 | Instalacja warstwy z pliku: wystarczy ostrzeżenie, czy blokować pakiety spoza katalogu? | Ostrzeżenie | Przyjęto rekomendację |
+| P16 | WAR-06 K1 wymaga testu gumki i zaznaczania, które powstają dopiero w kroku 1.6. Kiedy domknąć WAR-06? | W kroku 1.2 mechanizm izolacji sprawdzony narzędziem wtyczki testowej; test K1 z gumką i zaznaczaniem w kroku 1.6, wtedy WAR-06 dostaje ZAIMPL. | Przyjęto rekomendację (2026-11-19) |
 
 ### Tabela D: parametry domyślne (zatwierdzone 2026-11-01)
 | Nr | Dotyczy | Propozycja |

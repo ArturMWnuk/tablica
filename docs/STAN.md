@@ -29,11 +29,11 @@ Statusy: OCZEKUJE, W TOKU, UKOŃCZONY.
 |---|---|---|---|---|
 | 1.0 | Szkielet projektu i CI | PLAT-01–03 (K1), NF-01 (K1, K2 częściowo), UI-01, UI-02 (infrastruktura) | UKOŃCZONY (CI zielone: przebieg 41352386876) | 02efcb7, abae05a |
 | 1.1 | Prototypy ryzyk technicznych | przygotowanie: TLO-02, TLO-03, MM-02, MM-05, MM-09, WEJ-02, NF-04 | W TOKU (Windows gotowy: 14/14 sprawdzeń; Linux i Android po P12) | (ten commit) |
-| 1.2 | Rdzeń dokumentu i API wtyczek | WAR-01, WAR-06, WAR-12 (v1) | UKOŃCZONY (WAR-06 K1 dla gumki i zaznaczania w 1.6, P16) | (ten commit) |
+| 1.2 | Rdzeń dokumentu i API wtyczek | WAR-01, WAR-06, WAR-12 (v1) | UKOŃCZONY (WAR-06 K1 dla gumki i zaznaczania w 1.6, P16) | 655784b |
 | 1.3 | Historia i operacje na warstwach | DAN-03, WAR-02–05 | OCZEKUJE | |
 | 1.4 | Wejście i pisanie | WEJ-01–06, RYS-01, RYS-02, NF-04 | OCZEKUJE | |
 | 1.5 | Zapis i odczyt lekcji | DAN-01, DAN-02 | OCZEKUJE | |
-| 1.6 | Edycja rysunku | RYS-03, RYS-04, RYS-12–14 | OCZEKUJE | |
+| 1.6 | Edycja rysunku | RYS-03, RYS-04, RYS-12–14, domknięcie WAR-06 (K1, P16) | OCZEKUJE | |
 | 1.7 | Figury, przyrządy, narzędzia matematyczne | RYS-05–11 | OCZEKUJE | |
 | 1.8 | Obszar tablicy i tła | OBS-01, OBS-02, TLO-01, TLO-04–08 | OCZEKUJE | |
 | 1.9 | Multimedia z plików | MM-01–04, MM-06–08 | OCZEKUJE | |
@@ -44,21 +44,21 @@ Statusy: OCZEKUJE, W TOKU, UKOŃCZONY.
 | 1.14 | Wydanie i wydajność | NF-02, NF-03, NF-05, domknięcie PLAT-01–03, NF-01 | OCZEKUJE | |
 
 ## Następne działania
-1. Właściciel: odpowiedzieć na P16 (WAR-06 K1 z gumką i zaznaczaniem w kroku 1.6).
-2. W **nowym wątku**: `/realizuj-krok 1.3` (opcjonalnie wcześniej `/weryfikuj-etap 1 krok 1.2`).
-3. Właściciel: naprawić środowisko laptopa: Visual Studio Installer → Build Tools 2022 → Napraw (brak `oldnames.lib`) oraz `pnpm exec playwright install chromium --force` (brak `icudtl.dat`).
-4. Właściciel: podać brakujące dane sprzętu (P12), potem dokończyć krok 1.1 (Linux, Android, tablet graficzny).
-5. Po P12: `/realizuj-krok 1.1` (Linux, Android, tablet graficzny); kroki 1.9 i 1.10 dopiero po domknięciu 1.1.
+1. W **nowym wątku**: `/realizuj-krok 1.3` (opcjonalnie wcześniej `/weryfikuj-etap 1 krok 1.2`).
+2. Właściciel: naprawić środowisko laptopa: Visual Studio Installer → Build Tools 2022 → Napraw (brak `oldnames.lib`) oraz `pnpm exec playwright install chromium --force` (brak `icudtl.dat`).
+3. Właściciel: podać brakujące dane sprzętu (P12), potem dokończyć krok 1.1 (Linux, Android, tablet graficzny).
+4. Po P12: `/realizuj-krok 1.1` (Linux, Android, tablet graficzny); kroki 1.9 i 1.10 dopiero po domknięciu 1.1.
 
 ## Otwarte pytania
 - P12 (sprzęt testowy), część otwarta: dystrybucja Linuksa i sesja (X11/Wayland), tablet z Androidem i wersja systemu, model tabletu graficznego, urządzenie z ekranem dotykowym do R12 (laptop referencyjny go nie ma). Laptop referencyjny zapisany w planie (P12). **Potrzebne do dokończenia kroku 1.1** (część Windows wykonana 2026-11-10 za zgodą właściciela).
-
-- P16 (krok 1.2, WAR-06 K1): kryterium wymaga testu gumki (oba tryby) i zaznaczania na warstwie rysunkowej, a te narzędzia powstają w kroku 1.6 (RYS-03, RYS-04, RYS-14). W kroku 1.2 mechanizm izolacji sprawdzono narzędziem „wyczyść warstwę” wtyczki testowej (porównanie serializacji pozostałych warstw). **Propozycja:** test K1 z gumką i zaznaczaniem w kroku 1.6, wtedy WAR-06 dostaje ZAIMPL.; do tego czasu W TOKU. Nie blokuje kroku 1.3.
 
 ## Blokery
 Brak.
 
 ## Dziennik sesji
+### 2026-11-19: Decyzja P16
+- Właściciel przyjął propozycję: test WAR-06 K1 z gumką (oba tryby) i zaznaczaniem powstaje w kroku 1.6, wtedy WAR-06 dostaje ZAIMPL.; do tego czasu W TOKU. Zapisano w planie (sekcja 1, krok 1.6, tabela pytań) i w MACIERZ.
+
 ### 2026-11-10: Krok 1.2 — rdzeń dokumentu i API wtyczek
 - `packages/plugin-api` (`@tablica/plugin-api` 1.0.0): manifest i jego walidacja, zgodność wersji API (SemVer: ta sama wersja główna, poboczna nie nowsza), `LayerPlugin` (cykl życia `activate` / `mountLayer` / `render` / `unmount`), serializacja z `schemaVersion` i migracją w `deserialize`, polecenia cofania, narzędzia, skróty, panele, tłumaczenia, `LayerAccessError`.
 - Rdzeń `app/src/lib/core/`: `BoardDocument`, `Camera`, `History` (minimalna: wykonaj / cofnij / ponów; limit, scalanie i interfejs w 1.3), `PluginManager` (walidacja, zgodność API, leniwe ładowanie), `LayerHost` (stos kontenerów DOM), rejestry narzędzi, skrótów i paneli, komunikaty dla użytkownika (`Notices.svelte`), klasa `Board` spinająca całość. Błąd wtyczki oznacza warstwę (albo całą wtyczkę) jako uszkodzoną, dane zostają do zapisu.

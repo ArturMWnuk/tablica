@@ -32,7 +32,7 @@ Wykluczenia WYK-01 – WYK-05 nie są implementowane. Audytor sprawdza w każdym
 | WAR-03 | Blokowanie warstwy | — | | |
 | WAR-04 | Zmiana kolejności warstw | — | | |
 | WAR-05 | Przezroczystość warstwy | — | | |
-| WAR-06 | Izolacja warstw | W TOKU | `app/src/composition/layers.test.ts` (WAR-06); `app/src/lib/core/core.test.ts` (WAR-06) | Krok 1.2: K2 i K3 spełnione. K1: mechanizm sprawdzony narzędziem „wyczyść warstwę” wtyczki testowej (porównanie serializacji pozostałych warstw); test z gumką (oba tryby) i zaznaczaniem możliwy dopiero w kroku 1.6, gdy te narzędzia powstaną. Odstępstwo od kolumny „Krok” planu (1.2): pytanie P16 w `docs/STAN.md` |
+| WAR-06 | Izolacja warstw | W TOKU | `app/src/composition/layers.test.ts` (WAR-06); `app/src/lib/core/core.test.ts` (WAR-06) | Krok 1.2: K2 i K3 spełnione. K1: mechanizm sprawdzony narzędziem „wyczyść warstwę” wtyczki testowej (porównanie serializacji pozostałych warstw); test z gumką (oba tryby) i zaznaczaniem możliwy dopiero w kroku 1.6, gdy te narzędzia powstaną. Decyzja P16 (2026-11-19): test K1 z gumką i zaznaczaniem w kroku 1.6, wtedy ZAIMPL. |
 | WAR-07 | Wybór instalowanych warstw | — | | |
 | WAR-08 | Dodawanie warstw bez reinstalacji | — | | |
 | WAR-09 | Instalacja warstwy z pliku | — | | |
