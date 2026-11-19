@@ -23,6 +23,17 @@ export class Notices {
     this.changed.emit();
   }
 
+  /** Adds the notice unless the same one (key, plugin, params) is already shown. */
+  addOnce(key: string, pluginId: string, params: Record<string, string | number> = {}): void {
+    const same = this.items.some(
+      (item) =>
+        item.key === key &&
+        item.pluginId === pluginId &&
+        JSON.stringify(item.params) === JSON.stringify(params),
+    );
+    if (!same) this.add(key, pluginId, params);
+  }
+
   dismiss(id: number): void {
     this.items = this.items.filter((notice) => notice.id !== id);
     this.changed.emit();

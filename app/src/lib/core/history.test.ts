@@ -192,6 +192,19 @@ describe('DAN-03: merging continuous changes', () => {
     expect(history.undoCount).toBe(3);
   });
 
+  it('DAN-03: a merged change that ends where it started is dropped', () => {
+    const state = { value: 0 };
+    const history = new History();
+    const empty = (from: number, to: number) => ({
+      ...setter(state, from, to),
+      isEmpty: () => state.value === from,
+    });
+    history.execute(empty(0, 1), { merge: true });
+    history.execute(setter(state, 1, 0), { merge: true });
+    expect(state.value).toBe(0);
+    expect(history.canUndo).toBe(false);
+  });
+
   it('DAN-03: undo ends merging', () => {
     const state = { value: 0 };
     const { add } = counter();

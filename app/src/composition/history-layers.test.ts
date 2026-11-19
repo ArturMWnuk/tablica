@@ -226,13 +226,30 @@ describe('WAR-02: hiding and showing a layer', () => {
     expect(element.hidden).toBe(true);
     expect(element.style.display).toBe('none');
 
-    // Changes made while hidden (e.g. undo) are not drawn until the layer is shown again.
-    board.undo();
-    expect(element.querySelectorAll('.fixture-box')).toHaveLength(1);
+    // A camera change while hidden is not drawn until the layer is shown again.
+    const box = () => element.querySelector<HTMLElement>('.fixture-box');
+    expect(box()?.style.left).toBe('1px');
+    board.camera.panBy(100, 0);
+    expect(box()?.style.left).toBe('1px');
+    expect(container(root, 'b').hidden).toBe(false);
     board.setLayerVisible('a', true);
     expect(element.hidden).toBe(false);
     expect(element.style.display).toBe('');
-    expect(element.querySelectorAll('.fixture-box')).toHaveLength(0);
+    expect(box()?.style.left).toBe('101px');
+  });
+
+  it('WAR-02: a plugin command sent to a hidden layer (e.g. from a shortcut) changes nothing', async () => {
+    const { board } = await lessonBoard();
+    // The test plugin's shortcut adds a square to its topmost layer ("b").
+    board.setLayerVisible('b', false);
+    const before = JSON.stringify(board.serialize());
+    expect(board.handleKey(key('b', { ctrlKey: true, altKey: true }))).toBe(true);
+    expect(JSON.stringify(board.serialize())).toBe(before);
+    expect(board.history.canUndo).toBe(false);
+    expect(board.notices.list).toHaveLength(0);
+    board.setLayerVisible('b', true);
+    board.handleKey(key('b', { ctrlKey: true, altKey: true }));
+    expect(boxes(board, 'b')).toBe(1);
   });
 
   it('WAR-02: a hidden layer takes no input', async () => {
@@ -429,5 +446,200 @@ describe('WAR-05: layer opacity', () => {
     const { board } = await lessonBoard(documentOf(layerOf('test-fixture-layer', 'old')));
     const layer = board.document.getLayer('old');
     expect([layer?.visible, layer?.locked, layer?.opacity]).toEqual([true, false, 1]);
+  });
+
+  it('DAN-03: a slider moved back to its starting value leaves no undo step', async () => {
+    const { board } = await lessonBoard();
+    board.setLayerOpacity('a', 0.5);
+    for (const value of [0.45, 0.4, 0.45, 0.5]) board.setLayerOpacity('a', value, { merge: true });
+    board.history.seal();
+    expect(board.history.undoCount).toBe(1);
+    // Continuing the same drag after returning starts a new step; it does not join the old one.
+    for (const value of [0.45, 0.5, 0.55]) board.setLayerOpacity('a', value, { merge: true });
+    board.history.seal();
+    expect(board.history.undoCount).toBe(2);
+    board.undo();
+    expect(board.document.getLayer('a')?.opacity).toBe(0.5);
+    board.undo();
+    expect(board.document.getLayer('a')?.opacity).toBe(1);
+  });
+});
+
+describe('WAR-03: undo and redo stop at a locked or hidden layer (P17 a)', () => {
+  it('WAR-03: undo and redo of a change of a locked layer are held back with a notice', async () => {
+    const { board } = await lessonBoard();
+    addBoxOn(board, 'a');
+    board.setLayerLocked('a', true);
+    expect(board.undo()).toBe(false);
+    expect(boxes(board, 'a')).toBe(1);
+    expect(board.history.undoCount).toBe(1);
+    expect(board.notices.list.map((notice) => [notice.key, notice.pluginId])).toEqual([
+      ['notice.historyLocked', 'test-fixture-layer'],
+    ]);
+    // Repeated attempts do not pile up the same message.
+    board.handleKey(key('z', { ctrlKey: true }));
+    board.handleTap(2);
+    expect(board.notices.list).toHaveLength(1);
+
+    board.setLayerLocked('a', false);
+    expect(board.undo()).toBe(true);
+    expect(boxes(board, 'a')).toBe(0);
+    board.setLayerLocked('a', true);
+    expect(board.redo()).toBe(false);
+    expect(boxes(board, 'a')).toBe(0);
+    board.setLayerLocked('a', false);
+    expect(board.redo()).toBe(true);
+    expect(boxes(board, 'a')).toBe(1);
+  });
+
+  it('DAN-03: undo and redo of a change of a hidden layer are held back with a notice', async () => {
+    const { board } = await lessonBoard();
+    addBoxOn(board, 'b');
+    board.setLayerVisible('b', false);
+    expect(board.undo()).toBe(false);
+    expect(boxes(board, 'b')).toBe(1);
+    expect(board.notices.list.map((notice) => notice.key)).toEqual(['notice.historyHidden']);
+    board.setLayerVisible('b', true);
+    expect(board.undo()).toBe(true);
+    expect(boxes(board, 'b')).toBe(0);
+  });
+
+  it('DAN-03: the chronology stays: earlier steps wait until the blocked step can be undone (P4)', async () => {
+    const { board } = await lessonBoard();
+    addBoxOn(board, 'b');
+    addBoxOn(board, 'a');
+    board.setLayerLocked('a', true);
+    expect(board.undo()).toBe(false);
+    expect([boxes(board, 'a'), boxes(board, 'b')]).toEqual([1, 1]);
+  });
+
+  it('WAR-04: order and opacity of a locked or hidden layer are still undone (settings, D12)', async () => {
+    const { board } = await lessonBoard();
+    board.setLayerOpacity('a', 0.5);
+    board.moveLayer('b', 0);
+    board.setLayerLocked('a', true);
+    board.setLayerVisible('b', false);
+    expect(board.undo()).toBe(true);
+    expect(board.document.indexOf('b')).toBe(2);
+    expect(board.undo()).toBe(true);
+    expect(board.document.getLayer('a')?.opacity).toBe(1);
+    expect(board.notices.list).toHaveLength(0);
+  });
+});
+
+describe('DAN-03: adding and removing layers (P17 b)', () => {
+  it('DAN-03: a new layer is added above the given position, becomes active and can be undone', async () => {
+    const { board, root } = await lessonBoard();
+    const added = await board.addLayer('test-fixture-layer', 2);
+    expect(order(root)).toEqual(['bg', 'a', added, 'b', 'drawing']);
+    expect(board.document.activeLayerId).toBe(added);
+    expect(container(root, added).dataset['status']).toBe('ready');
+    addBoxOn(board, added);
+
+    board.undo();
+    board.undo();
+    expect(order(root)).toEqual(['bg', 'a', 'b', 'drawing']);
+    board.redo();
+    expect(order(root)).toEqual(['bg', 'a', added, 'b', 'drawing']);
+    board.redo();
+    expect(boxes(board, added)).toBe(1);
+    expect(container(root, added).querySelectorAll('.fixture-box')).toHaveLength(1);
+  });
+
+  it('DAN-03: a removed layer comes back with its data and settings on undo', async () => {
+    const { board, root } = await lessonBoard();
+    addBoxOn(board, 'a', 3);
+    addBoxOn(board, 'a', 7);
+    board.setLayerOpacity('a', 0.6);
+    board.setLayerVisible('a', false);
+    const before = JSON.stringify(board.serialize());
+
+    expect(board.removeLayer('a')).toBe(true);
+    expect(order(root)).toEqual(['bg', 'b', 'drawing']);
+    expect(board.serialize().layers.some((layer) => layer.id === 'a')).toBe(false);
+
+    board.undo();
+    expect(JSON.stringify(board.serialize())).toBe(before);
+    expect(order(root)).toEqual(['bg', 'a', 'b', 'drawing']);
+    board.setLayerVisible('a', true);
+    expect(container(root, 'a').querySelectorAll('.fixture-box')).toHaveLength(2);
+
+    board.redo();
+    expect(order(root)).toEqual(['bg', 'b', 'drawing']);
+  });
+
+  it('DAN-03: a broken layer or one without its plugin comes back unchanged after removal', async () => {
+    const broken = defineLayerPlugin<{ n: number }>({
+      schemaVersion: 1,
+      createData: () => ({ n: 0 }),
+      serialize: (data) => ({ n: data.n }),
+      deserialize: () => {
+        throw new Error('cannot read');
+      },
+      mountLayer: () => ({ render: () => undefined }),
+    });
+    const source: PluginSource = {
+      manifest: {
+        id: 'broken-one',
+        version: '1.0.0',
+        apiVersion: '1.0.0',
+        translations: {
+          pl: { name: 'Zepsuta', description: 'Opis.' },
+          en: { name: 'Broken', description: 'Description.' },
+        },
+      },
+      load: () => Promise.resolve({ default: broken }),
+    };
+    const lesson = documentOf(
+      { ...layerOf('broken-one', 'x'), schemaVersion: 1, data: { n: 5 } },
+      { ...layerOf('unknown-plugin', 'y'), schemaVersion: 3, data: { kept: true } },
+      layerOf('test-fixture-layer', 'z'),
+    );
+    const board = createTestBoard([...allSources, source], lesson);
+    await board.loadLayers();
+    attachToBody(board);
+    expect(board.document.getLayer('x')?.status).toBe('broken');
+    expect(board.document.getLayer('y')?.status).toBe('missing');
+    const before = JSON.stringify(board.serialize());
+
+    expect(board.removeLayer('x')).toBe(true);
+    expect(board.removeLayer('y')).toBe(true);
+    board.undo();
+    board.undo();
+    expect(JSON.stringify(board.serialize())).toBe(before);
+    expect(board.document.getLayer('x')?.status).toBe('broken');
+    expect(board.document.getLayer('y')?.status).toBe('missing');
+  });
+
+  it('WAR-03: a locked layer cannot be removed', async () => {
+    const { board } = await lessonBoard();
+    board.setLayerLocked('a', true);
+    expect(board.canRemoveLayer('a')).toBe(false);
+    expect(board.removeLayer('a')).toBe(false);
+    expect(board.document.getLayer('a')).toBeDefined();
+    expect(board.history.canUndo).toBe(false);
+  });
+
+  it('DAN-03: the last layer of the lesson cannot be removed', async () => {
+    const { board } = await lessonBoard(documentOf(layerOf('test-fixture-layer', 'only')));
+    expect(board.canRemoveLayer('only')).toBe(false);
+    expect(board.removeLayer('only')).toBe(false);
+    expect(board.document.layers).toHaveLength(1);
+  });
+
+  it('DAN-03: undoing the addition of a locked layer is held back (P17 a)', async () => {
+    const { board } = await lessonBoard();
+    const added = await board.addLayer('test-fixture-layer');
+    board.setLayerLocked(added, true);
+    expect(board.undo()).toBe(false);
+    expect(board.document.getLayer(added)).toBeDefined();
+    expect(board.notices.list.map((notice) => notice.key)).toEqual(['notice.historyLocked']);
+  });
+
+  it('DAN-03: removing the active layer makes the layer at its place active', async () => {
+    const { board } = await lessonBoard();
+    board.document.setActiveLayer('b');
+    board.removeLayer('b');
+    expect(board.document.activeLayerId).toBe('drawing');
   });
 });

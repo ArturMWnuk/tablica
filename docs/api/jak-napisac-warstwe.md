@@ -115,8 +115,10 @@ layer.execute(addBox(10, 20));
 Historia ma limit kroków ustawiany przez użytkownika (domyślnie 50); najstarsze polecenia są z niej usuwane. Cofanie (Ctrl+Z), ponawianie (Ctrl+Y, Ctrl+Shift+Z), przyciski i gesty obsługuje program; wtyczka nie może zająć tych skrótów.
 
 **Ustawienia warstwy należą do programu.** Widoczność, blokadę, krycie i kolejność warstw zmienia użytkownik w panelu warstw. Wtyczka nie musi ich obsługiwać:
-- na **zablokowanej** warstwie `execute` niczego nie zmienia i niczego nie zapisuje w historii, a narzędzia nie dostają zdarzeń;
-- **ukryta** warstwa nie dostaje zdarzeń narzędzi i program nie wywołuje jej `render()` (wywoła go po ponownym pokazaniu);
+- na **zablokowanej** i **ukrytej** warstwie `execute` niczego nie zmienia i niczego nie zapisuje w historii (także z poziomu skrótów i paneli), a narzędzia nie dostają zdarzeń;
+- program nie wywołuje `render()` **ukrytej** warstwy (wywoła go po ponownym pokazaniu);
+- kroków historii zmieniających zawartość zablokowanej lub ukrytej warstwy program nie cofa ani nie ponawia, dopóki użytkownik jej nie odblokuje lub nie pokaże;
+- użytkownik może dodawać i usuwać warstwy; usunięcie jest cofane, a dane warstwy wracają bez zmian (program przechowuje je sam, wtyczka nie musi nic robić);
 - krycie całej warstwy program nakłada na jej kontener.
 
 ## 6. Narzędzia, skróty i panele

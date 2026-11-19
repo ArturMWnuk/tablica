@@ -216,3 +216,40 @@ test.describe('DAN-03: undo and redo in the interface', () => {
     await expect(page.getByTestId('history-limit')).toHaveValue('120');
   });
 });
+
+test.describe('DAN-03: adding and removing layers in the panel (P17 b)', () => {
+  test('DAN-03: a layer is added above the active one and removed, both undoable', async ({
+    page,
+  }) => {
+    await openBoard(page);
+    await row(page, 'layer-background').getByTestId('layer-select').click();
+    await panel(page).getByTestId('layer-add-type').selectOption('layer-drawing');
+    await panel(page).getByTestId('layer-add').click();
+    await expect
+      .poll(() => stack(page))
+      .toEqual(['layer-background', 'layer-drawing', 'layer-media', 'layer-drawing']);
+    await expect(panel(page).locator('li.active')).toHaveAttribute(
+      'data-plugin-id',
+      'layer-drawing',
+    );
+    await page.getByTestId('undo').click();
+    await expect
+      .poll(() => stack(page))
+      .toEqual(['layer-background', 'layer-media', 'layer-drawing']);
+
+    await row(page, 'layer-media').getByTestId('layer-remove').click();
+    await expect.poll(() => stack(page)).toEqual(['layer-background', 'layer-drawing']);
+    await page.getByTestId('undo').click();
+    await expect
+      .poll(() => stack(page))
+      .toEqual(['layer-background', 'layer-media', 'layer-drawing']);
+  });
+
+  test('WAR-03: a locked layer cannot be removed', async ({ page }) => {
+    await openBoard(page);
+    const remove = row(page, 'layer-media').getByTestId('layer-remove');
+    await expect(remove).toBeEnabled();
+    await row(page, 'layer-media').getByTestId('layer-locked').click();
+    await expect(remove).toBeDisabled();
+  });
+});

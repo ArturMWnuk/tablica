@@ -6,12 +6,12 @@
 ## Podsumowanie
 | Etap | Wymagań | ZAIMPL. | ZWERYF. | Status etapu |
 |---|---|---|---|---|
-| 1 | 73 | 3 | 0 | REALIZACJA |
+| 1 | 73 | 6 | 0 | REALIZACJA |
 | 2 | 6 | 0 | 0 | NIEROZPOCZĘTY |
 | 3 | 13 | 0 | 0 | NIEROZPOCZĘTY |
 | 4 | 15 | 0 | 0 | NIEROZPOCZĘTY |
 | 5 | 3 | 0 | 0 | NIEROZPOCZĘTY |
-| **Razem** | **110** | **3** | **0** | |
+| **Razem** | **110** | **6** | **0** | |
 
 Wykluczenia WYK-01 – WYK-05 nie są implementowane. Audytor sprawdza w każdym etapie, czy nie zostały naruszone.
 
@@ -27,9 +27,9 @@ Wykluczenia WYK-01 – WYK-05 nie są implementowane. Audytor sprawdza w każdym
 | WEJ-04 | Mysz i klawiatura | — | | |
 | WEJ-05 | Nacisk, nachylenie, gumka rysika | — | | |
 | WEJ-06 | Odrzucanie dotyku dłoni | — | | |
-| WAR-01 | Wiele warstw nałożonych | ZAIMPL. | `app/src/composition/layers.test.ts` (WAR-01); `app/src/lib/core/core.test.ts` (WAR-01); `e2e/shell.spec.ts` (WAR-01) | Krok 1.2: K1–K3 (dokument z uporządkowaną listą warstw, wspólna kamera, stos kontenerów DOM, dowolna liczba warstw jednego typu wg P3) |
-| WAR-02 | Ukrywanie/pokazywanie warstwy | W TOKU | `app/src/composition/history-layers.test.ts` (WAR-02); `e2e/layers-history.spec.ts` (WAR-02) | Krok 1.3: K1 (ukryta warstwa nie jest renderowana i nie dostaje zdarzeń narzędzi), K2 (stan w serializacji dokumentu; zapis pliku `.tablica` w kroku 1.5). Poza historią cofania (D12). Weryfikacja kroku 1.3 (WARUNKOWO): ukryta warstwa przyjmuje polecenia wtyczki ze skrótów i paneli; domknięcie K1 w kroku 1.3-poprawka |
-| WAR-03 | Blokowanie warstwy | W TOKU | `app/src/composition/history-layers.test.ts` (WAR-03); `e2e/layers-history.spec.ts` (WAR-03) | Krok 1.3: K1 (oba narzędzia i skrót wtyczki testowej nic nie zmieniają na zablokowanej warstwie; rdzeń ignoruje polecenia wtyczki), K2 (panel pokazuje blokadę, stan w serializacji). Poza historią cofania (D12). Decyzja P17 a (2026-11-19): cofanie i ponawianie zmian zawartości zablokowanej i ukrytej warstwy ma być wstrzymane z komunikatem; realizacja w kroku 1.3-poprawka |
+| WAR-01 | Wiele warstw nałożonych | ZAIMPL. | `app/src/composition/layers.test.ts` (WAR-01); `app/src/lib/core/core.test.ts` (WAR-01); `e2e/shell.spec.ts` (WAR-01) | Krok 1.2: K1–K3 (dokument z uporządkowaną listą warstw, wspólna kamera, stos kontenerów DOM, dowolna liczba warstw jednego typu wg P3). Krok 1.3-poprawka: dodawanie warstwy wybranego typu w panelu warstw (`app/src/composition/history-layers.test.ts`, `e2e/layers-history.spec.ts`) |
+| WAR-02 | Ukrywanie/pokazywanie warstwy | ZAIMPL. | `app/src/composition/history-layers.test.ts` (WAR-02); `e2e/layers-history.spec.ts` (WAR-02) | Krok 1.3: K1 (ukryta warstwa nie jest renderowana i nie dostaje zdarzeń narzędzi), K2 (stan w serializacji dokumentu; zapis pliku `.tablica` w kroku 1.5). Poza historią cofania (D12). Weryfikacja kroku 1.3 (WARUNKOWO): ukryta warstwa przyjmuje polecenia wtyczki ze skrótów i paneli; domknięte w kroku 1.3-poprawka: ukryta warstwa odrzuca polecenia wtyczki (test skrótu wtyczki testowej) |
+| WAR-03 | Blokowanie warstwy | ZAIMPL. | `app/src/composition/history-layers.test.ts` (WAR-03); `e2e/layers-history.spec.ts` (WAR-03) | Krok 1.3: K1 (oba narzędzia i skrót wtyczki testowej nic nie zmieniają na zablokowanej warstwie; rdzeń ignoruje polecenia wtyczki), K2 (panel pokazuje blokadę, stan w serializacji). Poza historią cofania (D12). Decyzja P17 a (2026-11-19): cofanie i ponawianie zmian zawartości zablokowanej i ukrytej warstwy jest wstrzymane z komunikatem, zablokowanej warstwy nie da się usunąć (krok 1.3-poprawka). Kryterium „test każdego narzędzia” dotyczy też narzędzi z kroków 1.4–1.7 (zalecenie audytu) |
 | WAR-04 | Zmiana kolejności warstw | ZAIMPL. | `app/src/composition/history-layers.test.ts` (WAR-04); `e2e/layers-history.spec.ts` (WAR-04) | Krok 1.3: K1 (przyciski i przeciąganie w panelu), K2 (stan w serializacji, cofanie wg D12) |
 | WAR-05 | Przezroczystość warstwy | ZAIMPL. | `app/src/composition/history-layers.test.ts` (WAR-05); `e2e/layers-history.spec.ts` (WAR-05) | Krok 1.3: K1 (suwak 0–100 %, krok 5 %), K2 (stan w serializacji, cofanie wg D12; przesunięcie suwaka to jeden krok cofania) |
 | WAR-06 | Izolacja warstw | W TOKU | `app/src/composition/layers.test.ts` (WAR-06); `app/src/lib/core/core.test.ts` (WAR-06) | Krok 1.2: K2 i K3 spełnione. K1: mechanizm sprawdzony narzędziem „wyczyść warstwę” wtyczki testowej (porównanie serializacji pozostałych warstw); test z gumką (oba tryby) i zaznaczaniem możliwy dopiero w kroku 1.6, gdy te narzędzia powstaną. Decyzja P16 (2026-11-19): test K1 z gumką i zaznaczaniem w kroku 1.6, wtedy ZAIMPL. |
@@ -82,7 +82,7 @@ Wykluczenia WYK-01 – WYK-05 nie są implementowane. Audytor sprawdza w każdym
 | UI-08 | Dwa monitory | — | | |
 | DAN-01 | Zapis lekcji | — | | |
 | DAN-02 | Autozapis | — | | |
-| DAN-03 | Cofanie/ponawianie (50) | W TOKU | `app/src/lib/core/history.test.ts` (DAN-03); `app/src/composition/history-layers.test.ts` (DAN-03); `e2e/layers-history.spec.ts` (DAN-03) | Krok 1.3: K1 (Ctrl+Z, Ctrl+Y, Ctrl+Shift+Z, przyciski, gesty D3), K2 (limit 50, test 50/51, ustawienie 10–500 wg D6), K3 (wspólna historia chronologiczna wg P4), K4 (wtyczka testowa tylko przez wspólną historię; skróty cofania zarezerwowane). Decyzja P17 (2026-11-19): dodawanie i usuwanie warstw z cofaniem oraz wstrzymanie cofania na zablokowanej i ukrytej warstwie w kroku 1.3-poprawka |
+| DAN-03 | Cofanie/ponawianie (50) | ZAIMPL. | `app/src/lib/core/history.test.ts` (DAN-03); `app/src/composition/history-layers.test.ts` (DAN-03); `e2e/layers-history.spec.ts` (DAN-03) | Krok 1.3: K1 (Ctrl+Z, Ctrl+Y, Ctrl+Shift+Z, przyciski, gesty D3), K2 (limit 50, test 50/51, ustawienie 10–500 wg D6), K3 (wspólna historia chronologiczna wg P4), K4 (wtyczka testowa tylko przez wspólną historię; skróty cofania zarezerwowane). Krok 1.3-poprawka (P17): dodawanie i usuwanie warstw w panelu przez historię (dane, także uszkodzonej warstwy, wracają bez strat), wstrzymanie cofania na zablokowanej i ukrytej warstwie z komunikatem, suwak bez pustego kroku; progi stuknięcia D18 do zatwierdzenia |
 | DAN-04 | Eksport PDF | — | | |
 | DAN-05 | Eksport PNG | — | | |
 | INT-01 | Zgodność z udostępnianiem ekranu | — | | |

@@ -35,6 +35,8 @@ export interface HistoryEntry {
    * in one step. Returns false when the change cannot be merged.
    */
   merge?(next: HistoryEntry): boolean;
+  /** True when, after merging, the entry changes nothing; it is then dropped from the history. */
+  isEmpty?(): boolean;
 }
 
 export interface ExecuteOptions {
@@ -76,7 +78,11 @@ export class History {
     const last = this.done.at(-1);
     const merged = options.merge === true && this.open && last?.merge?.(entry) === true;
     if (!merged) this.done.push(entry);
-    this.open = options.merge === true;
+    // A continuous change that ended where it started leaves no undo step.
+    const emptied = merged && last?.isEmpty?.() === true;
+    if (emptied) this.done.pop();
+    // After a dropped entry the next change starts a new step (it must not join an older one).
+    this.open = options.merge === true && !emptied;
     this.undone = [];
     this.trim();
     this.changed.emit();

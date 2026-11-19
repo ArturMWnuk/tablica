@@ -34,6 +34,9 @@
   let activeId: string | undefined = $state();
   let drag: Drag | undefined = $state();
   let list: HTMLOListElement | undefined = $state();
+  /** Layer types (plugin ids) that can be added. */
+  let types: readonly string[] = $state([]);
+  let newType = $state('');
 
   // The panel lists layers from the top to the bottom, like the stack seen on the board.
   function snapshot(): void {
@@ -57,6 +60,19 @@
     });
     rows = result.reverse();
     activeId = board.document.activeLayerId;
+    types = board.plugins
+      .list()
+      .filter((entry) => entry.state !== 'broken')
+      .map((entry) => entry.manifest.id);
+    if (!types.includes(newType)) newType = types[0] ?? '';
+  }
+
+  /** P17 b: a new layer goes above the active layer (on top when none is active). */
+  function addLayer(): void {
+    if (!newType) return;
+    const active = activeId === undefined ? -1 : board.document.indexOf(activeId);
+    const index = active < 0 ? board.document.layers.length : active + 1;
+    void board.addLayer(newType, index);
   }
 
   $effect(() => {
@@ -207,6 +223,19 @@
               >
             {/if}
           </button>
+          <button
+            type="button"
+            class="remove"
+            data-testid="layer-remove"
+            disabled={row.locked || rows.length <= 1}
+            aria-label={t('layers.remove', { name })}
+            title={t('layers.remove', { name })}
+            onclick={() => board.removeLayer(row.id)}
+          >
+            <svg viewBox="0 0 24 24" aria-hidden={true}
+              ><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3" /></svg
+            >
+          </button>
         </div>
         <div class="line">
           <button
@@ -251,6 +280,28 @@
       </li>
     {/each}
   </ol>
+  <div class="add">
+    <select
+      data-testid="layer-add-type"
+      aria-label={t('layers.addType')}
+      title={t('layers.addType')}
+      bind:value={newType}
+    >
+      {#each types as type (type)}
+        <option value={type}>{layerName(type)}</option>
+      {/each}
+    </select>
+    <button
+      type="button"
+      class="add-button"
+      data-testid="layer-add"
+      disabled={!newType}
+      onclick={addLayer}
+    >
+      <svg viewBox="0 0 24 24" aria-hidden={true}><path d="M12 5v14M5 12h14" /></svg>
+      {t('layers.add')}
+    </button>
+  </div>
 </aside>
 
 <style>
@@ -262,6 +313,27 @@
     overflow-y: auto;
     background: var(--color-surface);
     border-left: 1px solid var(--color-border);
+  }
+
+  .add {
+    display: flex;
+    gap: 4px;
+    padding: 0 8px 8px;
+  }
+
+  .add select {
+    flex: 1;
+    min-width: 0;
+    font: inherit;
+    color: var(--color-text);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+  }
+
+  .add-button {
+    gap: 4px;
+    border-color: var(--color-border);
   }
 
   h2 {
@@ -329,7 +401,8 @@
   }
 
   button:focus-visible,
-  input:focus-visible {
+  input:focus-visible,
+  select:focus-visible {
     outline: 2px solid var(--color-accent);
     outline-offset: 1px;
   }

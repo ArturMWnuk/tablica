@@ -87,6 +87,38 @@ class OpacityEntry implements HistoryEntry {
     this.to = next.to;
     return true;
   }
+
+  /** A slider moved back to its starting value changes nothing. */
+  isEmpty(): boolean {
+    return this.from === this.to;
+  }
+}
+
+/**
+ * DAN-03 K1, P17 b: adding or removing a layer. The same record (with live data and its last
+ * stored form) is taken out and put back, so undo restores the layer without losses.
+ */
+class LayerStructureEntry implements HistoryEntry {
+  readonly layerId: string;
+
+  constructor(
+    private readonly document: BoardDocument,
+    private readonly record: LayerRecord,
+    private readonly index: number,
+    private readonly kind: 'add' | 'remove',
+  ) {
+    this.layerId = record.id;
+  }
+
+  apply(): void {
+    if (this.kind === 'add') this.document.restoreLayer(this.record, this.index);
+    else this.document.removeLayer(this.layerId);
+  }
+
+  revert(): void {
+    if (this.kind === 'add') this.document.removeLayer(this.layerId);
+    else this.document.restoreLayer(this.record, this.index);
+  }
 }
 
 /** WAR-04 K2, D12: a change of layer order is undoable. */
@@ -145,12 +177,35 @@ export class Board {
     await Promise.all(this.document.layers.map((record) => this.prepareLayer(record)));
   }
 
-  /** Adds a new layer of the plugin on top and prepares it. */
-  async addLayer(pluginId: string): Promise<string> {
-    const id = this.document.addLayer(pluginId);
-    const record = this.document.getLayer(id);
-    if (record) await this.prepareLayer(record);
-    return id;
+  /**
+   * Adds a new layer of the plugin at `index` (from the bottom; on top by default) through the
+   * history (DAN-03 K1, P17 b), makes it active and prepares it.
+   */
+  async addLayer(pluginId: string, index = this.document.layers.length): Promise<string> {
+    const record = this.document.createLayer(pluginId);
+    const at = Math.max(0, Math.min(Math.trunc(index), this.document.layers.length));
+    this.history.execute(new LayerStructureEntry(this.document, record, at, 'add'));
+    this.document.setActiveLayer(record.id);
+    await this.prepareLayer(record);
+    return record.id;
+  }
+
+  /**
+   * Removes a layer through the history (DAN-03 K1, P17 b); undo brings it back with its data.
+   * A locked layer and the last layer of the lesson cannot be removed (returns false).
+   */
+  removeLayer(layerId: string): boolean {
+    const record = this.document.getLayer(layerId);
+    if (!record) throw new Error(`Unknown layer ${layerId}`);
+    if (!this.canRemoveLayer(layerId)) return false;
+    const index = this.document.indexOf(layerId);
+    this.history.execute(new LayerStructureEntry(this.document, record, index, 'remove'));
+    return true;
+  }
+
+  canRemoveLayer(layerId: string): boolean {
+    const record = this.document.getLayer(layerId);
+    return record !== undefined && !record.locked && this.document.layers.length > 1;
   }
 
   private async prepareLayer(record: LayerRecord): Promise<void> {
@@ -159,7 +214,10 @@ export class Board {
     if (record.status !== 'loading') return;
     const plugin = this.pluginOf(record);
     if (!plugin) {
-      this.document.setStatus(record.id, this.plugins.get(record.pluginId) ? 'broken' : 'missing');
+      this.document.setRecordStatus(
+        record,
+        this.plugins.get(record.pluginId) ? 'broken' : 'missing',
+      );
       return;
     }
     const { data, schemaVersion } = record.stored;
@@ -172,7 +230,7 @@ export class Board {
       this.breakLayer(record, error);
       return;
     }
-    this.document.setStatus(record.id, 'ready');
+    this.document.setRecordStatus(record, 'ready');
   }
 
   /** Mounts the layer stack in `root`. */
@@ -236,7 +294,8 @@ export class Board {
     const record = this.document.getLayer(layerId);
     if (!record || record.status !== 'ready') throw new Error(`Layer ${layerId} is not ready`);
     // WAR-03 K1: a locked layer is protected against every change made by its plugin.
-    if (record.locked) return;
+    // WAR-02 K1: a hidden layer takes no input, also not from shortcuts and panels.
+    if (record.locked || !record.visible) return;
     try {
       this.history.execute(
         new LayerHistoryEntry(layerId, record, command as LayerCommand<unknown>),
@@ -290,6 +349,7 @@ export class Board {
   }
 
   private step(run: () => boolean, direction: 'undo' | 'redo'): boolean {
+    if (this.stepBlocked(direction)) return false;
     // The entry about to be undone or redone is the one whose layer gets redrawn.
     const before = this.peek(direction);
     try {
@@ -301,6 +361,28 @@ export class Board {
     }
     if (before) this.host?.render(before.layerId);
     return true;
+  }
+
+  /**
+   * P17 a: a step that changes the content of a locked or hidden layer (a plugin command), or
+   * adds or removes a locked layer, is not undone or redone. The history stays as it is (P4)
+   * and the user is told to unlock or show the layer. Order and opacity steps are not blocked.
+   */
+  private stepBlocked(direction: 'undo' | 'redo'): boolean {
+    const entry = this.history.peek(direction);
+    const content = entry instanceof LayerHistoryEntry;
+    if (!content && !(entry instanceof LayerStructureEntry)) return false;
+    const record = this.document.getLayer(entry.layerId);
+    if (!record) return false;
+    if (record.locked) {
+      this.notices.addOnce('notice.historyLocked', record.pluginId);
+      return true;
+    }
+    if (content && !record.visible) {
+      this.notices.addOnce('notice.historyHidden', record.pluginId);
+      return true;
+    }
+    return false;
   }
 
   private peek(direction: 'undo' | 'redo'): LayerHistoryEntry | undefined {

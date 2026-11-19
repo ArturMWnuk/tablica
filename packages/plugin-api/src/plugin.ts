@@ -63,8 +63,8 @@ export interface LayerHandle<TData> {
   readonly data: Readonly<TData>;
   /**
    * Applies a command to this layer, records it in the undo history and redraws the layer.
-   * When the user has locked the layer, the command is ignored: nothing changes and nothing is
-   * recorded.
+   * When the user has locked or hidden the layer, the command is ignored: nothing changes and
+   * nothing is recorded.
    */
   execute(command: LayerCommand<TData>): void;
 }

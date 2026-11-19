@@ -10,7 +10,7 @@
 | Bieżący etap | 1 |
 | Status etapu | REALIZACJA |
 | Plan etapu | `docs/etapy/ETAP-1-plan.md` (ZATWIERDZONY 2026-11-01) |
-| Bieżący krok | 1.3-poprawka (następny), potem 1.4; 1.1 W TOKU (Linux i Android czekają na P12) |
+| Bieżący krok | 1.4 (następny); 1.1 W TOKU (Linux i Android czekają na P12) |
 | Gałąź robocza | `etap-1` |
 
 ## Etapy
@@ -31,7 +31,7 @@ Statusy: OCZEKUJE, W TOKU, UKOŃCZONY.
 | 1.1 | Prototypy ryzyk technicznych | przygotowanie: TLO-02, TLO-03, MM-02, MM-05, MM-09, WEJ-02, NF-04 | W TOKU (Windows gotowy: 14/14 sprawdzeń; Linux i Android po P12) | (ten commit) |
 | 1.2 | Rdzeń dokumentu i API wtyczek | WAR-01, WAR-06, WAR-12 (v1) | UKOŃCZONY (WAR-06 K1 dla gumki i zaznaczania w 1.6, P16) | 655784b |
 | 1.3 | Historia i operacje na warstwach | DAN-03, WAR-02–05 | UKOŃCZONY (weryfikacja: WARUNKOWO, `docs/raporty/ETAP-1-krok-1.3-weryfikacja.md`) | 0bdd68b |
-| 1.3-poprawka | Domknięcie WAR-02 i DAN-03 po weryfikacji | WAR-02 (K1), WAR-03 (P17 a), DAN-03 (P17 b: dodawanie i usuwanie warstw), WAR-01 K3 (interfejs) | OCZEKUJE | |
+| 1.3-poprawka | Domknięcie WAR-02 i DAN-03 po weryfikacji | WAR-02 (K1), WAR-03 (P17 a), DAN-03 (P17 b: dodawanie i usuwanie warstw), WAR-01 K3 (interfejs) | UKOŃCZONY | (ten commit) |
 | 1.4 | Wejście i pisanie | WEJ-01–06, RYS-01, RYS-02, NF-04 | OCZEKUJE | |
 | 1.5 | Zapis i odczyt lekcji | DAN-01, DAN-02 | OCZEKUJE | |
 | 1.6 | Edycja rysunku | RYS-03, RYS-04, RYS-12–14, domknięcie WAR-06 (K1, P16) | OCZEKUJE | |
@@ -45,10 +45,11 @@ Statusy: OCZEKUJE, W TOKU, UKOŃCZONY.
 | 1.14 | Wydanie i wydajność | NF-02, NF-03, NF-05, domknięcie PLAT-01–03, NF-01 | OCZEKUJE | |
 
 ## Następne działania
-1. W **nowym wątku**: `/realizuj-krok 1.3-poprawka`, potem `/realizuj-krok 1.4`.
-2. Właściciel: naprawić środowisko laptopa: Visual Studio Installer → Build Tools 2022 → Napraw (brak `oldnames.lib`) oraz `pnpm exec playwright install chromium --force` (brak `icudtl.dat`).
-3. Właściciel: podać brakujące dane sprzętu (P12), potem dokończyć krok 1.1 (Linux, Android, tablet graficzny).
-4. Po P12: `/realizuj-krok 1.1` (Linux, Android, tablet graficzny); kroki 1.9 i 1.10 dopiero po domknięciu 1.1.
+1. W **nowym wątku**: `/realizuj-krok 1.4` (opcjonalnie wcześniej `/weryfikuj-etap 1 krok 1.3-poprawka`).
+2. Właściciel: zatwierdzić parametr D18 (progi stuknięcia: 350 ms, 12 px) w tabeli D planu.
+3. Właściciel: naprawić środowisko laptopa: Visual Studio Installer → Build Tools 2022 → Napraw (brak `oldnames.lib`) oraz `pnpm exec playwright install chromium --force` (brak `icudtl.dat`).
+4. Właściciel: podać brakujące dane sprzętu (P12), potem dokończyć krok 1.1 (Linux, Android, tablet graficzny).
+5. Po P12: `/realizuj-krok 1.1` (Linux, Android, tablet graficzny); kroki 1.9 i 1.10 dopiero po domknięciu 1.1.
 
 ## Otwarte pytania
 - P12 (sprzęt testowy), część otwarta: dystrybucja Linuksa i sesja (X11/Wayland), tablet z Androidem i wersja systemu, model tabletu graficznego, urządzenie z ekranem dotykowym do R12 (laptop referencyjny go nie ma). Laptop referencyjny zapisany w planie (P12). **Potrzebne do dokończenia kroku 1.1** (część Windows wykonana 2026-11-10 za zgodą właściciela).
@@ -57,6 +58,14 @@ Statusy: OCZEKUJE, W TOKU, UKOŃCZONY.
 Brak.
 
 ## Dziennik sesji
+### 2026-11-19: Krok 1.3-poprawka — domknięcie WAR-02 i DAN-03
+- WAR-02 K1: `Board.execute` odrzuca polecenia wtyczki na ukrytej warstwie (także ze skrótów i paneli), jak na zablokowanej; dokumentacja API uzupełniona (typy bez zmian, API 1.0.0).
+- P17 a: cofanie i ponawianie kroku zmieniającego zawartość zablokowanej lub ukrytej warstwy (oraz dodanie / usunięcie zablokowanej) jest wstrzymane, historia bez zmian, komunikat `notice.historyLocked` / `notice.historyHidden` pokazywany raz (`Notices.addOnce`). Kolejność i krycie cofają się normalnie.
+- P17 b: dodawanie warstwy wybranego typu nad aktywną i usuwanie warstwy w panelu, przez historię (`LayerStructureEntry` przenosi ten sam rekord z danymi, więc uszkodzona warstwa i warstwa bez wtyczki wracają bez strat). Zablokowanej i ostatniej warstwy nie da się usunąć. `Board.addLayer` przechodzi teraz przez historię i ustawia nową warstwę jako aktywną.
+- DAN-03: scalona zmiana suwaka, która wraca do wartości początkowej, jest usuwana z historii (`HistoryEntry.isEmpty`).
+- D18 (progi stuknięcia 350 ms / 12 px) dopisany do tabeli D jako propozycja do zatwierdzenia. Test „ukryta warstwa nie jest renderowana” przepisany: sprawdza przesunięcie kamery zamiast cofania (cofanie na ukrytej warstwie jest teraz wstrzymane zgodnie z P17 a).
+- Kontrole: lint, typy, Vitest 146/146, licencje, build web, Playwright WebKit 21/21; Chromium nieuruchamialny (znany brak danych ICU); rustfmt, clippy, cargo test 2/2 (obejście `oldnames.lib`).
+
 ### 2026-11-19: Decyzja P17
 - (a) Właściciel: cofanie i ponawianie **nie** działa na zablokowanej ani ukrytej warstwie. Ustalono sposób: krok zmieniający zawartość takiej warstwy jest wstrzymany z komunikatem (historia i jej chronologia P4 bez zmian); kolejność i krycie cofają się normalnie.
 - (b) Właściciel powierzył decyzję: dodawanie i usuwanie warstw z cofaniem w panelu warstw, w kroku 1.3-poprawka (zasady w planie).

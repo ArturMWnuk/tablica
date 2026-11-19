@@ -96,9 +96,25 @@ export class BoardDocument {
     return id;
   }
 
+  /** A new, empty layer of the plugin that is not yet part of the document. */
+  createLayer(pluginId: string): LayerRecord {
+    return BoardDocument.recordOf({
+      id: newLayerId(),
+      pluginId,
+      pluginVersion: null,
+      schemaVersion: null,
+      data: null,
+    });
+  }
+
   private insert(stored: SerializedLayer, index = this.records.length): void {
     if (this.getLayer(stored.id)) throw new Error(`Duplicate layer id ${stored.id}`);
-    const record: LayerRecord = {
+    this.records.splice(index, 0, BoardDocument.recordOf(stored));
+    this.changed.emit();
+  }
+
+  private static recordOf(stored: SerializedLayer): LayerRecord {
+    return {
       id: stored.id,
       pluginId: stored.pluginId,
       status: 'loading',
@@ -112,7 +128,33 @@ export class BoardDocument {
       data: undefined,
       stored,
     };
-    this.records.splice(index, 0, record);
+  }
+
+  /**
+   * Takes the layer out of the document and returns it with its position, so it can be put back
+   * unchanged (with live data and last stored form) by {@link BoardDocument.restoreLayer}.
+   * If it was the active layer, the layer now at its place (or below) becomes active.
+   */
+  removeLayer(id: string): { record: LayerRecord; index: number } {
+    const index = this.indexOf(id);
+    const record = this.records[index];
+    if (index < 0 || !record) throw new Error(`Unknown layer ${id}`);
+    this.records.splice(index, 1);
+    if (this.activeByPlugin.get(record.pluginId) === id)
+      this.activeByPlugin.delete(record.pluginId);
+    if (this.activeId === id) {
+      const next = this.records[Math.min(index, this.records.length - 1)];
+      this.activeId = next?.id;
+      if (next) this.activeByPlugin.set(next.pluginId, next.id);
+    }
+    this.changed.emit();
+    return { record, index };
+  }
+
+  /** Puts back a layer taken out by {@link BoardDocument.removeLayer} at `index`. */
+  restoreLayer(record: LayerRecord, index: number): void {
+    if (this.getLayer(record.id)) throw new Error(`Duplicate layer id ${record.id}`);
+    this.records.splice(Math.max(0, Math.min(index, this.records.length)), 0, record);
     this.changed.emit();
   }
 
@@ -161,6 +203,12 @@ export class BoardDocument {
     const [record] = this.records.splice(from, 1);
     if (record) this.records.splice(to, 0, record);
     this.changed.emit();
+  }
+
+  /** Sets the status of a record, also of one that is currently outside the document (undone). */
+  setRecordStatus(record: LayerRecord, status: LayerStatus): void {
+    if (this.getLayer(record.id) === record) this.setStatus(record.id, status);
+    else record.status = status;
   }
 
   setStatus(id: string, status: LayerStatus): void {

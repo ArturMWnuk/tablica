@@ -28,6 +28,9 @@
     "drag": "Przeciągnij, aby zmienić położenie warstwy „{name}”",
     "opacity": "Krycie warstwy „{name}”",
     "percent": "{value} %",
+    "addType": "Typ nowej warstwy",
+    "add": "Dodaj warstwę",
+    "remove": "Usuń warstwę „{name}”",
     "status": {
       "loading": "Wczytywanie",
       "broken": "Uszkodzona",
@@ -51,6 +54,8 @@
     "pluginDuplicate": "Warstwa „{name}” jest już wczytana. Drugi egzemplarz wtyczki został pominięty.",
     "pluginFailed": "Warstwa „{name}” przestała działać z powodu błędu we wtyczce. Pozostałe warstwy działają, a dane tej warstwy zostaną zachowane przy zapisie.",
     "layerBroken": "Warstwa „{name}” została oznaczona jako uszkodzona po błędzie we wtyczce. Pozostałe warstwy działają, a dane tej warstwy zostaną zachowane przy zapisie.",
-    "shortcutConflict": "Skrót {keys} warstwy „{name}” jest już zajęty i nie został przypisany."
+    "shortcutConflict": "Skrót {keys} warstwy „{name}” jest już zajęty i nie został przypisany.",
+    "historyLocked": "Następny krok cofania lub ponawiania zmienia warstwę „{name}”, która jest zablokowana. Odblokuj ją w panelu warstw, aby cofnąć lub ponowić.",
+    "historyHidden": "Następny krok cofania lub ponawiania zmienia warstwę „{name}”, która jest ukryta. Pokaż ją w panelu warstw, aby cofnąć lub ponowić."
   }
 }
