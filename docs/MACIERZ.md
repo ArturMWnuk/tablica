@@ -6,12 +6,12 @@
 ## Podsumowanie
 | Etap | Wymagań | ZAIMPL. | ZWERYF. | Status etapu |
 |---|---|---|---|---|
-| 1 | 73 | 6 | 0 | REALIZACJA |
+| 1 | 73 | 5 | 0 | REALIZACJA |
 | 2 | 6 | 0 | 0 | NIEROZPOCZĘTY |
 | 3 | 13 | 0 | 0 | NIEROZPOCZĘTY |
 | 4 | 15 | 0 | 0 | NIEROZPOCZĘTY |
 | 5 | 3 | 0 | 0 | NIEROZPOCZĘTY |
-| **Razem** | **110** | **6** | **0** | |
+| **Razem** | **110** | **5** | **0** | |
 
 Wykluczenia WYK-01 – WYK-05 nie są implementowane. Audytor sprawdza w każdym etapie, czy nie zostały naruszone.
 
@@ -28,7 +28,7 @@ Wykluczenia WYK-01 – WYK-05 nie są implementowane. Audytor sprawdza w każdym
 | WEJ-05 | Nacisk, nachylenie, gumka rysika | — | | |
 | WEJ-06 | Odrzucanie dotyku dłoni | — | | |
 | WAR-01 | Wiele warstw nałożonych | ZAIMPL. | `app/src/composition/layers.test.ts` (WAR-01); `app/src/lib/core/core.test.ts` (WAR-01); `e2e/shell.spec.ts` (WAR-01) | Krok 1.2: K1–K3 (dokument z uporządkowaną listą warstw, wspólna kamera, stos kontenerów DOM, dowolna liczba warstw jednego typu wg P3) |
-| WAR-02 | Ukrywanie/pokazywanie warstwy | ZAIMPL. | `app/src/composition/history-layers.test.ts` (WAR-02); `e2e/layers-history.spec.ts` (WAR-02) | Krok 1.3: K1 (ukryta warstwa nie jest renderowana i nie dostaje zdarzeń narzędzi), K2 (stan w serializacji dokumentu; zapis pliku `.tablica` w kroku 1.5). Poza historią cofania (D12) |
+| WAR-02 | Ukrywanie/pokazywanie warstwy | W TOKU | `app/src/composition/history-layers.test.ts` (WAR-02); `e2e/layers-history.spec.ts` (WAR-02) | Krok 1.3: K1 (ukryta warstwa nie jest renderowana i nie dostaje zdarzeń narzędzi), K2 (stan w serializacji dokumentu; zapis pliku `.tablica` w kroku 1.5). Poza historią cofania (D12). Weryfikacja kroku 1.3 (WARUNKOWO): ukryta warstwa przyjmuje polecenia wtyczki ze skrótów i paneli; domknięcie K1 w kroku 1.3-poprawka |
 | WAR-03 | Blokowanie warstwy | ZAIMPL. | `app/src/composition/history-layers.test.ts` (WAR-03); `e2e/layers-history.spec.ts` (WAR-03) | Krok 1.3: K1 (oba narzędzia i skrót wtyczki testowej nic nie zmieniają na zablokowanej warstwie; rdzeń ignoruje polecenia wtyczki), K2 (panel pokazuje blokadę, stan w serializacji). Poza historią cofania (D12). Cofanie w historii działa także na zablokowanej warstwie (interpretacja do potwierdzenia, `docs/STAN.md`) |
 | WAR-04 | Zmiana kolejności warstw | ZAIMPL. | `app/src/composition/history-layers.test.ts` (WAR-04); `e2e/layers-history.spec.ts` (WAR-04) | Krok 1.3: K1 (przyciski i przeciąganie w panelu), K2 (stan w serializacji, cofanie wg D12) |
 | WAR-05 | Przezroczystość warstwy | ZAIMPL. | `app/src/composition/history-layers.test.ts` (WAR-05); `e2e/layers-history.spec.ts` (WAR-05) | Krok 1.3: K1 (suwak 0–100 %, krok 5 %), K2 (stan w serializacji, cofanie wg D12; przesunięcie suwaka to jeden krok cofania) |

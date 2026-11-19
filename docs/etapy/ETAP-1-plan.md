@@ -536,6 +536,15 @@ Każdy krok to jedna sesja (`/realizuj-krok`), kończy się działającym progra
 - **Zakres prac:** `History` (polecenia, scalanie, limit, ustawienie limitu), panel warstw, przyciski cofnij/ponów, gesty D3.
 - **Testy:** limit 50/51, cofanie każdej operacji na warstwach wg D12, blokada dla narzędzi wtyczki testowej.
 
+### Krok 1.3-poprawka: Domknięcie WAR-02 po weryfikacji kroku 1.3
+- **Podstawa:** raport `docs/raporty/ETAP-1-krok-1.3-weryfikacja.md` (wynik WARUNKOWO); zgoda właściciela 2026-11-19.
+- **ID:** WAR-02 (K1); porządki DAN-03.
+- **Zakres prac:**
+  1. Ukryta warstwa odrzuca polecenia wtyczki (`execute`), także ze skrótów i paneli, tak jak zablokowana (WAR-02 K1); uzupełnienie dokumentacji API.
+  2. Przesunięcie suwaka krycia, które kończy się na wartości początkowej, nie zostawia pustego kroku w historii (DAN-03).
+  3. Progi rozpoznawania stuknięcia z D3 (350 ms, 12 px) dopisane do tabeli D jako parametr do zatwierdzenia przez właściciela.
+- **Testy:** polecenie ze skrótu wtyczki testowej na ukrytej warstwie nic nie zmienia i nie trafia do historii; suwak przesunięty i cofnięty do wartości początkowej nie tworzy kroku cofania.
+
 ### Krok 1.4: Wejście i pisanie
 - **ID:** WEJ-01–06, RYS-01, RYS-02, NF-04.
 - **Zakres prac:** `InputRouter` (nacisk, nachylenie, gumka rysika, odrzucanie dłoni, gesty, mysz), pióro i zakreślacz, wybór koloru i grubości, instrumentacja opóźnienia (T10).

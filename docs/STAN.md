@@ -10,7 +10,7 @@
 | Bieżący etap | 1 |
 | Status etapu | REALIZACJA |
 | Plan etapu | `docs/etapy/ETAP-1-plan.md` (ZATWIERDZONY 2026-11-01) |
-| Bieżący krok | 1.4 (następny); 1.1 W TOKU (Linux i Android czekają na P12) |
+| Bieżący krok | 1.3-poprawka (następny), potem 1.4; 1.1 W TOKU (Linux i Android czekają na P12) |
 | Gałąź robocza | `etap-1` |
 
 ## Etapy
@@ -30,7 +30,8 @@ Statusy: OCZEKUJE, W TOKU, UKOŃCZONY.
 | 1.0 | Szkielet projektu i CI | PLAT-01–03 (K1), NF-01 (K1, K2 częściowo), UI-01, UI-02 (infrastruktura) | UKOŃCZONY (CI zielone: przebieg 41352386876) | 02efcb7, abae05a |
 | 1.1 | Prototypy ryzyk technicznych | przygotowanie: TLO-02, TLO-03, MM-02, MM-05, MM-09, WEJ-02, NF-04 | W TOKU (Windows gotowy: 14/14 sprawdzeń; Linux i Android po P12) | (ten commit) |
 | 1.2 | Rdzeń dokumentu i API wtyczek | WAR-01, WAR-06, WAR-12 (v1) | UKOŃCZONY (WAR-06 K1 dla gumki i zaznaczania w 1.6, P16) | 655784b |
-| 1.3 | Historia i operacje na warstwach | DAN-03, WAR-02–05 | UKOŃCZONY | (ten commit) |
+| 1.3 | Historia i operacje na warstwach | DAN-03, WAR-02–05 | UKOŃCZONY (weryfikacja: WARUNKOWO, `docs/raporty/ETAP-1-krok-1.3-weryfikacja.md`) | 0bdd68b |
+| 1.3-poprawka | Domknięcie WAR-02 po weryfikacji | WAR-02 (K1), porządki DAN-03 | OCZEKUJE | |
 | 1.4 | Wejście i pisanie | WEJ-01–06, RYS-01, RYS-02, NF-04 | OCZEKUJE | |
 | 1.5 | Zapis i odczyt lekcji | DAN-01, DAN-02 | OCZEKUJE | |
 | 1.6 | Edycja rysunku | RYS-03, RYS-04, RYS-12–14, domknięcie WAR-06 (K1, P16) | OCZEKUJE | |
@@ -44,7 +45,7 @@ Statusy: OCZEKUJE, W TOKU, UKOŃCZONY.
 | 1.14 | Wydanie i wydajność | NF-02, NF-03, NF-05, domknięcie PLAT-01–03, NF-01 | OCZEKUJE | |
 
 ## Następne działania
-1. W **nowym wątku**: `/realizuj-krok 1.4` (opcjonalnie wcześniej `/weryfikuj-etap 1 krok 1.3`).
+1. W **nowym wątku**: `/realizuj-krok 1.3-poprawka`, potem `/realizuj-krok 1.4`.
 2. Właściciel: potwierdzić interpretację kroku 1.3 (sekcja „Otwarte pytania”, P17).
 3. Właściciel: naprawić środowisko laptopa: Visual Studio Installer → Build Tools 2022 → Napraw (brak `oldnames.lib`) oraz `pnpm exec playwright install chromium --force` (brak `icudtl.dat`).
 4. Właściciel: podać brakujące dane sprzętu (P12), potem dokończyć krok 1.1 (Linux, Android, tablet graficzny).
@@ -59,6 +60,11 @@ Statusy: OCZEKUJE, W TOKU, UKOŃCZONY.
 Brak.
 
 ## Dziennik sesji
+### 2026-11-19: Weryfikacja kroku 1.3
+- Audytor: wynik **WARUNKOWO** (`docs/raporty/ETAP-1-krok-1.3-weryfikacja.md`). DAN-03, WAR-03, WAR-04, WAR-05 OK; WAR-02 CZĘŚCIOWO: ukryta warstwa przyjmuje polecenia wtyczki ze skrótów i paneli (blokowane jest tylko wejście wskaźnika). Kontrole zielone (Vitest 132/132, WebKit 19/19).
+- Uwagi audytora: P17 a uznana za rozsądną (do potwierdzenia), P17 b to luka planu (brak kroku z dodawaniem i usuwaniem warstw); kryterium „test każdego narzędzia na zablokowanej warstwie” warto dziedziczyć w krokach 1.4–1.7; drobne: pusty krok cofania po powrocie suwaka, progi stuknięcia poza tabelą D.
+- Właściciel zgodził się na krok **1.3-poprawka** (dopisany do planu i tabeli kroków). WAR-02 wraca do W TOKU do czasu poprawki.
+
 ### 2026-11-19: Krok 1.3 — historia i operacje na warstwach
 - `History` (rdzeń): limit kroków (domyślnie 50, zakres 10–500 wg D6, przy przekroczeniu usuwana najstarsza operacja), scalanie zmian ciągłych (`merge` + `seal`: przesunięcie suwaka krycia to jeden krok), czyszczenie ponowień po nowej operacji.
 - Ustawienia warstwy w rdzeniu (`visible`, `locked`, `opacity`) zapisywane w serializacji dokumentu (pola opcjonalne, dla starszych danych wartości domyślne). Kolejność i krycie przez historię, widoczność i blokada poza nią (D12). Ukryta warstwa: kontener niewidoczny, bez `render()` i bez zdarzeń narzędzi; zablokowana: `execute` wtyczki ignorowane, narzędzia bez zdarzeń.
