@@ -112,6 +112,13 @@ layer.execute(addBox(10, 20));
 
 `apply` i `revert` muszą być dokładnymi odwrotnościami i zmieniać tylko przekazane dane. Program wywołuje `apply` także przy ponawianiu. Po wykonaniu, cofnięciu i ponowieniu polecenia program sam wywołuje `render()`.
 
+Historia ma limit kroków ustawiany przez użytkownika (domyślnie 50); najstarsze polecenia są z niej usuwane. Cofanie (Ctrl+Z), ponawianie (Ctrl+Y, Ctrl+Shift+Z), przyciski i gesty obsługuje program; wtyczka nie może zająć tych skrótów.
+
+**Ustawienia warstwy należą do programu.** Widoczność, blokadę, krycie i kolejność warstw zmienia użytkownik w panelu warstw. Wtyczka nie musi ich obsługiwać:
+- na **zablokowanej** warstwie `execute` niczego nie zmienia i niczego nie zapisuje w historii, a narzędzia nie dostają zdarzeń;
+- **ukryta** warstwa nie dostaje zdarzeń narzędzi i program nie wywołuje jej `render()` (wywoła go po ponownym pokazaniu);
+- krycie całej warstwy program nakłada na jej kontener.
+
 ## 6. Narzędzia, skróty i panele
 Rejestruje się je w `activate(context)`.
 

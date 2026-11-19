@@ -41,6 +41,8 @@ Layer identifier, unique within the lesson.
 > **execute**(`command`): `void`
 
 Applies a command to this layer, records it in the undo history and redraws the layer.
+When the user has locked the layer, the command is ignored: nothing changes and nothing is
+recorded.
 
 #### Parameters
 

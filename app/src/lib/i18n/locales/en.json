@@ -7,7 +7,32 @@
   },
   "settings": {
     "language": "Language",
-    "theme": "Theme"
+    "theme": "Theme",
+    "historyLimit": "Undo steps",
+    "historyLimitHint": "Number of operations that can be undone ({min}–{max})"
+  },
+  "history": {
+    "undo": "Undo",
+    "redo": "Redo",
+    "undoHint": "Undo (Ctrl+Z, tap with two fingers)",
+    "redoHint": "Redo (Ctrl+Y or Ctrl+Shift+Z, tap with three fingers)"
+  },
+  "layers": {
+    "title": "Layers",
+    "numbered": "{name} {number}",
+    "select": "Select the layer “{name}”",
+    "visible": "Show the layer “{name}”",
+    "locked": "Lock the layer “{name}”",
+    "moveUp": "Move the layer “{name}” up",
+    "moveDown": "Move the layer “{name}” down",
+    "drag": "Drag to change the position of the layer “{name}”",
+    "opacity": "Opacity of the layer “{name}”",
+    "percent": "{value} %",
+    "status": {
+      "loading": "Loading",
+      "broken": "Broken",
+      "missing": "Plugin missing"
+    }
   },
   "language": {
     "pl": "Polski",

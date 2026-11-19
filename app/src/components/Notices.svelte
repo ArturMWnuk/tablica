@@ -1,8 +1,7 @@
 <script lang="ts">
   import type { Board } from '../lib/core/board';
   import type { Notice } from '../lib/core/notices';
-  import { hasTranslation } from '../lib/i18n/core';
-  import { i18n, t } from '../lib/i18n/i18n.svelte';
+  import { layerName, t } from '../lib/i18n/i18n.svelte';
 
   interface Props {
     board: Board;
@@ -17,12 +16,6 @@
       notices = board.notices.list;
     });
   });
-
-  /** Translated layer name, or the plugin id when the plugin has no translations. */
-  function layerName(pluginId: string): string {
-    const key = `${pluginId}.name`;
-    return hasTranslation(i18n.catalogs, key) ? t(key) : pluginId;
-  }
 </script>
 
 {#if notices.length > 0}

@@ -7,7 +7,32 @@
   },
   "settings": {
     "language": "Język",
-    "theme": "Motyw"
+    "theme": "Motyw",
+    "historyLimit": "Kroki cofania",
+    "historyLimitHint": "Liczba operacji, które można cofnąć ({min}–{max})"
+  },
+  "history": {
+    "undo": "Cofnij",
+    "redo": "Ponów",
+    "undoHint": "Cofnij (Ctrl+Z, stuknięcie dwoma palcami)",
+    "redoHint": "Ponów (Ctrl+Y lub Ctrl+Shift+Z, stuknięcie trzema palcami)"
+  },
+  "layers": {
+    "title": "Warstwy",
+    "numbered": "{name} {number}",
+    "select": "Wybierz warstwę „{name}”",
+    "visible": "Pokazuj warstwę „{name}”",
+    "locked": "Zablokuj warstwę „{name}”",
+    "moveUp": "Przesuń warstwę „{name}” wyżej",
+    "moveDown": "Przesuń warstwę „{name}” niżej",
+    "drag": "Przeciągnij, aby zmienić położenie warstwy „{name}”",
+    "opacity": "Krycie warstwy „{name}”",
+    "percent": "{value} %",
+    "status": {
+      "loading": "Wczytywanie",
+      "broken": "Uszkodzona",
+      "missing": "Brak wtyczki"
+    }
   },
   "language": {
     "pl": "Polski",

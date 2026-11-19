@@ -16,6 +16,7 @@ import { Camera } from './camera';
 import {
   BoardDocument,
   type LayerRecord,
+  normalizeOpacity,
   type SerializedDocument,
   type SerializedLayer,
 } from './document';
@@ -23,7 +24,13 @@ import { History, type HistoryEntry } from './history';
 import { LayerHost } from './layer-host';
 import { Notices } from './notices';
 import { PluginManager, type PluginSource } from './plugin-manager';
-import { type KeyInput, PanelRegistry, ShortcutRegistry, ToolRegistry } from './registries';
+import {
+  type KeyInput,
+  matchesKeys,
+  PanelRegistry,
+  ShortcutRegistry,
+  ToolRegistry,
+} from './registries';
 
 export interface BoardOptions {
   /** Plugins available to the program (built-in and installed). */
@@ -58,12 +65,62 @@ class LayerHistoryEntry implements HistoryEntry {
   }
 }
 
+/** WAR-05 K2, D12: a change of layer opacity is undoable; slider drags merge into one step. */
+class OpacityEntry implements HistoryEntry {
+  constructor(
+    private readonly document: BoardDocument,
+    readonly layerId: string,
+    private readonly from: number,
+    private to: number,
+  ) {}
+
+  apply(): void {
+    this.document.setOpacity(this.layerId, this.to);
+  }
+
+  revert(): void {
+    this.document.setOpacity(this.layerId, this.from);
+  }
+
+  merge(next: HistoryEntry): boolean {
+    if (!(next instanceof OpacityEntry) || next.layerId !== this.layerId) return false;
+    this.to = next.to;
+    return true;
+  }
+}
+
+/** WAR-04 K2, D12: a change of layer order is undoable. */
+class MoveEntry implements HistoryEntry {
+  constructor(
+    private readonly document: BoardDocument,
+    readonly layerId: string,
+    private readonly from: number,
+    private readonly to: number,
+  ) {}
+
+  apply(): void {
+    this.document.moveLayer(this.layerId, this.to);
+  }
+
+  revert(): void {
+    this.document.moveLayer(this.layerId, this.from);
+  }
+}
+
+/** Core keyboard shortcuts of the history (DAN-03 K1); plugins cannot take them. */
+export const UNDO_KEYS = ['Ctrl+Z'] as const;
+export const REDO_KEYS = ['Ctrl+Y', 'Ctrl+Shift+Z'] as const;
+
+/** D3: tap with two fingers undoes, with three fingers redoes. */
+export const UNDO_TAP_FINGERS = 2;
+export const REDO_TAP_FINGERS = 3;
+
 export class Board {
   readonly camera = new Camera();
   readonly history = new History();
   readonly notices = new Notices();
   readonly tools = new ToolRegistry();
-  readonly shortcuts = new ShortcutRegistry();
+  readonly shortcuts = new ShortcutRegistry([...UNDO_KEYS, ...REDO_KEYS]);
   readonly panels = new PanelRegistry();
   readonly document: BoardDocument;
   readonly plugins: PluginManager;
@@ -178,6 +235,8 @@ export class Board {
   execute<TData>(layerId: string, command: LayerCommand<TData>): void {
     const record = this.document.getLayer(layerId);
     if (!record || record.status !== 'ready') throw new Error(`Layer ${layerId} is not ready`);
+    // WAR-03 K1: a locked layer is protected against every change made by its plugin.
+    if (record.locked) return;
     try {
       this.history.execute(
         new LayerHistoryEntry(layerId, record, command as LayerCommand<unknown>),
@@ -187,6 +246,39 @@ export class Board {
       return;
     }
     this.host?.render(layerId);
+  }
+
+  /** WAR-02: shows or hides a layer. A view setting, not recorded in the history (D12). */
+  setLayerVisible(layerId: string, visible: boolean): void {
+    this.document.setVisible(layerId, visible);
+  }
+
+  /** WAR-03: locks or unlocks a layer. A view setting, not recorded in the history (D12). */
+  setLayerLocked(layerId: string, locked: boolean): void {
+    this.document.setLocked(layerId, locked);
+  }
+
+  /**
+   * WAR-05: sets the opacity of a layer (0–1, step 5 %) through the history (D12). With `merge`,
+   * consecutive changes of the same layer form one undo step until `history.seal()`.
+   */
+  setLayerOpacity(layerId: string, opacity: number, options: { merge?: boolean } = {}): void {
+    const record = this.document.getLayer(layerId);
+    if (!record) throw new Error(`Unknown layer ${layerId}`);
+    const to = normalizeOpacity(opacity);
+    if (record.opacity === to) return;
+    this.history.execute(new OpacityEntry(this.document, layerId, record.opacity, to), {
+      merge: options.merge === true,
+    });
+  }
+
+  /** WAR-04: moves a layer to `index` (counted from the bottom) through the history (D12). */
+  moveLayer(layerId: string, index: number): void {
+    const from = this.document.indexOf(layerId);
+    if (from < 0) throw new Error(`Unknown layer ${layerId}`);
+    const to = Math.max(0, Math.min(Math.trunc(index), this.document.layers.length - 1));
+    if (from === to) return;
+    this.history.execute(new MoveEntry(this.document, layerId, from, to));
   }
 
   undo(): boolean {
@@ -225,6 +317,8 @@ export class Board {
     if (!tool) return false;
     const record = this.document.activeLayerOf(tool.pluginId);
     if (!record || record.status !== 'ready') return false;
+    // WAR-02 K1: a hidden layer takes no input; WAR-03 K1: a locked layer cannot be edited.
+    if (!record.visible || record.locked) return false;
     try {
       tool.definition.onPointer(event, this.handle(record));
     } catch (error) {
@@ -233,8 +327,19 @@ export class Board {
     return true;
   }
 
-  /** Runs the plugin shortcut matching the key press. Returns true if one was run. */
+  /**
+   * Runs the core or plugin shortcut matching the key press: Ctrl+Z undoes, Ctrl+Y and
+   * Ctrl+Shift+Z redo (DAN-03 K1). Returns true if a shortcut was run.
+   */
   handleKey(input: KeyInput): boolean {
+    if (UNDO_KEYS.some((keys) => matchesKeys(input, keys))) {
+      this.undo();
+      return true;
+    }
+    if (REDO_KEYS.some((keys) => matchesKeys(input, keys))) {
+      this.redo();
+      return true;
+    }
     const shortcut = this.shortcuts.match(input);
     if (!shortcut) return false;
     try {
@@ -243,6 +348,19 @@ export class Board {
       this.breakPlugin(shortcut.pluginId, error);
     }
     return true;
+  }
+
+  /** D3: a tap with two fingers undoes, with three fingers redoes. Returns true if handled. */
+  handleTap(fingers: number): boolean {
+    if (fingers === UNDO_TAP_FINGERS) {
+      this.undo();
+      return true;
+    }
+    if (fingers === REDO_TAP_FINGERS) {
+      this.redo();
+      return true;
+    }
+    return false;
   }
 
   /** Mounts a plugin panel in `element`; returns a function that removes it. */

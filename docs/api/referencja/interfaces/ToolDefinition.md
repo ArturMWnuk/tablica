@@ -8,6 +8,7 @@
 
 A tool of the plugin. The program delivers events only while the tool is active, and only
 together with the active layer of the plugin's type; the tool cannot reach other layers.
+No events are delivered while that layer is hidden or locked by the user.
 
 ## Type Parameters
 

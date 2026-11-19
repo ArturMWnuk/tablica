@@ -1,5 +1,6 @@
 <script lang="ts">
   import Board from './components/Board.svelte';
+  import LayersPanel from './components/LayersPanel.svelte';
   import Notices from './components/Notices.svelte';
   import SettingsBar from './components/SettingsBar.svelte';
   import type { Board as BoardModel } from './lib/core/board';
@@ -27,8 +28,11 @@
 </script>
 
 <div class="layout">
-  <SettingsBar />
-  <Board {board} />
+  <SettingsBar {board} />
+  <div class="workspace">
+    <Board {board} />
+    <LayersPanel {board} />
+  </div>
   <Notices {board} />
 </div>
 
@@ -38,5 +42,11 @@
     display: flex;
     flex-direction: column;
     height: 100%;
+  }
+
+  .workspace {
+    display: flex;
+    flex: 1;
+    min-height: 0;
   }
 </style>

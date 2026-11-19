@@ -6,6 +6,7 @@ import {
   addNamespaceIfFree,
   type Catalogs,
   detectLocale,
+  hasTranslation,
   isLocale,
   type Locale,
   translate,
@@ -38,3 +39,9 @@ class I18n {
 
 export const i18n = new I18n();
 export const t = i18n.t;
+
+/** Translated name of a layer type, or the plugin id when the plugin has no translations. */
+export function layerName(pluginId: string): string {
+  const key = `${pluginId}.name`;
+  return hasTranslation(i18n.catalogs, key) ? t(key) : pluginId;
+}

@@ -86,11 +86,30 @@ function inputKeys(input: KeyInput): string {
   return [...modifiers, input.key.toLowerCase()].join('+');
 }
 
+/** Tells whether a key press matches a combination like `Ctrl+Shift+Z`. */
+export function matchesKeys(input: KeyInput, keys: string): boolean {
+  return normalizeKeys(keys) === inputKeys(input);
+}
+
 export class ShortcutRegistry extends Registry<ShortcutDefinition> {
+  private readonly reserved: ReadonlySet<string>;
+
+  /** `reserved`: combinations used by the core, which plugins cannot take. */
+  constructor(reserved: readonly string[] = []) {
+    super();
+    this.reserved = new Set(
+      reserved.flatMap((keys) => {
+        const normalized = normalizeKeys(keys);
+        return normalized === undefined ? [] : [normalized];
+      }),
+    );
+  }
+
   /** Throws when the combination is invalid; returns false when it is already taken. */
   tryRegister(pluginId: string, definition: ShortcutDefinition): boolean {
     const keys = normalizeKeys(definition.keys);
     if (keys === undefined) throw new Error(`Invalid shortcut ${definition.keys}`);
+    if (this.reserved.has(keys)) return false;
     if (this.list().some((item) => normalizeKeys(item.definition.keys) === keys)) return false;
     this.register(pluginId, definition);
     return true;

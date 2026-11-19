@@ -68,7 +68,14 @@ export class LayerHost {
       // a node reloads embedded frames and media.
       const current = this.root.children.item(index);
       if (current !== slot.element) this.root.insertBefore(slot.element, current);
+      // WAR-05: opacity of the whole layer; WAR-02: a hidden layer is not displayed.
+      slot.element.style.opacity = String(record.opacity);
+      const shown = slot.element.hidden && record.visible;
+      slot.element.hidden = !record.visible;
+      slot.element.style.display = record.visible ? '' : 'none';
+      slot.element.dataset['locked'] = String(record.locked);
       if (record.status === 'ready' && !slot.view) this.mount(record, slot);
+      else if (shown) this.render(record.id);
       if (record.status !== 'ready' && slot.view) this.unmount(slot);
     });
   }
@@ -94,7 +101,7 @@ export class LayerHost {
     if (!plugin) return;
     try {
       slot.view = plugin.mountLayer(this.board.layerContext(record, slot.element));
-      slot.view.render();
+      if (record.visible) slot.view.render();
     } catch (error) {
       this.board.breakLayer(record, error);
     }
@@ -111,11 +118,14 @@ export class LayerHost {
     slot.element.replaceChildren();
   }
 
-  /** Redraws one layer; an error marks only that layer as broken. */
+  /**
+   * Redraws one layer; an error marks only that layer as broken. A hidden layer is not rendered
+   * (WAR-02 K1); it is redrawn when it is shown again.
+   */
   render(layerId: string): void {
     const view = this.slots.get(layerId)?.view;
     const record = this.board.document.getLayer(layerId);
-    if (!view || !record) return;
+    if (!view || !record || !record.visible) return;
     try {
       view.render();
     } catch (error) {

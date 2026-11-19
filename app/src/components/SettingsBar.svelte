@@ -1,8 +1,36 @@
 <script lang="ts">
+  import type { Board } from '../lib/core/board';
+  import { clampHistoryLimit, MAX_HISTORY_LIMIT, MIN_HISTORY_LIMIT } from '../lib/core/history';
   import { i18n, t } from '../lib/i18n/i18n.svelte';
   import { isLocale, LOCALES } from '../lib/i18n/core';
+  import { saveHistoryLimit } from '../lib/settings/history-limit';
   import { themeState } from '../lib/theme/theme.svelte';
   import { isThemePreference, THEME_PREFERENCES } from '../lib/theme/tokens';
+  import HistoryButtons from './HistoryButtons.svelte';
+
+  interface Props {
+    board: Board;
+  }
+
+  const { board }: Props = $props();
+  let historyLimit = $state(0);
+
+  $effect(() => {
+    const update = () => {
+      historyLimit = board.history.limit;
+    };
+    update();
+    return board.history.changed.subscribe(update);
+  });
+
+  /** DAN-03 K2, D6: number of undo steps, 10–500, remembered on this device. */
+  function onHistoryLimitChange(event: Event) {
+    const input = event.currentTarget as HTMLInputElement;
+    const limit = clampHistoryLimit(Number(input.value));
+    board.history.setLimit(limit);
+    saveHistoryLimit(limit);
+    input.value = String(limit);
+  }
 
   function onLocaleChange(event: Event) {
     const value = (event.currentTarget as HTMLSelectElement).value;
@@ -17,6 +45,22 @@
 
 <header class="bar">
   <h1 class="title">{t('app.title')}</h1>
+  <HistoryButtons {board} />
+  <label
+    class="field"
+    title={t('settings.historyLimitHint', { min: MIN_HISTORY_LIMIT, max: MAX_HISTORY_LIMIT })}
+  >
+    <span>{t('settings.historyLimit')}</span>
+    <input
+      type="number"
+      data-testid="history-limit"
+      min={MIN_HISTORY_LIMIT}
+      max={MAX_HISTORY_LIMIT}
+      step="1"
+      value={historyLimit}
+      onchange={onHistoryLimitChange}
+    />
+  </label>
   <label class="field">
     <span>{t('settings.language')}</span>
     <select data-testid="language-select" value={i18n.locale} onchange={onLocaleChange}>
@@ -58,7 +102,12 @@
     color: var(--color-text-muted);
   }
 
-  select {
+  input {
+    width: 64px;
+  }
+
+  select,
+  input {
     font: inherit;
     color: var(--color-text);
     background: var(--color-surface);
@@ -67,7 +116,8 @@
     padding: 2px 6px;
   }
 
-  select:focus-visible {
+  select:focus-visible,
+  input:focus-visible {
     outline: 2px solid var(--color-accent);
     outline-offset: 1px;
   }

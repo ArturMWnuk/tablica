@@ -10,7 +10,7 @@
 | Bieżący etap | 1 |
 | Status etapu | REALIZACJA |
 | Plan etapu | `docs/etapy/ETAP-1-plan.md` (ZATWIERDZONY 2026-11-01) |
-| Bieżący krok | 1.3 (następny); 1.1 W TOKU (Linux i Android czekają na P12) |
+| Bieżący krok | 1.4 (następny); 1.1 W TOKU (Linux i Android czekają na P12) |
 | Gałąź robocza | `etap-1` |
 
 ## Etapy
@@ -30,7 +30,7 @@ Statusy: OCZEKUJE, W TOKU, UKOŃCZONY.
 | 1.0 | Szkielet projektu i CI | PLAT-01–03 (K1), NF-01 (K1, K2 częściowo), UI-01, UI-02 (infrastruktura) | UKOŃCZONY (CI zielone: przebieg 41352386876) | 02efcb7, abae05a |
 | 1.1 | Prototypy ryzyk technicznych | przygotowanie: TLO-02, TLO-03, MM-02, MM-05, MM-09, WEJ-02, NF-04 | W TOKU (Windows gotowy: 14/14 sprawdzeń; Linux i Android po P12) | (ten commit) |
 | 1.2 | Rdzeń dokumentu i API wtyczek | WAR-01, WAR-06, WAR-12 (v1) | UKOŃCZONY (WAR-06 K1 dla gumki i zaznaczania w 1.6, P16) | 655784b |
-| 1.3 | Historia i operacje na warstwach | DAN-03, WAR-02–05 | OCZEKUJE | |
+| 1.3 | Historia i operacje na warstwach | DAN-03, WAR-02–05 | UKOŃCZONY | (ten commit) |
 | 1.4 | Wejście i pisanie | WEJ-01–06, RYS-01, RYS-02, NF-04 | OCZEKUJE | |
 | 1.5 | Zapis i odczyt lekcji | DAN-01, DAN-02 | OCZEKUJE | |
 | 1.6 | Edycja rysunku | RYS-03, RYS-04, RYS-12–14, domknięcie WAR-06 (K1, P16) | OCZEKUJE | |
@@ -44,18 +44,30 @@ Statusy: OCZEKUJE, W TOKU, UKOŃCZONY.
 | 1.14 | Wydanie i wydajność | NF-02, NF-03, NF-05, domknięcie PLAT-01–03, NF-01 | OCZEKUJE | |
 
 ## Następne działania
-1. W **nowym wątku**: `/realizuj-krok 1.3` (opcjonalnie wcześniej `/weryfikuj-etap 1 krok 1.2`).
-2. Właściciel: naprawić środowisko laptopa: Visual Studio Installer → Build Tools 2022 → Napraw (brak `oldnames.lib`) oraz `pnpm exec playwright install chromium --force` (brak `icudtl.dat`).
-3. Właściciel: podać brakujące dane sprzętu (P12), potem dokończyć krok 1.1 (Linux, Android, tablet graficzny).
-4. Po P12: `/realizuj-krok 1.1` (Linux, Android, tablet graficzny); kroki 1.9 i 1.10 dopiero po domknięciu 1.1.
+1. W **nowym wątku**: `/realizuj-krok 1.4` (opcjonalnie wcześniej `/weryfikuj-etap 1 krok 1.3`).
+2. Właściciel: potwierdzić interpretację kroku 1.3 (sekcja „Otwarte pytania”, P17).
+3. Właściciel: naprawić środowisko laptopa: Visual Studio Installer → Build Tools 2022 → Napraw (brak `oldnames.lib`) oraz `pnpm exec playwright install chromium --force` (brak `icudtl.dat`).
+4. Właściciel: podać brakujące dane sprzętu (P12), potem dokończyć krok 1.1 (Linux, Android, tablet graficzny).
+5. Po P12: `/realizuj-krok 1.1` (Linux, Android, tablet graficzny); kroki 1.9 i 1.10 dopiero po domknięciu 1.1.
 
 ## Otwarte pytania
 - P12 (sprzęt testowy), część otwarta: dystrybucja Linuksa i sesja (X11/Wayland), tablet z Androidem i wersja systemu, model tabletu graficznego, urządzenie z ekranem dotykowym do R12 (laptop referencyjny go nie ma). Laptop referencyjny zapisany w planie (P12). **Potrzebne do dokończenia kroku 1.1** (część Windows wykonana 2026-11-10 za zgodą właściciela).
+
+- P17 (krok 1.3, nieblokujące, przyjęto interpretację do potwierdzenia): (a) blokada warstwy (WAR-03) chroni przed narzędziami i poleceniami wtyczki, ale **cofanie i ponawianie** we wspólnej historii działa także na zablokowanej i ukrytej warstwie (inaczej trzeba by przerywać chronologię P4); (b) dodawanie warstwy (`Board.addLayer`) nie trafia do historii, bo nie ma jeszcze interfejsu dodawania i usuwania warstw; plan nie wskazuje kroku, w którym taki interfejs powstaje (P3). Czy tak zostawić, a dodawanie / usuwanie warstw z cofaniem zaplanować (np. w kroku 1.13)?
 
 ## Blokery
 Brak.
 
 ## Dziennik sesji
+### 2026-11-19: Krok 1.3 — historia i operacje na warstwach
+- `History` (rdzeń): limit kroków (domyślnie 50, zakres 10–500 wg D6, przy przekroczeniu usuwana najstarsza operacja), scalanie zmian ciągłych (`merge` + `seal`: przesunięcie suwaka krycia to jeden krok), czyszczenie ponowień po nowej operacji.
+- Ustawienia warstwy w rdzeniu (`visible`, `locked`, `opacity`) zapisywane w serializacji dokumentu (pola opcjonalne, dla starszych danych wartości domyślne). Kolejność i krycie przez historię, widoczność i blokada poza nią (D12). Ukryta warstwa: kontener niewidoczny, bez `render()` i bez zdarzeń narzędzi; zablokowana: `execute` wtyczki ignorowane, narzędzia bez zdarzeń.
+- Skróty Ctrl+Z, Ctrl+Y, Ctrl+Shift+Z obsługuje rdzeń i są zarezerwowane (wtyczka dostaje komunikat o konflikcie); pola tekstowe zachowują własne cofanie. Gesty D3: rozpoznawanie stuknięcia wieloma palcami (`TapGestureRecognizer`, ruch > 12 px lub dotyk > 350 ms to nie stuknięcie); integracja z pełnym potokiem wejścia w kroku 1.4.
+- Interfejs: przyciski cofnij/ponów, pole „Kroki cofania” (zapamiętywane na urządzeniu), panel warstw (od góry stosu: wybór aktywnej, widoczność, blokada, w górę / w dół, przeciąganie uchwytem, suwak krycia).
+- API wtyczek bez zmian typów (nadal 1.0.0); dokumentacja `LayerHandle.execute`, `LayerView.render` i `ToolDefinition` uzupełniona o zachowanie przy zablokowanej i ukrytej warstwie; przewodnik i referencja zaktualizowane.
+- Kontrole: lint, typy, Vitest 132/132, licencje npm, build web, Playwright WebKit 19/19; Chromium 0/19 (znany brak danych ICU / `icudtl.dat`, środowisko); rustfmt, clippy, cargo test 2/2 (z obejściem `oldnames.lib`).
+- Interpretacje do potwierdzenia: P17.
+
 ### 2026-11-19: Decyzja P16
 - Właściciel przyjął propozycję: test WAR-06 K1 z gumką (oba tryby) i zaznaczaniem powstaje w kroku 1.6, wtedy WAR-06 dostaje ZAIMPL.; do tego czasu W TOKU. Zapisano w planie (sekcja 1, krok 1.6, tabela pytań) i w MACIERZ.
 

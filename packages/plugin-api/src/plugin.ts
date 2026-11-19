@@ -61,7 +61,11 @@ export interface LayerHandle<TData> {
   readonly id: string;
   /** Current layer data. Read it freely; change it only through {@link LayerHandle.execute}. */
   readonly data: Readonly<TData>;
-  /** Applies a command to this layer, records it in the undo history and redraws the layer. */
+  /**
+   * Applies a command to this layer, records it in the undo history and redraws the layer.
+   * When the user has locked the layer, the command is ignored: nothing changes and nothing is
+   * recorded.
+   */
   execute(command: LayerCommand<TData>): void;
 }
 
@@ -83,7 +87,9 @@ export interface LayerView {
   /**
    * Redraws the layer from `layer.data` and `layer.camera`. The program calls it after
    * mounting, after every change of the layer data, after a camera change, after a change
-   * of the board size and after a change of the interface language.
+   * of the board size and after a change of the interface language. It is not called while the
+   * layer is hidden; the layer is redrawn when it is shown again. Opacity of the whole layer is
+   * applied by the program to the container.
    */
   render(): void;
   /** Removes everything the plugin added to the container. */
@@ -112,6 +118,7 @@ export interface ToolPointerEvent {
 /**
  * A tool of the plugin. The program delivers events only while the tool is active, and only
  * together with the active layer of the plugin's type; the tool cannot reach other layers.
+ * No events are delivered while that layer is hidden or locked by the user.
  */
 export interface ToolDefinition<TData> {
   /** Identifier unique within the plugin. */
