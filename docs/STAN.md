@@ -10,7 +10,7 @@
 | Bieżący etap | 1 |
 | Status etapu | REALIZACJA |
 | Plan etapu | `docs/etapy/ETAP-1-plan.md` (ZATWIERDZONY 2026-11-01) |
-| Bieżący krok | 1.4 (następny); 1.1 W TOKU (Linux i Android czekają na P12) |
+| Bieżący krok | 1.3-poprawka-2 (następny), potem 1.4; 1.1 W TOKU (Linux i Android czekają na P12) |
 | Gałąź robocza | `etap-1` |
 
 ## Etapy
@@ -31,7 +31,8 @@ Statusy: OCZEKUJE, W TOKU, UKOŃCZONY.
 | 1.1 | Prototypy ryzyk technicznych | przygotowanie: TLO-02, TLO-03, MM-02, MM-05, MM-09, WEJ-02, NF-04 | W TOKU (Windows gotowy: 14/14 sprawdzeń; Linux i Android po P12) | (ten commit) |
 | 1.2 | Rdzeń dokumentu i API wtyczek | WAR-01, WAR-06, WAR-12 (v1) | UKOŃCZONY (WAR-06 K1 dla gumki i zaznaczania w 1.6, P16) | 655784b |
 | 1.3 | Historia i operacje na warstwach | DAN-03, WAR-02–05 | UKOŃCZONY (weryfikacja: WARUNKOWO, `docs/raporty/ETAP-1-krok-1.3-weryfikacja.md`) | 0bdd68b |
-| 1.3-poprawka | Domknięcie WAR-02 i DAN-03 po weryfikacji | WAR-02 (K1), WAR-03 (P17 a), DAN-03 (P17 b: dodawanie i usuwanie warstw), WAR-01 K3 (interfejs) | UKOŃCZONY | (ten commit) |
+| 1.3-poprawka | Domknięcie WAR-02 i DAN-03 po weryfikacji | WAR-02 (K1), WAR-03 (P17 a), DAN-03 (P17 b: dodawanie i usuwanie warstw), WAR-01 K3 (interfejs) | UKOŃCZONY (weryfikacja: WARUNKOWO, `docs/raporty/ETAP-1-krok-1.3-poprawka-weryfikacja.md`) | f6fd8e4 |
+| 1.3-poprawka-2 | Przypadki brzegowe historii warstw | DAN-03 (P17 b), WAR-03 (P17 a) | OCZEKUJE | |
 | 1.4 | Wejście i pisanie | WEJ-01–06, RYS-01, RYS-02, NF-04 | OCZEKUJE | |
 | 1.5 | Zapis i odczyt lekcji | DAN-01, DAN-02 | OCZEKUJE | |
 | 1.6 | Edycja rysunku | RYS-03, RYS-04, RYS-12–14, domknięcie WAR-06 (K1, P16) | OCZEKUJE | |
@@ -45,7 +46,7 @@ Statusy: OCZEKUJE, W TOKU, UKOŃCZONY.
 | 1.14 | Wydanie i wydajność | NF-02, NF-03, NF-05, domknięcie PLAT-01–03, NF-01 | OCZEKUJE | |
 
 ## Następne działania
-1. W **nowym wątku**: `/realizuj-krok 1.4` (opcjonalnie wcześniej `/weryfikuj-etap 1 krok 1.3-poprawka`).
+1. W **nowym wątku**: `/realizuj-krok 1.3-poprawka-2`, potem `/realizuj-krok 1.4`.
 2. Właściciel: zatwierdzić parametr D18 (progi stuknięcia: 350 ms, 12 px) w tabeli D planu.
 3. Właściciel: naprawić środowisko laptopa: Visual Studio Installer → Build Tools 2022 → Napraw (brak `oldnames.lib`) oraz `pnpm exec playwright install chromium --force` (brak `icudtl.dat`).
 4. Właściciel: podać brakujące dane sprzętu (P12), potem dokończyć krok 1.1 (Linux, Android, tablet graficzny).
@@ -58,6 +59,11 @@ Statusy: OCZEKUJE, W TOKU, UKOŃCZONY.
 Brak.
 
 ## Dziennik sesji
+### 2026-11-19: Weryfikacja kroku 1.3-poprawka
+- Audytor: wynik **WARUNKOWO** (`docs/raporty/ETAP-1-krok-1.3-poprawka-weryfikacja.md`). WAR-02 K1 i WAR-01 K3 OK; WAR-03 (P17 a) i DAN-03 (P17 b) CZĘŚCIOWO; kryteria kroku 1.3 bez regresji. Kontrole zielone (Vitest 146/146, WebKit 21/21).
+- Braki: awaria wtyczki przy usuniętej (cofalnej) warstwie gubi dane z sesji; warstwa dodana i cofnięta przed nieudanym wczytaniem wtyczki zostaje „Wczytywanie”; komunikat P17 a bez numeru warstwy; luki w testach (ponowienie na ukrytej warstwie, ponowienie dodania/usunięcia z porównaniem serializacji, e2e ostatniej warstwy).
+- Właściciel zgodził się na krok **1.3-poprawka-2** (dopisany do planu i tabeli kroków). DAN-03 i WAR-03 wracają do W TOKU do czasu poprawki. D18 nadal czeka na zatwierdzenie.
+
 ### 2026-11-19: Krok 1.3-poprawka — domknięcie WAR-02 i DAN-03
 - WAR-02 K1: `Board.execute` odrzuca polecenia wtyczki na ukrytej warstwie (także ze skrótów i paneli), jak na zablokowanej; dokumentacja API uzupełniona (typy bez zmian, API 1.0.0).
 - P17 a: cofanie i ponawianie kroku zmieniającego zawartość zablokowanej lub ukrytej warstwy (oraz dodanie / usunięcie zablokowanej) jest wstrzymane, historia bez zmian, komunikat `notice.historyLocked` / `notice.historyHidden` pokazywany raz (`Notices.addOnce`). Kolejność i krycie cofają się normalnie.

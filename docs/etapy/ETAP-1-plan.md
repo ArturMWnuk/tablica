@@ -547,6 +547,15 @@ Każdy krok to jedna sesja (`/realizuj-krok`), kończy się działającym progra
   5. Progi rozpoznawania stuknięcia z D3 (350 ms, 12 px) dopisane do tabeli D jako parametr do zatwierdzenia przez właściciela.
 - **Testy:** polecenie ze skrótu wtyczki testowej na ukrytej warstwie nic nie zmienia i nie trafia do historii; cofnięcie i ponowienie kroku na zablokowanej i ukrytej warstwie jest wstrzymane z komunikatem, a po odblokowaniu lub pokazaniu działa; dodanie i usunięcie warstwy (także uszkodzonej) cofa się i ponawia z zachowaniem danych (porównanie serializacji); zablokowanej warstwy nie można usunąć; ostatniej warstwy nie można usunąć; suwak przesunięty i cofnięty do wartości początkowej nie tworzy kroku cofania; e2e panelu: dodanie i usunięcie warstwy.
 
+### Krok 1.3-poprawka-2: Przypadki brzegowe historii warstw po weryfikacji poprawki
+- **Podstawa:** raport `docs/raporty/ETAP-1-krok-1.3-poprawka-weryfikacja.md` (wynik WARUNKOWO); zgoda właściciela 2026-11-19.
+- **ID:** DAN-03 (K1, P17 b), WAR-03 (K1, P17 a).
+- **Zakres prac:**
+  1. Awaria wtyczki zachowuje najnowsze dane także warstw usuniętych, które można przywrócić cofnięciem (warstwy w historii poza dokumentem); po cofnięciu usunięcia warstwa jest oznaczona jako uszkodzona, a zapis zawiera jej najnowsze dane (P17 b: „bez strat”).
+  2. Warstwa dodana i cofnięta przed wczytaniem wtyczki dostaje właściwy stan (gotowa, uszkodzona albo brak wtyczki) także wtedy, gdy wczytanie się nie powiedzie; po ponowieniu nie zostaje w stanie „Wczytywanie”.
+  3. Komunikaty o wstrzymanym cofaniu (P17 a) podają nazwę warstwy tak jak panel (z numerem, gdy jest kilka warstw jednego typu).
+- **Testy:** awaria wtyczki przy usuniętej warstwie, potem cofnięcie: serializacja zawiera dane sprzed awarii; cofnięcie dodania przed wczytaniem wtyczki (udane i nieudane wczytanie) i ponowienie: właściwy stan; komunikat z numerem warstwy; ponowienie wstrzymane na ukrytej warstwie; ponowienie dodania i usunięcia (także warstwy uszkodzonej i bez wtyczki) sprawdzone porównaniem serializacji; e2e: przycisk usuwania wyłączony przy ostatniej warstwie.
+
 ### Krok 1.4: Wejście i pisanie
 - **ID:** WEJ-01–06, RYS-01, RYS-02, NF-04.
 - **Zakres prac:** `InputRouter` (nacisk, nachylenie, gumka rysika, odrzucanie dłoni, gesty, mysz), pióro i zakreślacz, wybór koloru i grubości, instrumentacja opóźnienia (T10).
