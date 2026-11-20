@@ -9,7 +9,16 @@
     "language": "Language",
     "theme": "Theme",
     "historyLimit": "Undo steps",
-    "historyLimitHint": "Number of operations that can be undone ({min}–{max})"
+    "historyLimitHint": "Number of operations that can be undone ({min}–{max})",
+    "penDisablesFinger": "Pen turns off finger drawing",
+    "penDisablesFingerHint": "After the pen is first used, a finger only moves and zooms the view (until the end of the session)"
+  },
+  "tools": {
+    "label": "Tools",
+    "select": "Tool: {name}"
+  },
+  "panels": {
+    "label": "Tool settings"
   },
   "history": {
     "undo": "Undo",

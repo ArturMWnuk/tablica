@@ -6,7 +6,7 @@
 
 # Variable: API\_VERSION
 
-> `const` **API\_VERSION**: `"1.0.0"` = `'1.0.0'`
+> `const` **API\_VERSION**: `"1.1.0"` = `'1.1.0'`
 
 Version of the plugin API implemented by this package (SemVer).
 

@@ -9,7 +9,16 @@
     "language": "Język",
     "theme": "Motyw",
     "historyLimit": "Kroki cofania",
-    "historyLimitHint": "Liczba operacji, które można cofnąć ({min}–{max})"
+    "historyLimitHint": "Liczba operacji, które można cofnąć ({min}–{max})",
+    "penDisablesFinger": "Rysik wyłącza rysowanie palcem",
+    "penDisablesFingerHint": "Po pierwszym użyciu rysika palec tylko przesuwa i powiększa widok (do końca sesji)"
+  },
+  "tools": {
+    "label": "Narzędzia",
+    "select": "Narzędzie: {name}"
+  },
+  "panels": {
+    "label": "Ustawienia narzędzi"
   },
   "history": {
     "undo": "Cofnij",

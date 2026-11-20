@@ -6,12 +6,12 @@
 ## Podsumowanie
 | Etap | Wymagań | ZAIMPL. | ZWERYF. | Status etapu |
 |---|---|---|---|---|
-| 1 | 73 | 6 | 0 | REALIZACJA |
+| 1 | 73 | 13 | 0 | REALIZACJA |
 | 2 | 6 | 0 | 0 | NIEROZPOCZĘTY |
 | 3 | 13 | 0 | 0 | NIEROZPOCZĘTY |
 | 4 | 15 | 0 | 0 | NIEROZPOCZĘTY |
 | 5 | 3 | 0 | 0 | NIEROZPOCZĘTY |
-| **Razem** | **110** | **4** | **0** | |
+| **Razem** | **110** | **13** | **0** | |
 
 Wykluczenia WYK-01 – WYK-05 nie są implementowane. Audytor sprawdza w każdym etapie, czy nie zostały naruszone.
 
@@ -21,12 +21,12 @@ Wykluczenia WYK-01 – WYK-05 nie są implementowane. Audytor sprawdza w każdym
 | PLAT-01 | Windows | W TOKU | `.github/workflows/ci.yml` (build-desktop: NSIS, MSI); `e2e/shell.spec.ts`; `src-tauri/src/lib.rs` (`plat_01_*`) | K1 przygotowane w kroku 1.0, potwierdzone w CI (przebieg 41352386876). Lokalnie: `tauri build` NSIS+MSI i test dymny `e2e-app/smoke.test.mjs` zaliczone na Windows 11. K2 ręczny R01. Domknięcie: 1.14 |
 | PLAT-02 | Linux | W TOKU | `.github/workflows/ci.yml` (build-desktop: AppImage, deb; smoke); `e2e-app/smoke.test.mjs` | K1 przygotowane w kroku 1.0, potwierdzone w CI (przebieg 41352386876). K2 ręczny R02. Domknięcie: 1.14 |
 | PLAT-03 | Android | W TOKU | `.github/workflows/ci.yml` (build-android: APK arm64-v8a) | K1 przygotowane w kroku 1.0, potwierdzone w CI (przebieg 41352386876). APK debug do czasu klucza wydania (1.14). K2 ręczny R03. Domknięcie: 1.14 |
-| WEJ-01 | Tablet z Androidem i rysikiem | — | | |
-| WEJ-02 | Tablet graficzny | — | | Krok 1.1 (prototyp, bez zmiany statusu): Windows OK, `docs/etapy/ETAP-1-prototypy.md`; Linux/Android czekają na P12 (pióro syntetyczne Windows Ink; tablet ręcznie R11) |
-| WEJ-03 | Ekran dotykowy | — | | |
-| WEJ-04 | Mysz i klawiatura | — | | |
-| WEJ-05 | Nacisk, nachylenie, gumka rysika | — | | |
-| WEJ-06 | Odrzucanie dotyku dłoni | — | | |
+| WEJ-01 | Tablet z Androidem i rysikiem | ZAIMPL. | `app/src/composition/input.test.ts` (WEJ-01); `e2e/drawing.spec.ts` (WEJ-01); ręczny: R10 | Krok 1.4: K1 (potok wejścia `InputRouter` rozpoznaje pen / touch / mouse i kieruje zdarzenia do aktywnego narzędzia). K2 ręczny R10 (po P12) |
+| WEJ-02 | Tablet graficzny | W TOKU | `app/src/composition/input.test.ts` (WEJ-05: nacisk, nachylenie, przyciski rysika); ręczny: R11 | Krok 1.1 (prototyp): Windows OK, `docs/etapy/ETAP-1-prototypy.md`; Linux/Android czekają na P12. Krok 1.4: tablet graficzny przechodzi przez ten sam potok co rysik (nacisk, nachylenie). Przyciski rysika wg D4: pierwszy (menu kontekstowe, UI-06) nie rysuje do kroku 1.12, drugi (gumka) czeka na gumkę z kroku 1.6 (P18 a). Ryzyko do R11 na Linuksie: WebKit podaje `tiltX` 90 dla pióra bez danych o nachyleniu; program traktuje dokładnie ±90° jako brak danych |
+| WEJ-03 | Ekran dotykowy | ZAIMPL. | `app/src/composition/input.test.ts` (WEJ-03); ręczny: R12 | Krok 1.4: K1 (jeden palec rysuje, dopóki nie użyto rysika, D4), K2 (dwa palce: przesuwanie i pinch bez rysowania; kreska pierwszego palca porzucana), gesty D3 przeniesione do potoku wejścia. K3 ręczny R12 (po P12: urządzenie dotykowe). Interpretacja do potwierdzenia: P18 b |
+| WEJ-04 | Mysz i klawiatura | ZAIMPL. | `app/src/composition/input.test.ts` (WEJ-04); `e2e/drawing.spec.ts` (WEJ-04) | Krok 1.4: K1 (lewy przycisk = narzędzie, kółko przewija, Ctrl + kółko powiększa, środkowy przycisk i Spacja + przeciągnięcie przesuwają; powiększenie w zakresie D5), K2 (e2e: każde narzędzie paska używalne myszą) |
+| WEJ-05 | Nacisk, nachylenie, gumka rysika | W TOKU | `packages/layer-drawing/src/stroke.test.ts` (WEJ-05); `app/src/composition/input.test.ts` (WEJ-05); ręczny: R10, R11 | Krok 1.4: K1 (nacisk 1,0 daje 2,29× grubości przy 0,25), K2 (mysz i palec: nacisk 0,5, grubość nominalna), K4 (D2: liniowo od 45° do 1,5× przy 90°). K3: mechanizm przełączania na gumkę na czas kontaktu sprawdzony narzędziem testowym; warstwa rysunkowa nie ma jeszcze gumki (RYS-03/04, krok 1.6), więc w programie końcówka gumki na razie nie rysuje. Pytanie P18 a: domknięcie K3 w kroku 1.6 |
+| WEJ-06 | Odrzucanie dotyku dłoni | ZAIMPL. | `app/src/composition/input.test.ts` (WEJ-06); ręczny: R13 | Krok 1.4: K1 (dotyk ignorowany przy kontakcie rysika, w zasięgu (hover) i do 500 ms po jego ostatnim zdarzeniu; dłoń przy lądowaniu rysika przerywa kreskę palca), K2 (D4: po użyciu rysika palec nie rysuje; przełącznik w pasku ustawień, zapamiętywany na urządzeniu). K3 ręczny R13 (po P12) |
 | WAR-01 | Wiele warstw nałożonych | ZAIMPL. | `app/src/composition/layers.test.ts` (WAR-01); `app/src/lib/core/core.test.ts` (WAR-01); `e2e/shell.spec.ts` (WAR-01) | Krok 1.2: K1–K3 (dokument z uporządkowaną listą warstw, wspólna kamera, stos kontenerów DOM, dowolna liczba warstw jednego typu wg P3). Krok 1.3-poprawka: dodawanie warstwy wybranego typu w panelu warstw (`app/src/composition/history-layers.test.ts`, `e2e/layers-history.spec.ts`) |
 | WAR-02 | Ukrywanie/pokazywanie warstwy | ZAIMPL. | `app/src/composition/history-layers.test.ts` (WAR-02); `e2e/layers-history.spec.ts` (WAR-02) | Krok 1.3: K1 (ukryta warstwa nie jest renderowana i nie dostaje zdarzeń narzędzi), K2 (stan w serializacji dokumentu; zapis pliku `.tablica` w kroku 1.5). Poza historią cofania (D12). Weryfikacja kroku 1.3 (WARUNKOWO): ukryta warstwa przyjmuje polecenia wtyczki ze skrótów i paneli; domknięte w kroku 1.3-poprawka: ukryta warstwa odrzuca polecenia wtyczki (test skrótu wtyczki testowej) |
 | WAR-03 | Blokowanie warstwy | ZAIMPL. | `app/src/composition/history-layers.test.ts` (WAR-03); `e2e/layers-history.spec.ts` (WAR-03) | Krok 1.3: K1 (oba narzędzia i skrót wtyczki testowej nic nie zmieniają na zablokowanej warstwie; rdzeń ignoruje polecenia wtyczki), K2 (panel pokazuje blokadę, stan w serializacji). Poza historią cofania (D12). Decyzja P17 a (2026-11-19): cofanie i ponawianie zmian zawartości zablokowanej i ukrytej warstwy jest wstrzymane z komunikatem, zablokowanej warstwy nie da się usunąć (krok 1.3-poprawka). Kryterium „test każdego narzędzia” dotyczy też narzędzi z kroków 1.4–1.7 (zalecenie audytu). Weryfikacja poprawki (WARUNKOWO): komunikat bez numeru warstwy, brak testu ponowienia na ukrytej warstwie; domknięte w kroku 1.3-poprawka-2: komunikat podaje nazwę warstwy z numerem jak panel (testy „WAR-03: the message gives…”, e2e „WAR-03: a held-back step names the layer…”), test ponowienia wstrzymanego na ukrytej warstwie |
@@ -38,9 +38,9 @@ Wykluczenia WYK-01 – WYK-05 nie są implementowane. Audytor sprawdza w każdym
 | WAR-09 | Instalacja warstwy z pliku | — | | |
 | WAR-10 | Katalog warstw online | — | | |
 | WAR-11 | Niezależne wersje i aktualizacje warstw | — | | |
-| WAR-12 | Stabilne, udokumentowane API wtyczek | W TOKU | `packages/plugin-api/src/api.test.ts`; `tools/eslint-rules/boundaries.test.ts`; `tools/api-docs.test.ts`; `app/src/composition/layers.test.ts` (WAR-12); `app/src/lib/core/core.test.ts` (WAR-12) | Krok 1.2: K1–K4 w wersji v1 (API 1.0.0, `docs/api/`, wtyczka testowa `packages/test-fixture-layer`). Domknięcie (dokumentacja końcowa): 1.13 |
-| RYS-01 | Pióro z naciskiem | — | | |
-| RYS-02 | Zakreślacz | — | | |
+| WAR-12 | Stabilne, udokumentowane API wtyczek | W TOKU | `packages/plugin-api/src/api.test.ts`; `tools/eslint-rules/boundaries.test.ts`; `tools/api-docs.test.ts`; `app/src/composition/layers.test.ts` (WAR-12); `app/src/lib/core/core.test.ts` (WAR-12) | Krok 1.2: K1–K4 w wersji v1 (API 1.0.0, `docs/api/`, wtyczka testowa `packages/test-fixture-layer`). Krok 1.4: API 1.1.0 (zgodne wstecz: `tilt`, `predicted`, `ToolPointerSample`), warstwa rysunkowa może mieć zewnętrzne biblioteki (perfect-freehand, ADR-007), ale z pakietów programu tylko `@tablica/plugin-api`. Domknięcie (dokumentacja końcowa): 1.13 |
+| RYS-01 | Pióro z naciskiem | ZAIMPL. | `packages/layer-drawing/src/stroke.test.ts` (RYS-01); `app/src/composition/drawing.test.ts` (RYS-01, WAR-03); `e2e/drawing.spec.ts` (RYS-01, wzorzec `e2e/reference/pen-stroke.png`); ręczny: R10–R12 | Krok 1.4: K1 (grubość wg WEJ-05), K2 (paleta 13 kolorów, dowolny kolor: próbnik i kod hex, 6 grubości gotowych, suwak 1–50 px), K3 (obrys perfect-freehand z naciskiem i wygładzaniem; porównanie maski z wzorcem, IoU ≥ 0,9, WebKit i Edge). Kreska = jeden krok cofania; test narzędzia na zablokowanej i ukrytej warstwie (WAR-03 K1). K4 ręczny |
+| RYS-02 | Zakreślacz | ZAIMPL. | `packages/layer-drawing/src/stroke.test.ts` (RYS-02); `app/src/composition/drawing.test.ts` (RYS-02, WAR-03); `e2e/drawing.spec.ts` (RYS-02) | Krok 1.4: K1 (krycie 40 %, stała grubość, nakładające się części jednej kreski nie ciemnieją: test obrazu), K2 (mieszanie „multiply”: czarna kreska pod zakreśleniem zostaje czarna: test obrazu) |
 | RYS-03 | Gumka: cała kreska | — | | |
 | RYS-04 | Gumka: fragment | — | | |
 | RYS-05 | Figury | — | | |
@@ -86,10 +86,10 @@ Wykluczenia WYK-01 – WYK-05 nie są implementowane. Audytor sprawdza w każdym
 | DAN-04 | Eksport PDF | — | | |
 | DAN-05 | Eksport PNG | — | | |
 | INT-01 | Zgodność z udostępnianiem ekranu | — | | |
-| NF-01 | GPL-3.0, zgodne licencje | W TOKU | `scripts/license-policy.test.ts`; `scripts/check-licenses.mjs`; `src-tauri/deny.toml`; `src-tauri/src/lib.rs` (`nf_01_*`) | Weryfikowane w każdym etapie. Krok 1.0: K1 (kontrola npm i Cargo w CI), K2 bez listy w „O programie”. Domknięcie: 1.14 |
+| NF-01 | GPL-3.0, zgodne licencje | W TOKU | `scripts/license-policy.test.ts`; `scripts/check-licenses.mjs`; `src-tauri/deny.toml`; `src-tauri/src/lib.rs` (`nf_01_*`) | Weryfikowane w każdym etapie. Krok 1.0: K1 (kontrola npm i Cargo w CI), K2 bez listy w „O programie”. Krok 1.4: kontrola npm obejmuje zależności wszystkich pakietów obszaru roboczego (`--recursive`; wcześniej tylko pakietu głównego), nowa zależność perfect-freehand 1.2.2 (MIT). Domknięcie: 1.14 |
 | NF-02 | Instalatory na GitHub Releases | — | | |
 | NF-03 | Płynność na sprzęcie docelowym | — | | Weryfikowane w każdym etapie. Krok 1.2: moduły wtyczek ładowane leniwie, przy pierwszej warstwie danego typu (test w `app/src/composition/layers.test.ts`) |
-| NF-04 | Brak opóźnienia rysowania | — | | Próg w planie etapu 1. Krok 1.1 (prototyp, bez zmiany statusu): Windows OK, `docs/etapy/ETAP-1-prototypy.md`; Linux/Android czekają na P12 (WebView2: p95 0,7 ms) |
+| NF-04 | Brak opóźnienia rysowania | ZAIMPL. | `app/src/composition/input.test.ts` (NF-04); `packages/layer-drawing/src/stroke.test.ts` (NF-04); `e2e/drawing.spec.ts` (NF-04); ręczny: R10, R11 | Krok 1.1 (prototyp): Windows OK (WebView2: p95 0,7 ms). Krok 1.4 (T10): K1 (licznik `LatencyMeter`, czas od `event.timeStamp` do końca rysowania segmentu; e2e: 400 zdarzeń pióra, p95 ≤ 4 ms w WebKit i Edge; odczyt w programie: `tablicaDiagnostics.latency`), K2 (zdarzenia scalone i przewidywane, ścieżka zapasowa bez nich; bieżąca kreska rysowana przyrostowo na płótnie `desynchronized`). K3 ręczny R10, R11 (po P12) |
 | NF-05 | Praca offline | — | | Weryfikowane w każdym etapie |
 
 ## Etap 2

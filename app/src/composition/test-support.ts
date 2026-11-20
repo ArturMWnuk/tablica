@@ -53,6 +53,8 @@ export function pointerDown(x: number, y: number) {
     screen: { x, y },
     pointerType: 'mouse' as const,
     pressure: 0.5,
+    tilt: 0,
     buttons: 1,
+    predicted: [],
   };
 }

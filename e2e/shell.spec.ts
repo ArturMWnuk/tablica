@@ -40,7 +40,9 @@ test.describe('WAR-01: layers', () => {
       elements.map((element) => JSON.stringify(element.getBoundingClientRect())),
     );
     expect(new Set(boxes).size).toBe(1);
-    await expect(layers.nth(2).locator('canvas')).toHaveCount(1);
+    // The drawing layer: a canvas with finished strokes and one for the stroke being drawn.
+    await expect(layers.nth(2).locator('canvas.drawing-canvas')).toHaveCount(1);
+    await expect(layers.nth(2).locator('canvas.drawing-live')).toHaveCount(1);
   });
 });
 

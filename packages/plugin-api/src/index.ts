@@ -34,6 +34,7 @@ export {
   type ShortcutDefinition,
   type ToolDefinition,
   type ToolPointerEvent,
+  type ToolPointerSample,
   type Translate,
   type TranslationParams,
 } from './plugin';

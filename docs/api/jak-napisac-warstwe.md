@@ -160,7 +160,12 @@ activate(context) {
 }
 ```
 
-- **Narzędzie** dostaje zdarzenia tylko wtedy, gdy jest aktywne, i zawsze razem z aktywną warstwą typu tej wtyczki. Zdarzenie zawiera pozycję na tablicy (`world`), w kontenerze (`screen`), rodzaj urządzenia, nacisk i przyciski.
+- **Narzędzie** dostaje zdarzenia tylko wtedy, gdy jest aktywne, i zawsze razem z aktywną warstwą typu tej wtyczki. Zdarzenie zawiera pozycję na tablicy (`world`), w kontenerze (`screen`), rodzaj urządzenia, nacisk, nachylenie rysika (`tilt`, od API 1.1), przyciski i przewidywane pozycje (`predicted`, od API 1.1).
+- Potok wejścia programu rozstrzyga, co trafia do narzędzia: rysik, mysz (lewy przycisk) i palec (jeden palec, dopóki w sesji nie użyto rysika). Gesty dwoma palcami, kółko myszy, środkowy przycisk i Spacja z przeciąganiem przesuwają i powiększają widok, a dotyk dłoni przy rysiku jest odrzucany. Narzędzie nie musi tego obsługiwać.
+- Faza `cancel` kończy gest bez wyniku (np. drugi palec zamienił rysowanie w gest widoku). Narzędzie porzuca wtedy to, co zaczęło, i nie wykonuje polecenia.
+- Szybki ruch przychodzi jako kolejne zdarzenia `move` dla każdej próbki (zdarzenia scalone). Obsługuj je synchronicznie i rysuj nowy fragment od razu: program mierzy czas od zdarzenia do końca `onPointer` (opóźnienie rysowania, próg p95 ≤ 4 ms). Pozycje `predicted` służą tylko do chwilowego podglądu; nie zapisuj ich.
+- Gotową kreskę zapisuj jednym poleceniem przy `up`, nie przy każdym ruchu: jedno pociągnięcie to jeden krok cofania.
+- Nacisk myszy i palca ma stałą wartość 0,5; nachylenie urządzeń bez czujnika wynosi 0.
 - **Skrót** to kombinacja modyfikatorów `Ctrl`, `Alt`, `Shift`, `Meta` i klawisza (`KeyboardEvent.key`, bez rozróżniania wielkości liter). Kombinacja zajęta przez inną wtyczkę nie zostanie przypisana, a użytkownik dostanie komunikat.
 - **Panel** buduje się w przekazanym elemencie dowolną techniką. `mount` zwraca funkcję, która go usuwa.
 
@@ -194,4 +199,4 @@ Program przechwytuje wyjątki z kodu wtyczki:
 - Wzorcowa wtyczka testowa programu: `packages/test-fixture-layer`. Napisano ją wyłącznie według tego przewodnika i referencji; testy integracyjne programu (`app/src/composition/layers.test.ts`) sprawdzają na niej całe API.
 
 ## 11. Co dojdzie w kolejnych wersjach pobocznych
-API 1.0 obejmuje rejestrację warstwy, kontener i kamerę, narzędzia, skróty, panele, tłumaczenia, polecenia cofania oraz zapis z wersją formatu i migracjami. Kolejne kroki etapu 1 dodadzą zgodnie z planem, jako zmiany zgodne wstecz: dostęp do zasobów lekcji (osadzone pliki), pełne zdarzenia wejścia z potoku wejścia (nachylenie, gumka rysika), rysowanie do eksportu PDF/PNG oraz instalację wtyczek z pliku i z katalogu.
+API 1.0 obejmuje rejestrację warstwy, kontener i kamerę, narzędzia, skróty, panele, tłumaczenia, polecenia cofania oraz zapis z wersją formatu i migracjami. API 1.1 dodało do zdarzeń narzędzi nachylenie rysika i przewidywane pozycje. Kolejne kroki etapu 1 dodadzą zgodnie z planem, jako zmiany zgodne wstecz: dostęp do zasobów lekcji (osadzone pliki), rysowanie do eksportu PDF/PNG oraz instalację wtyczek z pliku i z katalogu.

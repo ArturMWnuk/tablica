@@ -96,11 +96,21 @@ describe('WAR-12: plugins use only the public API (lint rule)', { timeout: 60_00
       const manifest = JSON.parse(
         readFileSync(join(root, 'packages', name, 'package.json'), 'utf8'),
       ) as Record<string, Record<string, string> | undefined>;
-      const dependencies = [
-        ...Object.keys(manifest['dependencies'] ?? {}),
-        ...Object.keys(manifest['peerDependencies'] ?? {}),
-      ];
-      expect(dependencies, name).toEqual(['@tablica/plugin-api']);
+      const dependencies = {
+        ...manifest['dependencies'],
+        ...manifest['peerDependencies'],
+      };
+      // The only program package a layer may use is the plugin API. Other dependencies can be
+      // only external libraries (e.g. perfect-freehand of the drawing layer, ADR-007), never
+      // workspace packages of the program.
+      const program = Object.keys(dependencies).filter((dependency) =>
+        dependency.startsWith('@tablica/'),
+      );
+      expect(program, name).toEqual(['@tablica/plugin-api']);
+      for (const [dependency, version] of Object.entries(dependencies)) {
+        if (dependency === '@tablica/plugin-api') continue;
+        expect(version, `${name}: ${dependency}`).not.toMatch(/^(workspace|link|file):/);
+      }
     }
   });
 });

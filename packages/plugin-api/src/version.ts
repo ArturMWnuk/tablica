@@ -5,7 +5,7 @@
  * - A new **minor** version only adds features; plugins written for an older minor
  *   version keep working.
  */
-export const API_VERSION = '1.0.0';
+export const API_VERSION = '1.1.0';
 
 /** A parsed semantic version. */
 export interface SemVer {

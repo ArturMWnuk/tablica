@@ -567,7 +567,7 @@ Każdy krok to jedna sesja (`/realizuj-krok`), kończy się działającym progra
 - **Testy:** round-trip wszystkich istniejących elementów, uszkodzony plik, plik z nowszej wersji, zegar autozapisu.
 
 ### Krok 1.6: Edycja rysunku
-- **ID:** RYS-03, RYS-04, RYS-12, RYS-13, RYS-14; domknięcie WAR-06 (K1, P16).
+- **ID:** RYS-03, RYS-04, RYS-12, RYS-13, RYS-14; domknięcie WAR-06 (K1, P16); domknięcie WEJ-05 K3 (gumka rysika: `InputRouter.eraserTool` wskazuje gumkę warstwy rysunkowej, test z nią), jeśli właściciel przyjmie P18 a.
 - **Zakres prac:** dwie gumki, zaznaczanie (klik, prostokąt, lasso), transformacje, tekst, wskaźnik laserowy.
 - **Testy (WAR-06 K1):** gumka (oba tryby) i zaznaczanie na warstwie rysunkowej nie zmieniają danych warstw tła i multimediów (porównanie serializacji przed i po).
 
@@ -666,6 +666,7 @@ Szczegółowe procedury audytor przeniesie do raportu weryfikacji.
 | P14 | Instalacja warstwy z pliku: wystarczy ostrzeżenie, czy blokować pakiety spoza katalogu? | Ostrzeżenie | Przyjęto rekomendację |
 | P16 | WAR-06 K1 wymaga testu gumki i zaznaczania, które powstają dopiero w kroku 1.6. Kiedy domknąć WAR-06? | W kroku 1.2 mechanizm izolacji sprawdzony narzędziem wtyczki testowej; test K1 z gumką i zaznaczaniem w kroku 1.6, wtedy WAR-06 dostaje ZAIMPL. | Przyjęto rekomendację (2026-11-19) |
 | P17 | (a) Czy cofanie i ponawianie ma działać na zablokowanej i ukrytej warstwie? (b) W którym kroku dodawanie i usuwanie warstw z cofaniem (P3, DAN-03 K1)? | (a) Nie: krok zmieniający zawartość takiej warstwy jest wstrzymany z komunikatem, chronologia historii zostaje; (b) w kroku 1.3-poprawka, w panelu warstw | (a) Nie (właściciel, 2026-11-19); (b) właściciel powierzył decyzję, przyjęto rekomendację (2026-11-19) |
+| P18 | (a) WEJ-05 K3 i przycisk gumki rysika z D4 (WEJ-02) wymagają gumki, która powstaje dopiero w kroku 1.6 (RYS-03/04). Kiedy domknąć WEJ-05? (b) D4 mówi, że po użyciu rysika palec „nie rysuje (tylko gesty)”. Co robi wtedy pojedynczy palec? (c) D2 „do 1,5×”: jak rośnie poszerzenie? | (a) Jak P16: w kroku 1.4 mechanizm przełączania sprawdzony narzędziem testowym; w kroku 1.6 podłączenie gumki warstwy rysunkowej i test z nią, wtedy WEJ-05 dostaje ZAIMPL. (WEJ-02 po R11). (b) Pojedynczy palec przesuwa widok (dwa palce: przesuwanie i pinch). (c) Liniowo od 1× przy 45° do 1,5× przy 90° | Otwarte (zgłoszone w kroku 1.4, 2026-11-20); w kroku 1.4 zrealizowano rekomendację |
 
 ### Tabela D: parametry domyślne (zatwierdzone 2026-11-01)
 | Nr | Dotyczy | Propozycja |

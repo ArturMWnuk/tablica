@@ -2,6 +2,7 @@
 // Integration tests of the layer system with the built-in plugins and the test plugin
 // (WAR-01, WAR-06, WAR-12).
 import {
+  API_VERSION,
   defineLayerPlugin,
   LayerAccessError,
   type LayerPlugin,
@@ -219,7 +220,9 @@ describe('WAR-06: layer isolation', () => {
     expect(board.dispatchPointer(pointerDown(50, 50))).toBe(true);
     expect(boxesOf(root, 'other')).toHaveLength(3);
     expect(boxesOf(root, 'target')).toHaveLength(2);
-    expect(board.serialize().layers.find((layer) => layer.id === 'drawing')?.data).toEqual({});
+    expect(board.serialize().layers.find((layer) => layer.id === 'drawing')?.data).toEqual({
+      strokes: [],
+    });
   });
 
   it('WAR-06: a tool without a layer of its type does nothing', async () => {
@@ -229,7 +232,7 @@ describe('WAR-06: layer isolation', () => {
     await board.plugins.load('test-fixture-layer');
     board.tools.setActive('test-fixture-layer/box');
     expect(board.dispatchPointer(pointerDown(0, 0))).toBe(false);
-    expect(board.serialize().layers[0]?.data).toEqual({});
+    expect(board.serialize().layers[0]?.data).toEqual({ strokes: [] });
   });
 
   it('WAR-06: the API does not let a plugin write data of a layer it does not own', async () => {
@@ -512,7 +515,7 @@ describe('WAR-12: API version compatibility', () => {
       expect.objectContaining({
         key: 'notice.pluginIncompatible',
         pluginId: 'future',
-        params: { required: '2.0.0', provided: '1.0.0' },
+        params: { required: '2.0.0', provided: API_VERSION },
       }),
     ]);
     expect(board.document.getLayer('f')?.status).toBe('missing');

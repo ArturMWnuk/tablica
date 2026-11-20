@@ -1,15 +1,43 @@
 {
   "id": "layer-drawing",
-  "version": "0.1.0",
-  "apiVersion": "1.0.0",
+  "version": "0.2.0",
+  "apiVersion": "1.1.0",
   "translations": {
     "pl": {
       "name": "Rysunek",
-      "description": "Odręczne pisanie i rysowanie, figury, przyrządy i tekst."
+      "description": "Odręczne pisanie i rysowanie, figury, przyrządy i tekst.",
+      "tool": {
+        "pen": "Pióro",
+        "highlighter": "Zakreślacz"
+      },
+      "panel": {
+        "title": "Pióro i zakreślacz",
+        "color": "Kolor",
+        "swatch": "Kolor {value}",
+        "customColor": "Dowolny kolor",
+        "hex": "Kod koloru (#rrggbb)",
+        "width": "Grubość",
+        "widthPreset": "Grubość {value} px",
+        "widthValue": "{value} px"
+      }
     },
     "en": {
       "name": "Drawing",
-      "description": "Handwriting and drawing, shapes, instruments and text."
+      "description": "Handwriting and drawing, shapes, instruments and text.",
+      "tool": {
+        "pen": "Pen",
+        "highlighter": "Highlighter"
+      },
+      "panel": {
+        "title": "Pen and highlighter",
+        "color": "Colour",
+        "swatch": "Colour {value}",
+        "customColor": "Any colour",
+        "hex": "Colour code (#rrggbb)",
+        "width": "Width",
+        "widthPreset": "Width {value} px",
+        "widthValue": "{value} px"
+      }
     }
   }
 }

@@ -2,6 +2,7 @@
   import Board from './components/Board.svelte';
   import LayersPanel from './components/LayersPanel.svelte';
   import Notices from './components/Notices.svelte';
+  import PluginPanels from './components/PluginPanels.svelte';
   import SettingsBar from './components/SettingsBar.svelte';
   import type { Board as BoardModel } from './lib/core/board';
   import { i18n, t } from './lib/i18n/i18n.svelte';
@@ -31,7 +32,10 @@
   <SettingsBar {board} />
   <div class="workspace">
     <Board {board} />
-    <LayersPanel {board} />
+    <div class="side">
+      <LayersPanel {board} />
+      <PluginPanels {board} />
+    </div>
   </div>
   <Notices {board} />
 </div>
@@ -48,5 +52,15 @@
     display: flex;
     flex: 1;
     min-height: 0;
+  }
+
+  .side {
+    display: flex;
+    flex-direction: column;
+    width: 260px;
+    min-height: 0;
+    overflow-y: auto;
+    background: var(--color-surface);
+    border-left: 1px solid var(--color-border);
   }
 </style>

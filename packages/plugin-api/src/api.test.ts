@@ -30,6 +30,12 @@ describe('WAR-12: API versioning', () => {
     expect(isApiCompatible('1.2.0', '1.3.1')).toBe(true);
   });
 
+  it('WAR-12: plugins written for API 1.0.0 keep working on the current API 1.1.0', () => {
+    expect(API_VERSION).toBe('1.1.0');
+    expect(isApiCompatible('1.0.0')).toBe(true);
+    expect(isApiCompatible('1.1.0')).toBe(true);
+  });
+
   it('WAR-12: different major or newer minor version is incompatible', () => {
     expect(isApiCompatible('2.0.0', '1.9.0')).toBe(false);
     expect(isApiCompatible('0.9.0', '1.0.0')).toBe(false);

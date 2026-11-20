@@ -32,6 +32,7 @@ Guide: `docs/api/jak-napisac-warstwe.md`.
 - [ShortcutDefinition](interfaces/ShortcutDefinition.md)
 - [ToolDefinition](interfaces/ToolDefinition.md)
 - [ToolPointerEvent](interfaces/ToolPointerEvent.md)
+- [ToolPointerSample](interfaces/ToolPointerSample.md)
 
 ## Type Aliases
 

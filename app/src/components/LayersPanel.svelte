@@ -299,11 +299,6 @@
   .panel {
     display: flex;
     flex-direction: column;
-    width: 260px;
-    min-height: 0;
-    overflow-y: auto;
-    background: var(--color-surface);
-    border-left: 1px solid var(--color-border);
   }
 
   .add {

@@ -99,9 +99,30 @@ export interface LayerView {
 /** Kind of pointing device. */
 export type PointerKind = 'mouse' | 'pen' | 'touch';
 
+/**
+ * One position of the pointer: a sample of a pointer event or a predicted position.
+ * @since API 1.1.0
+ */
+export interface ToolPointerSample {
+  /** Position on the board. */
+  readonly world: Point;
+  /** Position in the board container. */
+  readonly screen: Point;
+  /** Pressure from 0 to 1 (0.5 for devices without pressure, also for the mouse and fingers). */
+  readonly pressure: number;
+  /**
+   * Tilt of the pen from the perpendicular to the screen, in degrees from 0 to 90.
+   * 0 for devices that do not report tilt.
+   */
+  readonly tilt: number;
+}
+
 /** A pointer event delivered to the active tool. */
 export interface ToolPointerEvent {
-  /** Phase of the gesture. */
+  /**
+   * Phase of the gesture. `cancel` ends the gesture without a result: the tool must drop what
+   * it started (e.g. a second finger turned the touch into a gesture of the view).
+   */
   readonly phase: 'down' | 'move' | 'up' | 'cancel';
   /** Position on the board. */
   readonly world: Point;
@@ -109,16 +130,33 @@ export interface ToolPointerEvent {
   readonly screen: Point;
   /** Device that produced the event. */
   readonly pointerType: PointerKind;
-  /** Pressure from 0 to 1 (0.5 for devices without pressure). */
+  /** Pressure from 0 to 1 (0.5 for devices without pressure, also for the mouse and fingers). */
   readonly pressure: number;
+  /**
+   * Tilt of the pen from the perpendicular to the screen, in degrees from 0 to 90.
+   * 0 for devices that do not report tilt.
+   * @since API 1.1.0
+   */
+  readonly tilt: number;
   /** Pressed buttons as in `PointerEvent.buttons`. */
   readonly buttons: number;
+  /**
+   * Positions the pointer will probably reach next (`move` only; empty when the platform does
+   * not predict). Use them only to draw a temporary preview that hides the latency; never store
+   * them.
+   * @since API 1.1.0
+   */
+  readonly predicted: readonly ToolPointerSample[];
 }
 
 /**
  * A tool of the plugin. The program delivers events only while the tool is active, and only
  * together with the active layer of the plugin's type; the tool cannot reach other layers.
  * No events are delivered while that layer is hidden or locked by the user.
+ *
+ * Every sample of a fast movement is delivered as its own `move` event (coalesced events), so
+ * the tool sees the full path. Handle the events synchronously and draw the new piece at once:
+ * the program measures the time from the input event to the end of `onPointer` (drawing latency).
  */
 export interface ToolDefinition<TData> {
   /** Identifier unique within the plugin. */

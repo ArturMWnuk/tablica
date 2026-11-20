@@ -4,9 +4,11 @@
   import { i18n, t } from '../lib/i18n/i18n.svelte';
   import { isLocale, LOCALES } from '../lib/i18n/core';
   import { saveHistoryLimit } from '../lib/settings/history-limit';
+  import { savePenDisablesFingerDrawing } from '../lib/settings/input';
   import { themeState } from '../lib/theme/theme.svelte';
   import { isThemePreference, THEME_PREFERENCES } from '../lib/theme/tokens';
   import HistoryButtons from './HistoryButtons.svelte';
+  import ToolBar from './ToolBar.svelte';
 
   interface Props {
     board: Board;
@@ -14,6 +16,15 @@
 
   const { board }: Props = $props();
   let historyLimit = $state(0);
+  let penDisablesFinger = $derived(board.input.settings.penDisablesFingerDrawing);
+
+  /** D4: switch of finger drawing after the first use of the pen, remembered on this device. */
+  function onPenDisablesFingerChange(event: Event) {
+    const value = (event.currentTarget as HTMLInputElement).checked;
+    board.input.settings.penDisablesFingerDrawing = value;
+    savePenDisablesFingerDrawing(value);
+    penDisablesFinger = value;
+  }
 
   $effect(() => {
     const update = () => {
@@ -45,7 +56,17 @@
 
 <header class="bar">
   <h1 class="title">{t('app.title')}</h1>
+  <ToolBar {board} />
   <HistoryButtons {board} />
+  <label class="field" title={t('settings.penDisablesFingerHint')}>
+    <input
+      type="checkbox"
+      data-testid="pen-disables-finger"
+      checked={penDisablesFinger}
+      onchange={onPenDisablesFingerChange}
+    />
+    <span>{t('settings.penDisablesFinger')}</span>
+  </label>
   <label
     class="field"
     title={t('settings.historyLimitHint', { min: MIN_HISTORY_LIMIT, max: MAX_HISTORY_LIMIT })}
@@ -102,8 +123,12 @@
     color: var(--color-text-muted);
   }
 
-  input {
+  input[type='number'] {
     width: 64px;
+  }
+
+  input[type='checkbox'] {
+    accent-color: var(--color-accent);
   }
 
   select,

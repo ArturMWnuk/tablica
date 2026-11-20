@@ -13,6 +13,9 @@ export const builtinPlugins: readonly PluginSource[] = [
   { manifest: drawingManifest, load: () => import('@tablica/layer-drawing') },
 ];
 
+/** Tool active when the program starts: the pen of the drawing layer (RYS-01). */
+export const DEFAULT_TOOL = `${drawingManifest.id}/pen`;
+
 /** A new lesson: background at the bottom, multimedia above it and drawing on top (WAR-01). */
 export function newLessonDocument(): SerializedDocument {
   return {

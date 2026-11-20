@@ -1,8 +1,10 @@
 // Fails (exit code 1) when any npm dependency has a license incompatible with GPL-3.0 (NF-01).
+// --recursive covers the dependencies of every workspace package (e.g. layer plugins), not only
+// those of the root package.
 import { execSync } from 'node:child_process';
 import { findViolations } from './license-policy.mjs';
 
-const output = execSync('pnpm licenses list --json', {
+const output = execSync('pnpm licenses list --json --recursive', {
   encoding: 'utf8',
   maxBuffer: 64 * 1024 * 1024,
 });

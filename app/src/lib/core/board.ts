@@ -21,6 +21,7 @@ import {
   type SerializedLayer,
 } from './document';
 import { History, type HistoryEntry } from './history';
+import { InputRouter } from './input-router';
 import { LayerHost } from './layer-host';
 import { Notices } from './notices';
 import { PluginManager, type PluginSource } from './plugin-manager';
@@ -155,6 +156,8 @@ export class Board {
   readonly tools = new ToolRegistry();
   readonly shortcuts = new ShortcutRegistry([...UNDO_KEYS, ...REDO_KEYS]);
   readonly panels = new PanelRegistry();
+  /** Input pipeline: pen, fingers, mouse and keyboard (WEJ-01–06, NF-04). */
+  readonly input: InputRouter = new InputRouter(this);
   readonly document: BoardDocument;
   readonly plugins: PluginManager;
   private host: LayerHost | undefined;

@@ -11,6 +11,7 @@
     "./manifest.json": "./manifest.json"
   },
   "dependencies": {
-    "@tablica/plugin-api": "workspace:*"
+    "@tablica/plugin-api": "workspace:*",
+    "perfect-freehand": "1.2.2"
   }
 }
