@@ -33,7 +33,7 @@ Statusy: OCZEKUJE, W TOKU, UKOŃCZONY.
 | 1.3 | Historia i operacje na warstwach | DAN-03, WAR-02–05 | UKOŃCZONY (weryfikacja: WARUNKOWO, `docs/raporty/ETAP-1-krok-1.3-weryfikacja.md`) | 0bdd68b |
 | 1.3-poprawka | Domknięcie WAR-02 i DAN-03 po weryfikacji | WAR-02 (K1), WAR-03 (P17 a), DAN-03 (P17 b: dodawanie i usuwanie warstw), WAR-01 K3 (interfejs) | UKOŃCZONY (weryfikacja: WARUNKOWO, `docs/raporty/ETAP-1-krok-1.3-poprawka-weryfikacja.md`) | f6fd8e4 |
 | 1.3-poprawka-2 | Przypadki brzegowe historii warstw | DAN-03 (P17 b), WAR-03 (P17 a) | UKOŃCZONY (weryfikacja: ZALICZONY, `docs/raporty/ETAP-1-krok-1.3-poprawka-2-weryfikacja.md`) | 9e477e1 |
-| 1.4 | Wejście i pisanie | WEJ-01–06, RYS-01, RYS-02, NF-04 | UKOŃCZONY (WEJ-05 i WEJ-02 W TOKU do decyzji P18) | (ten commit) |
+| 1.4 | Wejście i pisanie | WEJ-01–06, RYS-01, RYS-02, NF-04 | UKOŃCZONY (WEJ-05 K3 domknięcie w 1.6, P18; WEJ-02 po R11) | c1ee23b |
 | 1.5 | Zapis i odczyt lekcji | DAN-01, DAN-02 | OCZEKUJE | |
 | 1.6 | Edycja rysunku | RYS-03, RYS-04, RYS-12–14, domknięcie WAR-06 (K1, P16) | OCZEKUJE | |
 | 1.7 | Figury, przyrządy, narzędzia matematyczne | RYS-05–11 | OCZEKUJE | |
@@ -46,20 +46,21 @@ Statusy: OCZEKUJE, W TOKU, UKOŃCZONY.
 | 1.14 | Wydanie i wydajność | NF-02, NF-03, NF-05, domknięcie PLAT-01–03, NF-01 | OCZEKUJE | |
 
 ## Następne działania
-1. Właściciel: odpowiedzieć na P18 (domknięcie WEJ-05 K3 w kroku 1.6, pojedynczy palec po użyciu rysika przesuwa widok, poszerzenie D2 liniowe 45°–90°).
-2. W **nowym wątku**: `/weryfikuj-etap 1 krok 1.4` (zalecane), potem `/realizuj-krok 1.5`.
-3. Właściciel: naprawić środowisko laptopa: Visual Studio Installer → Build Tools 2022 → Napraw (brak `oldnames.lib`) oraz `pnpm exec playwright install chromium --force` (brak `icudtl.dat`).
-4. Właściciel: podać brakujące dane sprzętu (P12), potem dokończyć krok 1.1 (Linux, Android, tablet graficzny).
-5. Po P12: `/realizuj-krok 1.1` (Linux, Android, tablet graficzny); kroki 1.9 i 1.10 dopiero po domknięciu 1.1.
+1. W **nowym wątku**: `/weryfikuj-etap 1 krok 1.4` (zalecane), potem `/realizuj-krok 1.5`.
+2. Właściciel: naprawić środowisko laptopa: Visual Studio Installer → Build Tools 2022 → Napraw (brak `oldnames.lib`) oraz `pnpm exec playwright install chromium --force` (brak `icudtl.dat`).
+3. Właściciel: podać brakujące dane sprzętu (P12), potem dokończyć krok 1.1 (Linux, Android, tablet graficzny).
+4. Po P12: `/realizuj-krok 1.1` (Linux, Android, tablet graficzny); kroki 1.9 i 1.10 dopiero po domknięciu 1.1.
 
 ## Otwarte pytania
-- P18 (krok 1.4): (a) WEJ-05 K3 (gumka rysika) i przycisk gumki z D4 wymagają gumki z kroku 1.6: rekomendacja jak P16, domknięcie w 1.6; (b) po użyciu rysika pojedynczy palec przesuwa widok; (c) poszerzenie D2 liniowe od 1× przy 45° do 1,5× przy 90°. W kroku 1.4 zrealizowano rekomendacje; WEJ-05 i WEJ-02 zostają W TOKU do decyzji.
 - P12 (sprzęt testowy), część otwarta: dystrybucja Linuksa i sesja (X11/Wayland), tablet z Androidem i wersja systemu, model tabletu graficznego, urządzenie z ekranem dotykowym do R12 (laptop referencyjny go nie ma). Laptop referencyjny zapisany w planie (P12). **Potrzebne do dokończenia kroku 1.1** (część Windows wykonana 2026-11-10 za zgodą właściciela).
 
 ## Blokery
 Brak.
 
 ## Dziennik sesji
+### 2026-11-20: Decyzja P18
+- Właściciel przyjął rekomendacje: (a) WEJ-05 K3 (gumka rysika) i przycisk gumki z D4 domykane w kroku 1.6 (`InputRouter.eraserTool` wskaże gumkę warstwy rysunkowej, test z nią), do tego czasu WEJ-05 W TOKU; WEJ-02 zostaje W TOKU do R11; (b) po użyciu rysika pojedynczy palec przesuwa widok; (c) poszerzenie D2 liniowe od 1× przy 45° do 1,5× przy 90°. Zapisano w planie (tabela pytań, krok 1.6) i w MACIERZ.
+
 ### 2026-11-20: Krok 1.4 — wejście i pisanie
 - `InputRouter` (rdzeń, `board.input`): rysik, palec i mysz trafiają do aktywnego narzędzia albo do widoku. Mysz: lewy przycisk = narzędzie, kółko przewija, Ctrl + kółko powiększa w punkcie kursora, środkowy przycisk i Spacja + przeciągnięcie przesuwają (WEJ-04). Dotyk: jeden palec rysuje, dopóki nie użyto rysika; drugi palec porzuca kreskę i zaczyna przesuwanie z pinch (WEJ-03, D4); stuknięcia D3 przeniesione z komponentu do potoku. Dłoń: dotyk ignorowany przy kontakcie rysika, w zasięgu (hover) i 500 ms po nim; dotyk obecny przy lądowaniu rysika jest przerywany (WEJ-06). Przełącznik D4 w pasku ustawień, zapamiętywany na urządzeniu. Powiększenie gestami w zakresie D5 (10–1000 %).
 - Nacisk (tylko rysik; mysz i palec 0,5), nachylenie z `altitudeAngle` albo `tiltX`/`tiltY`, końcówka gumki (`buttons & 32`) przełącza na narzędzie `eraserTool` na czas kontaktu, pierwszy przycisk rysika nie rysuje (menu kontekstowe w 1.12) (WEJ-05, D4). Zdarzenia scalone jako osobne `move`, przewidywane w `predicted`, ścieżka zapasowa bez nich (NF-04 K2).
