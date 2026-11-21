@@ -36,6 +36,25 @@ async function openBoard(page: Page): Promise<void> {
   ).toHaveCount(3);
 }
 
+test.describe('WAR-01: layer panel snapshot', () => {
+  test('WAR-01: the panel lists the layer types without an effect loop', async ({ page }) => {
+    const failures: string[] = [];
+    page.on('pageerror', (error) => failures.push(error.message));
+    page.on('console', (message) => {
+      if (message.type() === 'error') failures.push(message.text());
+    });
+    await openBoard(page);
+    // The snapshot of the panel must not read the state it writes: such a read makes every
+    // snapshot schedule another one until Svelte stops the loop (effect_update_depth_exceeded).
+    const options = await panel(page)
+      .getByTestId('layer-add-type')
+      .locator('option')
+      .evaluateAll((elements) => elements.map((element) => (element as HTMLOptionElement).value));
+    expect(options).toEqual(['layer-background', 'layer-media', 'layer-drawing']);
+    expect(failures.filter((text) => text.includes('effect_update_depth_exceeded'))).toEqual([]);
+  });
+});
+
 test.describe('WAR-02, WAR-03: layer panel', () => {
   test('WAR-02: the panel lists the layers from the top and hides and shows a layer', async ({
     page,

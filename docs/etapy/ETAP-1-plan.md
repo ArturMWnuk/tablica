@@ -556,6 +556,13 @@ Każdy krok to jedna sesja (`/realizuj-krok`), kończy się działającym progra
   3. Komunikaty o wstrzymanym cofaniu (P17 a) podają nazwę warstwy tak jak panel (z numerem, gdy jest kilka warstw jednego typu).
 - **Testy:** awaria wtyczki przy usuniętej warstwie, potem cofnięcie: serializacja zawiera dane sprzed awarii; cofnięcie dodania przed wczytaniem wtyczki (udane i nieudane wczytanie) i ponowienie: właściwy stan; komunikat z numerem warstwy; ponowienie wstrzymane na ukrytej warstwie; ponowienie dodania i usunięcia (także warstwy uszkodzonej i bez wtyczki) sprawdzone porównaniem serializacji; e2e: przycisk usuwania wyłączony przy ostatniej warstwie.
 
+### Krok 1.3-poprawka-3: Pętla efektów w panelu warstw
+- **Podstawa:** usterka wykryta przy przygotowaniu testów ręcznych właściciela 2026-11-21 (uruchomiona aplikacja Tauri i przeglądarka na silniku Chromium); zgoda właściciela 2026-11-21.
+- **ID:** WAR-01 (K3).
+- **Zakres prac:**
+  1. Odczyt stanu panelu warstw (`snapshot`) nie czyta stanu, który sam zapisuje, więc efekt nie planuje kolejnych przebiegów. Dziś przy każdym wczytaniu wtyczek panel zapętla się do limitu Svelte (`effect_update_depth_exceeded`), na moment blokuje interfejs i zgłasza błąd w konsoli; po przerwaniu pętli program działa dalej, dlatego testy automatyczne tego nie wychwytywały.
+- **Testy:** e2e w Chromium i WebKit: po otwarciu tablicy panel wymienia typy warstw do dodania, a przy starcie nie pojawia się błąd strony ani konsoli o przekroczeniu głębokości efektów.
+
 ### Krok 1.4: Wejście i pisanie
 - **ID:** WEJ-01–06, RYS-01, RYS-02, NF-04.
 - **Zakres prac:** `InputRouter` (nacisk, nachylenie, gumka rysika, odrzucanie dłoni, gesty, mysz), pióro i zakreślacz, wybór koloru i grubości, instrumentacja opóźnienia (T10).

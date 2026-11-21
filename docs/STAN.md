@@ -10,8 +10,8 @@
 | Bieżący etap | 1 |
 | Status etapu | REALIZACJA |
 | Plan etapu | `docs/etapy/ETAP-1-plan.md` (ZATWIERDZONY 2026-11-01) |
-| Bieżący krok | 1.5 (następny); 1.1 W TOKU (Linux i Android czekają na P12) |
-| Gałąź robocza | `etap-1` |
+| Bieżący krok | 1.3-poprawka-3 (wykonany, do scalenia w `etap-1`); 1.5 następny; 1.1 W TOKU (Linux i Android czekają na P12) |
+| Gałąź robocza | `etap-1`; krok 1.3-poprawka-3 na `testy-reczne-etap1` (sesja testów ręcznych) |
 
 ## Etapy
 | Etap | Status | Plan | Raport weryfikacji | Wersja |
@@ -33,6 +33,7 @@ Statusy: OCZEKUJE, W TOKU, UKOŃCZONY.
 | 1.3 | Historia i operacje na warstwach | DAN-03, WAR-02–05 | UKOŃCZONY (weryfikacja: WARUNKOWO, `docs/raporty/ETAP-1-krok-1.3-weryfikacja.md`) | 0bdd68b |
 | 1.3-poprawka | Domknięcie WAR-02 i DAN-03 po weryfikacji | WAR-02 (K1), WAR-03 (P17 a), DAN-03 (P17 b: dodawanie i usuwanie warstw), WAR-01 K3 (interfejs) | UKOŃCZONY (weryfikacja: WARUNKOWO, `docs/raporty/ETAP-1-krok-1.3-poprawka-weryfikacja.md`) | f6fd8e4 |
 | 1.3-poprawka-2 | Przypadki brzegowe historii warstw | DAN-03 (P17 b), WAR-03 (P17 a) | UKOŃCZONY (weryfikacja: ZALICZONY, `docs/raporty/ETAP-1-krok-1.3-poprawka-2-weryfikacja.md`) | 9e477e1 |
+| 1.3-poprawka-3 | Pętla efektów w panelu warstw | WAR-01 (K3) | UKOŃCZONY (kontrole zielone, bez weryfikacji audytora; wykonany 2026-11-21 przy przygotowaniu testów ręcznych) | (ten commit) |
 | 1.4 | Wejście i pisanie | WEJ-01–06, RYS-01, RYS-02, NF-04 | UKOŃCZONY (weryfikacja: WARUNKOWO, `docs/raporty/ETAP-1-krok-1.4-weryfikacja.md`; WEJ-04 K1 do poprawki; WEJ-05 K3 domknięcie w 1.6, P18; WEJ-02 po R11) | c1ee23b |
 | 1.4-poprawka | Spacja z przeciąganiem po weryfikacji | WEJ-04 (K1) | UKOŃCZONY (weryfikacja: WARUNKOWO, `docs/raporty/ETAP-1-krok-1.4-poprawka-weryfikacja.md`; w Edge suwak grubości i pole wyboru D4 nadal zatrzymują fokus) | 07d4ce6 |
 | 1.5 | Zapis i odczyt lekcji | DAN-01, DAN-02 | OCZEKUJE | |
@@ -48,9 +49,11 @@ Statusy: OCZEKUJE, W TOKU, UKOŃCZONY.
 
 ## Następne działania
 1. Właściciel: decyzja w sprawie ustaleń weryfikacji kroku 1.4-poprawka (WEJ-04 K1 w Edge: po użyciu myszą suwaka grubości lub pola wyboru D4 Spacja + przeciągnięcie rysuje, a pole wyboru przełącza się Spacją): (a) krok **1.4-poprawka-2** (zwalnianie fokusu po kliknięciu myszą także z suwaków, pól wyboru i selektora koloru, e2e w Edge) albo (b) przyjęcie jako znane ograniczenie. Po zgodzie na (a) dopisać krok do planu i tabeli kroków, potem `/realizuj-krok 1.4-poprawka-2`, następnie `/realizuj-krok 1.5`. Właściciel: testy ręczne W5, W5a–W5c z raportu `docs/raporty/ETAP-1-krok-1.4-poprawka-weryfikacja.md` (Windows, WebView2).
-2. Właściciel: naprawić środowisko laptopa: Visual Studio Installer → Build Tools 2022 → Napraw (brak `oldnames.lib`) oraz `pnpm exec playwright install chromium --force` (brak `icudtl.dat`).
-3. Właściciel: podać brakujące dane sprzętu (P12), potem dokończyć krok 1.1 (Linux, Android, tablet graficzny).
-4. Po P12: `/realizuj-krok 1.1` (Linux, Android, tablet graficzny); kroki 1.9 i 1.10 dopiero po domknięciu 1.1.
+2. Scalić krok 1.3-poprawka-3 z gałęzi `testy-reczne-etap1` do `etap-1` (przewinięcie, dopóki `etap-1` się nie ruszy).
+3. Trwa sesja testów ręcznych właściciela (gałąź `testy-reczne-etap1`): 39 zaległych testów z raportów weryfikacji, w tym 23 wykonalne na Windows od razu, 13 po P12. Wyniki odznaczane w raportach w `docs/raporty/`.
+4. Właściciel: naprawić środowisko laptopa: Visual Studio Installer → Build Tools 2022 → Napraw (w `lib\x64` brak `oldnames.lib`; obejściem jest pusta biblioteka x64 z `lib.exe /DEF` podana w zmiennej `LIB`). Playwright Chromium naprawiony 2026-11-21 (`playwright install chromium --force`). Polecenia projektu uruchamiać Node 26 z `C:\Users\artur\AppData\Local\Programs\nodejs-portable\node-v26.13.0-win-x64` (Node w PATH to 20.12.2, za stary: pnpm pomija wtedy natywne bindingi).
+5. Właściciel: podać brakujące dane sprzętu (P12), potem dokończyć krok 1.1 (Linux, Android, tablet graficzny).
+6. Po P12: `/realizuj-krok 1.1` (Linux, Android, tablet graficzny); kroki 1.9 i 1.10 dopiero po domknięciu 1.1.
 
 ## Otwarte pytania
 - P12 (sprzęt testowy), część otwarta: dystrybucja Linuksa i sesja (X11/Wayland), tablet z Androidem i wersja systemu, model tabletu graficznego, urządzenie z ekranem dotykowym do R12 (laptop referencyjny go nie ma). Laptop referencyjny zapisany w planie (P12). **Potrzebne do dokończenia kroku 1.1** (część Windows wykonana 2026-11-10 za zgodą właściciela).
@@ -60,6 +63,13 @@ Statusy: OCZEKUJE, W TOKU, UKOŃCZONY.
 Brak.
 
 ## Dziennik sesji
+### 2026-11-21: Krok 1.3-poprawka-3 — pętla efektów w panelu warstw (sesja testów ręcznych)
+- Przygotowanie środowiska do testów ręcznych właściciela: zależności zainstalowane Node 26 (przenośny, `nodejs-portable\node-v26.13.0-win-x64`) — Node 20.12.2 w PATH jest za stary, pnpm pomijał wtedy natywny binding `@rolldown/binding-win32-x64-msvc` i Vitest nie startował. Playwright Chromium naprawiony (`playwright install chromium --force`), więc pełne e2e działa po raz pierwszy w obu silnikach. Linkowanie Rust: w `lib\x64` Build Tools nadal brak `oldnames.lib`, obejście to pusta biblioteka x64 wygenerowana `lib.exe /DEF` i podana w `LIB` (trwale: naprawa Build Tools).
+- Usterka wykryta po uruchomieniu aplikacji (`pnpm tauri dev`, WebView2; potwierdzona też w przeglądarce na Chromium): przy każdym wczytaniu wtyczek panel warstw zgłaszał `effect_update_depth_exceeded` i na moment blokował interfejs. Przyczyna: `snapshot()` w `LayersPanel.svelte` zapisywał stan `types` i zaraz go czytał (`types.includes(newType)`), więc efekt wywołujący `snapshot()` zależał od własnych zapisów i planował kolejne przebiegi aż do limitu Svelte. Po przerwaniu pętli program działał dalej, dlatego kontrole tego nie wychwytywały.
+- WAR-01 K3: lista typów liczona do zmiennej lokalnej, odczyt `newType` przez `untrack`. Test e2e „WAR-01: the panel lists the layer types without an effect loop” (błędy strony i konsoli przy starcie, lista typów w panelu); sprawdzone, że bez poprawki pada w Chromium i WebKit.
+- Kontrole: lint, prettier, typy (346 plików, 0 błędów), Vitest 206/206, licencje npm 232, build web, Playwright **66/66** (33 Chromium + 33 WebKit), cargo fmt, clippy, cargo test 2/2.
+- Ustalenie dla testów ręcznych M8, P11 i Q8: pełny zestaw e2e przechodzi teraz w Chromium (silnik najbliższy WebView2), liczby w raportach (19/21/23) są historyczne.
+
 ### 2026-11-21: Weryfikacja kroku 1.4-poprawka
 - Audytor: wynik **WARUNKOWO** (`docs/raporty/ETAP-1-krok-1.4-poprawka-weryfikacja.md`). Poprawka spełnia kryterium kroku: przycisk kliknięty myszą oddaje fokus, przycisk uruchomiony z klawiatury go zachowuje; brak regresji. Kontrole zielone (lint, typy, Vitest 206/206, Edge 32/32 zamiast Chromium, WebKit 32/32, licencje 232, build, cargo fmt, clippy, cargo test 2/2).
 - Ustalenie: w Edge (silnik WebView2) ta sama ścieżka błędu WEJ-04 K1 zostaje po użyciu myszą suwaka grubości i pola wyboru „palec nie rysuje po użyciu rysika” (Spacja + przeciągnięcie rysuje; pole wyboru dodatkowo przełącza się Spacją). W WebKit poprawnie. MACIERZ: WEJ-04 z ZAIMPL. na W TOKU do decyzji właściciela (krok 1.4-poprawka-2 albo znane ograniczenie).

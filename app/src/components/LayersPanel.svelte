@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { untrack } from 'svelte';
   import type { LayerStatus } from '@tablica/plugin-api';
   import type { Board } from '../lib/core/board';
   import { layerName, layerTitle, t } from '../lib/i18n/i18n.svelte';
@@ -52,11 +53,15 @@
     }));
     rows = result.reverse();
     activeId = board.document.activeLayerId;
-    types = board.plugins
+    // The effect below calls this function, so nothing here may read the state it writes:
+    // a reactive read of `types` or `newType` would schedule another run after every snapshot
+    // (effect loop). The local list and `untrack` keep the reads out of the effect.
+    const available = board.plugins
       .list()
       .filter((entry) => entry.state !== 'broken')
       .map((entry) => entry.manifest.id);
-    if (!types.includes(newType)) newType = types[0] ?? '';
+    types = available;
+    if (!available.includes(untrack(() => newType))) newType = available[0] ?? '';
   }
 
   /** P17 b: a new layer goes above the active layer (on top when none is active). */
