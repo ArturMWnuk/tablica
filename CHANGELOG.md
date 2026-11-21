@@ -30,3 +30,4 @@ Każdy wpis zawiera identyfikatory wymagań z `docs/DOKUMENTACJA.md`.
 - Awaria wtyczki zachowuje najnowsze dane także warstw usuniętych, które można przywrócić cofnięciem; po cofnięciu usunięcia warstwa jest oznaczona jako uszkodzona i zapisuje się z tymi danymi (DAN-03).
 - Warstwa dodana i cofnięta, zanim wtyczka zdążyła się wczytać, po ponowieniu nie zostaje w stanie „Wczytywanie”, także gdy wczytanie się nie powiedzie (DAN-03).
 - Komunikat o wstrzymanym cofaniu na zablokowanej lub ukrytej warstwie podaje nazwę warstwy tak jak panel warstw, z numerem przy kilku warstwach jednego typu (WAR-03).
+- Spacja z przeciąganiem przesuwa widok także po kliknięciu przycisku paska narzędzi (w WebView2 i Android WebView fokus zostawał na przycisku i przeciągnięcie rysowało kreskę); przyciski obsługiwane z klawiatury działają jak dotąd (WEJ-04).

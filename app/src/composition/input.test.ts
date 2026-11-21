@@ -16,6 +16,7 @@ import {
 } from '../lib/core/input-router';
 import { LATENCY_THRESHOLD_MS, LatencyMeter } from '../lib/core/latency';
 import type { PluginSource } from '../lib/core/plugin-manager';
+import { isControl, isTextField, releasePointerFocus } from '../lib/ui/focus';
 import { builtinPlugins, DEFAULT_TOOL } from './builtin';
 import { createTestBoard, documentOf, layerOf } from './test-support';
 
@@ -270,6 +271,36 @@ describe('WEJ-04: mouse and keyboard', () => {
     board.input.pointerDown(pointer('mouse', 1, 10, 10));
     expect(phases(drawn)).toEqual(['down']);
     expect(board.input.keyDown({ code: 'KeyA' })).toBe(false);
+  });
+
+  it('WEJ-04: a toolbar button clicked with the mouse does not keep Space (focus on the button)', () => {
+    document.body.innerHTML =
+      '<div role="toolbar"><button type="button">Pen</button></div><input type="text" />';
+    const button = document.querySelector('button');
+    const field = document.querySelector('input');
+    if (!button || !field) throw new Error('No test controls');
+    window.addEventListener('click', releasePointerFocus);
+    try {
+      // Mouse click (detail 1): the focus goes back to the page, so Space reaches the board.
+      button.focus();
+      expect(isControl(document.activeElement)).toBe(true);
+      button.dispatchEvent(new MouseEvent('click', { bubbles: true, detail: 1 }));
+      expect(document.activeElement).toBe(document.body);
+      expect(isControl(document.activeElement)).toBe(false);
+      // Keyboard activation (detail 0): the button keeps the focus and its own Space.
+      button.focus();
+      button.dispatchEvent(new MouseEvent('click', { bubbles: true, detail: 0 }));
+      expect(document.activeElement).toBe(button);
+      expect(isControl(document.activeElement)).toBe(true);
+      // A click that moved the focus elsewhere (here: into a text field) is left alone.
+      button.addEventListener('click', () => field.focus(), { once: true });
+      button.dispatchEvent(new MouseEvent('click', { bubbles: true, detail: 1 }));
+      expect(document.activeElement).toBe(field);
+      expect(isTextField(document.activeElement)).toBe(true);
+    } finally {
+      window.removeEventListener('click', releasePointerFocus);
+      document.body.innerHTML = '';
+    }
   });
 });
 

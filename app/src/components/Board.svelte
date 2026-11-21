@@ -2,6 +2,7 @@
   import type { Board } from '../lib/core/board';
   import { toInputEvent } from '../lib/core/input-router';
   import { t } from '../lib/i18n/i18n.svelte';
+  import { isControl, isTextField, releasePointerFocus } from '../lib/ui/focus';
 
   interface Props {
     board: Board;
@@ -54,24 +55,8 @@
     }
   }
 
-  /** Text fields keep their own Ctrl+Z (undo of typing), not the board history. */
-  function isTextField(target: EventTarget | null): boolean {
-    if (!(target instanceof HTMLElement)) return false;
-    if (target.isContentEditable || target instanceof HTMLTextAreaElement) return true;
-    return (
-      target instanceof HTMLInputElement &&
-      !['range', 'checkbox', 'radio', 'button', 'color'].includes(target.type)
-    );
-  }
-
-  /** Space activates focused controls; it moves the view only elsewhere (WEJ-04 K1). */
-  function isControl(target: EventTarget | null): boolean {
-    return (
-      target instanceof HTMLElement &&
-      target.closest('button, input, select, textarea, a, [contenteditable]') !== null
-    );
-  }
-
+  // Text fields keep their own Ctrl+Z (undo of typing); Space activates focused controls and
+  // moves the view only elsewhere (WEJ-04 K1).
   function onKeyDown(event: KeyboardEvent) {
     if (isTextField(event.target)) return;
     if (!isControl(event.target) && board.input.keyDown(event)) {
@@ -92,7 +77,12 @@
   }
 </script>
 
-<svelte:window onkeydown={onKeyDown} onkeyup={onKeyUp} onblur={onBlur} />
+<svelte:window
+  onkeydown={onKeyDown}
+  onkeyup={onKeyUp}
+  onblur={onBlur}
+  onclick={releasePointerFocus}
+/>
 
 <main
   class="board"

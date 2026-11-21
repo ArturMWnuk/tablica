@@ -180,6 +180,37 @@ test.describe('WEJ-04: every tool works with the mouse', () => {
     expect((await pixel(page, 200, 120))[3]).toBe(0);
     await expect(page.getByTestId('undo')).toBeDisabled();
   });
+
+  for (const key of ['layer-drawing/pen', 'layer-drawing/highlighter']) {
+    test(`WEJ-04: after clicking ${key} on the toolbar, Space + drag moves the view and does not draw`, async ({
+      page,
+    }) => {
+      await openBoard(page);
+      await selectTool(page, key);
+      await mouseStroke(page, [
+        [100, 120],
+        [300, 120],
+      ]);
+      expect((await pixel(page, 200, 120))[3]).toBeGreaterThan(0);
+      // The focus does not stay on the clicked button (Chromium would press it with Space).
+      expect(await page.evaluate(() => document.activeElement?.tagName)).not.toBe('BUTTON');
+      await page.keyboard.down('Space');
+      await mouseStroke(page, [
+        [100, 300],
+        [300, 300],
+      ]);
+      await page.keyboard.up('Space');
+      // No second stroke; the first one moved 200 px to the right with the view.
+      await expect(page.locator(`[data-tool="${key}"]`)).toHaveAttribute('aria-pressed', 'true');
+      expect((await pixel(page, 200, 300))[3]).toBe(0);
+      expect((await pixel(page, 200, 120))[3]).toBe(0);
+      expect((await pixel(page, 400, 120))[3]).toBeGreaterThan(0);
+      // One undo removes the only stroke.
+      await page.getByTestId('undo').click();
+      expect((await pixel(page, 400, 120))[3]).toBe(0);
+      await expect(page.getByTestId('undo')).toBeDisabled();
+    });
+  }
 });
 
 test.describe('RYS-01: pen', () => {
