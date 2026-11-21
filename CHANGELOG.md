@@ -23,6 +23,9 @@ Każdy wpis zawiera identyfikatory wymagań z `docs/DOKUMENTACJA.md`.
 - Rysowanie bez opóźnienia: zdarzenia scalone i przewidywane, przyrostowe rysowanie bieżącej kreski i wbudowany pomiar opóźnienia (p95 ≤ 4 ms) (NF-04).
 - Pasek narzędzi i panele ustawień narzędzi z wtyczek (RYS-01, WEJ-04).
 - API wtyczek 1.1 (zgodne wstecz): nachylenie rysika i przewidywane pozycje w zdarzeniach narzędzi (WAR-12).
+- Zapis i odczyt lekcji w pliku `.tablica` (archiwum ZIP z wersją formatu i migracjami): warstwy z ustawieniami i numerami, kreski i widok tablicy. Menu Plik z poleceniami Nowa, Otwórz, Zapisz, Zapisz jako i Ostatnie pliki oraz skróty Ctrl+N, Ctrl+O, Ctrl+S, Ctrl+Shift+S. Zapis atomowy (plik tymczasowy i zamiana), więc przerwany zapis nie psuje poprzedniej wersji pliku. Uszkodzony plik albo plik z nowszej wersji programu daje komunikat zamiast awarii. Dane warstw bez zainstalowanej wtyczki i dane z nowszej wersji wtyczki są zachowywane bez zmian. Przed odrzuceniem niezapisanych zmian program pyta o zgodę (DAN-01).
+- Autozapis: domyślnie co 2 minuty, odstęp 1–60 minut albo wyłączony w pasku ustawień. Kopia zapasowa trafia do osobnego katalogu odzyskiwania, a plik lekcji zmienia się tylko przy „Zapisz”. Po nieprawidłowym zamknięciu programu przy starcie pojawia się propozycja przywrócenia ostatniego autozapisu (DAN-02).
+- Tryb deweloperski: `tablicaDiagnostics.breakPlugin(id)` w konsoli wywołuje awarię wtyczki, do testu ręcznego odzyskiwania danych uszkodzonej warstwy (WAR-06, DAN-03).
 - Prototypy ryzyk technicznych kroku 1.1 w `spikes/platform/` (poza programem) i raport `docs/etapy/ETAP-1-prototypy.md`: część Windows (przygotowanie TLO-02, TLO-03, MM-02, MM-05, MM-09, WEJ-02, NF-04).
 
 ### Poprawiono

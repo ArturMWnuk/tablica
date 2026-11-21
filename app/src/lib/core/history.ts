@@ -54,10 +54,28 @@ export class History {
   private stepLimit: number;
   /** The last entry may still take over merged changes. */
   private open = false;
+  /** Counts executed, undone and redone steps; tells the lesson that the document changed. */
+  private edits = 0;
   readonly changed = new Emitter();
 
   constructor(limit = DEFAULT_HISTORY_LIMIT) {
     this.stepLimit = clampHistoryLimit(limit);
+  }
+
+  /**
+   * Grows with every executed, undone or redone step (also merged ones), so the lesson can tell
+   * whether the document changed since it was saved (DAN-01, DAN-02). Never goes back.
+   */
+  get version(): number {
+    return this.edits;
+  }
+
+  /** Forgets all steps, e.g. when another lesson is opened. */
+  clear(): void {
+    this.done = [];
+    this.undone = [];
+    this.open = false;
+    this.changed.emit();
   }
 
   /** Maximum number of undo steps. */
@@ -85,6 +103,7 @@ export class History {
     this.open = options.merge === true && !emptied;
     this.undone = [];
     this.trim();
+    this.edits += 1;
     this.changed.emit();
   }
 
@@ -120,6 +139,7 @@ export class History {
     this.open = false;
     const entry = this.done.pop();
     if (!entry) return false;
+    this.edits += 1;
     this.run(() => entry.revert());
     this.undone.push(entry);
     this.changed.emit();
@@ -130,6 +150,7 @@ export class History {
     this.open = false;
     const entry = this.undone.pop();
     if (!entry) return false;
+    this.edits += 1;
     this.run(() => entry.apply());
     this.done.push(entry);
     this.changed.emit();

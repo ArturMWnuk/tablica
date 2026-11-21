@@ -11,7 +11,26 @@
     "historyLimit": "Kroki cofania",
     "historyLimitHint": "Liczba operacji, które można cofnąć ({min}–{max})",
     "penDisablesFinger": "Rysik wyłącza rysowanie palcem",
-    "penDisablesFingerHint": "Po pierwszym użyciu rysika palec tylko przesuwa i powiększa widok (do końca sesji)"
+    "penDisablesFingerHint": "Po pierwszym użyciu rysika palec tylko przesuwa i powiększa widok (do końca sesji)",
+    "autosave": "Autozapis co",
+    "autosaveMinutes": "min",
+    "autosaveHint": "Kopia zapasowa lekcji co tyle minut ({min}–{max}) w katalogu odzyskiwania. Plik lekcji zmienia się tylko przy „Zapisz”.",
+    "autosaveInterval": "Odstęp autozapisu w minutach"
+  },
+  "file": {
+    "menu": "Plik",
+    "menuHint": "Polecenia pliku lekcji",
+    "new": "Nowa",
+    "open": "Otwórz…",
+    "save": "Zapisz",
+    "saveAs": "Zapisz jako…",
+    "recent": "Ostatnie pliki",
+    "noRecent": "Brak ostatnich plików",
+    "untitled": "Lekcja bez nazwy",
+    "unsaved": "Niezapisane zmiany",
+    "filterName": "Lekcja Tablicy",
+    "discardConfirm": "Lekcja „{file}” ma niezapisane zmiany. Czy odrzucić te zmiany?",
+    "restoreConfirm": "Poprzednia sesja nie została prawidłowo zamknięta. Czy przywrócić autozapis lekcji „{file}” ({when})?"
   },
   "tools": {
     "label": "Narzędzia",
@@ -65,6 +84,13 @@
     "layerBroken": "Warstwa „{name}” została oznaczona jako uszkodzona po błędzie we wtyczce. Pozostałe warstwy działają, a dane tej warstwy zostaną zachowane przy zapisie.",
     "shortcutConflict": "Skrót {keys} warstwy „{name}” jest już zajęty i nie został przypisany.",
     "historyLocked": "Następny krok cofania lub ponawiania zmienia warstwę „{name}”, która jest zablokowana. Odblokuj ją w panelu warstw, aby cofnąć lub ponowić.",
-    "historyHidden": "Następny krok cofania lub ponawiania zmienia warstwę „{name}”, która jest ukryta. Pokaż ją w panelu warstw, aby cofnąć lub ponowić."
+    "historyHidden": "Następny krok cofania lub ponawiania zmienia warstwę „{name}”, która jest ukryta. Pokaż ją w panelu warstw, aby cofnąć lub ponowić.",
+    "layerNewer": "Warstwa „{name}” została zapisana w nowszej wersji wtyczki. Jej dane zostaną zachowane bez zmian, ale nie można jej edytować.",
+    "fileCorrupt": "Nie można otworzyć pliku „{file}”: plik jest uszkodzony albo nie jest lekcją Tablicy.",
+    "fileNewer": "Plik „{file}” został zapisany w nowszej wersji programu. Zaktualizuj Tablicę, aby go otworzyć.",
+    "fileReadFailed": "Nie można odczytać pliku „{file}”. Sprawdź, czy plik nadal istnieje.",
+    "fileWriteFailed": "Nie udało się zapisać pliku „{file}”. Poprzednia wersja pliku pozostała bez zmian.",
+    "autosaveFailed": "Autozapis lekcji „{file}” nie powiódł się.",
+    "recoveryFailed": "Nie można przywrócić autozapisu lekcji „{file}”: kopia jest uszkodzona."
   }
 }

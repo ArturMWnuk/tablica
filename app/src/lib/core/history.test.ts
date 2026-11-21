@@ -46,6 +46,40 @@ function setter(state: { value: number }, from: number, to: number) {
   return entry;
 }
 
+describe('DAN-01: changes of the document for saving', () => {
+  it('DAN-01: the version grows with every executed, undone and redone step', () => {
+    const history = new History();
+    const { add } = counter();
+    expect(history.version).toBe(0);
+    history.execute(add(1));
+    history.undo();
+    history.redo();
+    expect(history.version).toBe(3);
+    // A failing undo or an empty stack does not count; the limit is not a document change.
+    history.setLimit(20);
+    history.undo();
+    history.undo();
+    expect(history.version).toBe(4);
+    expect(history.undo()).toBe(false);
+    expect(history.version).toBe(4);
+  });
+
+  it('DAN-01: clear forgets every step (another lesson was opened)', () => {
+    const history = new History();
+    const { add } = counter();
+    history.execute(add(1));
+    history.execute(add(2));
+    history.undo();
+    const listener = vi.fn();
+    history.changed.subscribe(listener);
+    history.clear();
+    expect(history.canUndo).toBe(false);
+    expect(history.canRedo).toBe(false);
+    expect(history.entries).toEqual([]);
+    expect(listener).toHaveBeenCalledOnce();
+  });
+});
+
 describe('DAN-03: undo limit', () => {
   it('DAN-03: the default limit is 50 steps', () => {
     expect(new History().limit).toBe(DEFAULT_HISTORY_LIMIT);

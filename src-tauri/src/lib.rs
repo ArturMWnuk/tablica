@@ -1,6 +1,8 @@
 //! Rust core of Tablica: windows, files and system integration.
 //! Layers live in the web interface as plugins; the core does not know about them (WAR-12).
 
+mod files;
+
 /// Application context generated from `tauri.conf.json` and the built web interface.
 fn context() -> tauri::Context<tauri::Wry> {
     tauri::generate_context!()
@@ -10,6 +12,16 @@ fn context() -> tauri::Context<tauri::Wry> {
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        // DAN-01 K4: system dialogs to choose the lesson file to open or save.
+        .plugin(tauri_plugin_dialog::init())
+        .invoke_handler(tauri::generate_handler![
+            files::lesson_read,
+            files::lesson_write,
+            files::recovery_write,
+            files::recovery_meta,
+            files::recovery_read,
+            files::recovery_clear,
+        ])
         .run(context())
         .expect("error while running Tablica");
 }

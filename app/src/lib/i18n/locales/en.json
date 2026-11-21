@@ -11,7 +11,26 @@
     "historyLimit": "Undo steps",
     "historyLimitHint": "Number of operations that can be undone ({min}–{max})",
     "penDisablesFinger": "Pen turns off finger drawing",
-    "penDisablesFingerHint": "After the pen is first used, a finger only moves and zooms the view (until the end of the session)"
+    "penDisablesFingerHint": "After the pen is first used, a finger only moves and zooms the view (until the end of the session)",
+    "autosave": "Autosave every",
+    "autosaveMinutes": "min",
+    "autosaveHint": "Backup copy of the lesson every so many minutes ({min}–{max}) in the recovery folder. The lesson file changes only on “Save”.",
+    "autosaveInterval": "Autosave interval in minutes"
+  },
+  "file": {
+    "menu": "File",
+    "menuHint": "Lesson file commands",
+    "new": "New",
+    "open": "Open…",
+    "save": "Save",
+    "saveAs": "Save as…",
+    "recent": "Recent files",
+    "noRecent": "No recent files",
+    "untitled": "Untitled lesson",
+    "unsaved": "Unsaved changes",
+    "filterName": "Tablica lesson",
+    "discardConfirm": "The lesson “{file}” has unsaved changes. Discard these changes?",
+    "restoreConfirm": "The previous session was not closed properly. Restore the autosave of the lesson “{file}” ({when})?"
   },
   "tools": {
     "label": "Tools",
@@ -65,6 +84,13 @@
     "layerBroken": "The layer “{name}” was marked as broken after an error in its plugin. Other layers keep working, and the data of this layer will be kept when saving.",
     "shortcutConflict": "The shortcut {keys} of the layer “{name}” is already taken and was not assigned.",
     "historyLocked": "The next undo or redo step changes the layer “{name}”, which is locked. Unlock it in the layer panel to undo or redo.",
-    "historyHidden": "The next undo or redo step changes the layer “{name}”, which is hidden. Show it in the layer panel to undo or redo."
+    "historyHidden": "The next undo or redo step changes the layer “{name}”, which is hidden. Show it in the layer panel to undo or redo.",
+    "layerNewer": "The layer “{name}” was saved by a newer version of its plugin. Its data will be kept unchanged, but it cannot be edited.",
+    "fileCorrupt": "The file “{file}” cannot be opened: it is damaged or it is not a Tablica lesson.",
+    "fileNewer": "The file “{file}” was saved by a newer version of the program. Update Tablica to open it.",
+    "fileReadFailed": "The file “{file}” cannot be read. Check that the file still exists.",
+    "fileWriteFailed": "The file “{file}” could not be saved. The previous version of the file was left unchanged.",
+    "autosaveFailed": "The autosave of the lesson “{file}” failed.",
+    "recoveryFailed": "The autosave of the lesson “{file}” cannot be restored: the copy is damaged."
   }
 }

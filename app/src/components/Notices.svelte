@@ -25,7 +25,10 @@
         <p>
           {t(notice.key, {
             ...notice.params,
-            name: layerTitle(notice.pluginId, Number(notice.params['number'] ?? 0)),
+            // Messages about files name no layer (DAN-01).
+            ...(notice.pluginId
+              ? { name: layerTitle(notice.pluginId, Number(notice.params['number'] ?? 0)) }
+              : {}),
           })}
         </p>
         <button

@@ -5,14 +5,16 @@
   import PluginPanels from './components/PluginPanels.svelte';
   import SettingsBar from './components/SettingsBar.svelte';
   import type { Board as BoardModel } from './lib/core/board';
+  import type { LessonSession } from './lib/files/session';
   import { i18n, t } from './lib/i18n/i18n.svelte';
   import { applyTheme, themeState } from './lib/theme/theme.svelte';
 
   interface Props {
     board: BoardModel;
+    session: LessonSession;
   }
 
-  const { board }: Props = $props();
+  const { board, session }: Props = $props();
 
   $effect(() => themeState.watchSystem());
 
@@ -29,7 +31,7 @@
 </script>
 
 <div class="layout">
-  <SettingsBar {board} />
+  <SettingsBar {board} {session} />
   <div class="workspace">
     <Board {board} />
     <div class="side">

@@ -14,11 +14,14 @@
     "@tablica/layer-background": "workspace:*",
     "@tablica/layer-drawing": "workspace:*",
     "@tablica/layer-media": "workspace:*",
-    "@tablica/plugin-api": "workspace:*"
+    "@tablica/plugin-api": "workspace:*",
+    "@tauri-apps/api": "2.12.5",
+    "@tauri-apps/plugin-dialog": "2.8.4",
+    "fflate": "0.8.3"
   },
   "devDependencies": {
-    "@tablica/test-fixture-layer": "workspace:*",
     "@sveltejs/vite-plugin-svelte": "7.3.1",
+    "@tablica/test-fixture-layer": "workspace:*",
     "svelte": "5.57.3",
     "svelte-check": "4.7.8",
     "typescript": "6.0.3",

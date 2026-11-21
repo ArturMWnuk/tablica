@@ -10,7 +10,7 @@
 | Bieżący etap | 1 |
 | Status etapu | REALIZACJA |
 | Plan etapu | `docs/etapy/ETAP-1-plan.md` (ZATWIERDZONY 2026-11-01) |
-| Bieżący krok | 1.5 (następny); 1.1 W TOKU (Linux i Android czekają na P12) |
+| Bieżący krok | 1.6 (następny); 1.1 W TOKU (Linux i Android czekają na P12) |
 | Gałąź robocza | `etap-1` |
 
 ## Etapy
@@ -38,7 +38,7 @@ Statusy: OCZEKUJE, W TOKU, UKOŃCZONY.
 | 1.4 | Wejście i pisanie | WEJ-01–06, RYS-01, RYS-02, NF-04 | UKOŃCZONY (weryfikacja: WARUNKOWO, `docs/raporty/ETAP-1-krok-1.4-weryfikacja.md`; WEJ-04 K1 do poprawki; WEJ-05 K3 domknięcie w 1.6, P18; WEJ-02 po R11) | c1ee23b |
 | 1.4-poprawka | Spacja z przeciąganiem po weryfikacji | WEJ-04 (K1) | UKOŃCZONY (weryfikacja: WARUNKOWO, `docs/raporty/ETAP-1-krok-1.4-poprawka-weryfikacja.md`; w Edge suwak grubości i pole wyboru D4 nadal zatrzymują fokus) | 07d4ce6 |
 | 1.4-poprawka-2 | Spacja po użyciu suwaka i pola wyboru | WEJ-04 (K1) | UKOŃCZONY (kontrole zielone, bez weryfikacji audytora; W5b i W5c powtórzone przez właściciela: zaliczone) | 1110dc0 |
-| 1.5 | Zapis i odczyt lekcji | DAN-01, DAN-02 | OCZEKUJE | |
+| 1.5 | Zapis i odczyt lekcji | DAN-01, DAN-02 | UKOŃCZONY (kontrole zielone, bez weryfikacji audytora) | (ten commit) |
 | 1.6 | Edycja rysunku | RYS-03, RYS-04, RYS-12–14, domknięcie WAR-06 (K1, P16) | OCZEKUJE | |
 | 1.7 | Figury, przyrządy, narzędzia matematyczne | RYS-05–11 | OCZEKUJE | |
 | 1.8 | Obszar tablicy i tła | OBS-01, OBS-02, TLO-01, TLO-04–08 | OCZEKUJE | |
@@ -50,8 +50,8 @@ Statusy: OCZEKUJE, W TOKU, UKOŃCZONY.
 | 1.14 | Wydanie i wydajność | NF-02, NF-03, NF-05, domknięcie PLAT-01–03, NF-01 | OCZEKUJE | |
 
 ## Następne działania
-1. `/realizuj-krok 1.5`. Testy W5, W5a–W5c (WEJ-04 K1, WebView2) zaliczone 2026-11-21; W5d (Android) i W5e (Linux) po P12.
-2. Testy ręczne wykonalne na laptopie referencyjnym są zrobione (24 zaliczone, podsumowanie w dzienniku). Pozostaje 13 po P12, Q4 i ostatnia część P2 po kroku 1.5, P7 po kroku 1.6. Przy planowaniu kroku 1.5 uwzględnić deweloperski sposób wywołania awarii wtyczki (Q4).
+1. `/weryfikuj-etap 1 krok 1.5` (zalecane przed krokiem 1.6), potem `/realizuj-krok 1.6`.
+2. Właściciel, w aplikacji Tauri (`pnpm tauri dev`, Windows): testy ręczne kroku 1.5 opisane w dzienniku (F1–F4), Q4 i ostatnia część P2. Pozostaje 13 testów po P12 i P7 po kroku 1.6.
 3. Właściciel: naprawić środowisko laptopa: Visual Studio Installer → Build Tools 2022 → Napraw (w `lib\x64` brak `oldnames.lib`; obejściem jest pusta biblioteka x64 z `lib.exe /DEF` podana w zmiennej `LIB`). Playwright Chromium naprawiony 2026-11-21 (`playwright install chromium --force`). Polecenia projektu uruchamiać Node 26 z `C:\Users\artur\AppData\Local\Programs\nodejs-portable\node-v26.13.0-win-x64` (Node w PATH to 20.12.2, za stary: pnpm pomija wtedy natywne bindingi).
 4. Właściciel: podać brakujące dane sprzętu (P12), potem dokończyć krok 1.1 (Linux, Android, tablet graficzny).
 5. Po P12: `/realizuj-krok 1.1` (Linux, Android, tablet graficzny); kroki 1.9 i 1.10 dopiero po domknięciu 1.1.
@@ -64,6 +64,18 @@ Statusy: OCZEKUJE, W TOKU, UKOŃCZONY.
 Brak.
 
 ## Dziennik sesji
+### 2026-11-21: Krok 1.5 — zapis i odczyt lekcji, autozapis
+- Format `.tablica` (ADR-009, `app/src/lib/files/lesson-format.ts`, fflate 0.8.3, MIT): ZIP z `manifest.json` (`format: "tablica"`, `formatVersion` układu), `document.json` (wersja schematu, widok, lista warstw z ustawieniami i numerami), `layers/<id>.json` (dane każdej warstwy od jej wtyczki) i `assets/`. Nieznane wpisy archiwum przechodzą bez zmian przez kolejne zapisy. Migracje `document.json` krok po kroku (`LESSON_MIGRATIONS`, na razie pusta tabela, mechanizm sprawdzony testem z wstrzykniętymi migracjami). Plik z nowszym układem lub schematem daje `notice.fileNewer`, uszkodzony albo obcy plik `notice.fileCorrupt`. Identyfikatory warstw muszą być bezpieczną nazwą pliku. Moduł formatu ładowany leniwie przy pierwszym zapisie lub otwarciu (NF-03, osobny fragment 15 kB).
+- Rdzeń: `Board.openDocument` zastępuje lekcję na tej samej tablicy (warstwy, widok, pusta historia; wtyczki zostają wczytane), `BoardDocument.reset`, `History.clear` i `History.version`, `Board.revision` (kroki historii oraz widoczność i blokada; przesunięcie widoku nie zmienia lekcji). Serializacja zawiera widok (kamerę). Dane warstwy zapisane nowszą wersją formatu wtyczki niż zainstalowana nie trafiają do `deserialize`: warstwa jest oznaczona jako uszkodzona z komunikatem `notice.layerNewer`, a dane zapisują się bez zmian (zachowanie danych nieznanych wtyczek). Ctrl+N, Ctrl+O, Ctrl+S i Ctrl+Shift+S są zarezerwowane dla programu.
+- `LessonSession` (`app/src/lib/files/session.ts`): Nowa, Otwórz, Zapisz, Zapisz jako, Ostatnie pliki (do 10, zapamiętywane na urządzeniu, plik nieczytelny wypada z listy), autozapis (P5: osobna kopia w katalogu odzyskiwania, tylko gdy coś się zmieniło; zapis lekcji usuwa kopię), przywracanie przy starcie, zamknięcie. Operacje idą po kolei, więc autozapis nie miesza się z otwieraniem. Interfejs: menu Plik z nazwą lekcji i znacznikiem niezapisanych zmian, pole „Autozapis co … min” (pole wyboru + 1–60).
+- Rust (`src-tauri/src/files.rs`): `lesson_read`, `lesson_write` (zapis atomowy: plik tymczasowy w tym samym katalogu, `sync_all`, `rename`; po błędzie plik tymczasowy usuwany, poprzedni plik bez zmian), `recovery_write/meta/read/clear` w `app_data_dir/recovery`. Bajty idą surowym ciałem IPC, ścieżka w nagłówku zakodowanym `encodeURIComponent` (polskie litery). Nowe zależności: `tauri-plugin-dialog` 2.8.4 (MIT OR Apache-2.0, okna wyboru pliku i pytania), `@tauri-apps/api` 2.12.5 i `@tauri-apps/plugin-dialog` 2.8.4 (Apache-2.0 OR MIT), dev: `tempfile` (MIT OR Apache-2.0). Uprawnienia okna: `dialog:allow-open/save/ask/message`, `core:window:allow-destroy` (obsługa zamknięcia okna).
+- Q4: w trybie deweloperskim (`pnpm tauri dev`) konsola WebView udostępnia `tablicaDiagnostics.breakPlugin('layer-drawing')`, które wywołuje awarię wtyczki. W wydaniu ta funkcja nie istnieje.
+- Interpretacje do potwierdzenia przez właściciela (dokumentacja ich nie opisuje): (1) Nowa, Otwórz i zamknięcie okna przy niezapisanych zmianach pytają systemowym oknem „odrzucić zmiany?” (tak/nie, bez „zapisz”); bez tego jedno kliknięcie gubiłoby pracę. (2) Przywrócona z autozapisu lekcja wskazuje swój pierwotny plik i jest oznaczona jako niezapisana; kopia zostaje do zapisu lub prawidłowego zamknięcia. (3) Odmowa przywrócenia usuwa kopię. (4) Okna pytań są systemowe (wtyczka dialog), więc nie ma problemu pułapki fokusu z raportu 1.4-poprawka.
+- Ograniczenia: Android (P12) nie sprawdzony; wybór pliku na Androidzie zwraca adresy `content://`, których `std::fs` nie obsłuży, więc zapis i odczyt na Androidzie wymagają osobnego sprawdzenia przy R03. Dwa uruchomione egzemplarze programu dzielą jeden katalog odzyskiwania.
+- Testy: `lesson-format.test.ts` (14: układ archiwum, round-trip, nieznane wpisy, uszkodzone pliki, nowsza wersja, migracje), `lesson-file.test.ts` (25: round-trip wszystkich istniejących elementów z prawdziwymi wtyczkami, edycja i cofanie po otwarciu, ciągłość numeracji P20, migracja warstwy rysunkowej z formatu 1, warstwa bez wtyczki i z nowszej wtyczki, Q4/P17 b w teście jednostkowym, polecenia Plik, ostatnie pliki, błędy odczytu i zapisu, autozapis z kontrolowanym zegarem, przywracanie), `history.test.ts` (+2), e2e `lesson-file.spec.ts` (3 × 2 silniki: Zapisz / Nowa / Ostatnie pliki z kreską, skróty Ctrl+Shift+S / Ctrl+N / Ctrl+O, uszkodzony plik), Rust 4 nowe (`dan_01_*`).
+- Kontrole: lint i prettier, typy (371 plików, 0 błędów), Vitest 251/251, licencje npm 235, build web, Playwright 78/78 (39 Chromium + 39 WebKit) w trzech kolejnych przebiegach; jeden wcześniejszy przebieg miał 1 nieudany test, którego nie zidentyfikowano (znany kandydat: próg NF-04 pod pełnym obciążeniem równoległym), cargo fmt, clippy `-D warnings`, cargo test 6/6, cargo-deny licencje OK (z obejściem `oldnames.lib`).
+- Testy ręczne dla właściciela (aplikacja Tauri, Windows): **F1** narysuj kilka kresek, Ctrl+S → systemowe okno zapisu, zapisz jako „Próba żółw” → plik `Próba żółw.tablica` powstaje, nazwa w pasku bez kropki; zamknij program, uruchom, Plik → Ostatnie pliki → kreski, krycie, ukrycie i blokada warstw oraz widok wracają. **F2** Plik → Otwórz dowolny plik zmieniony na `.tablica` (np. tekst) → komunikat o uszkodzonym pliku, tablica działa. **F3** ustaw „Autozapis co 1 min”, narysuj kreskę, odczekaj ponad minutę, zakończ proces w Menedżerze zadań → przy starcie pytanie o przywrócenie; „Tak” → kreska wraca, lekcja oznaczona jako niezapisana. **F4** narysuj kreskę i zamknij okno → pytanie o odrzucenie zmian; „Nie” zostawia program otwarty. **Q4** i ostatnia część **P2** według raportów: awaria wtyczki przez `tablicaDiagnostics.breakPlugin('layer-drawing')` w konsoli (prawy przycisk → Zbadaj w `pnpm tauri dev`).
+
 ### 2026-11-21: Porządki w stanie
 - Kroki 1.3-poprawka-3, 1.4-poprawka-2 i 1.3-poprawka-4 są już w `etap-1` (gałąź `testy-reczne-etap1` wskazuje ten sam commit c67522c), więc usunięto nieaktualne wpisy o scalaniu. Następny krok: 1.5.
 

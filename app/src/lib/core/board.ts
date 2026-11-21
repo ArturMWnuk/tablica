@@ -144,6 +144,13 @@ class MoveEntry implements HistoryEntry {
 /** Core keyboard shortcuts of the history (DAN-03 K1); plugins cannot take them. */
 export const UNDO_KEYS = ['Ctrl+Z'] as const;
 export const REDO_KEYS = ['Ctrl+Y', 'Ctrl+Shift+Z'] as const;
+/** Lesson commands of the File menu (DAN-01 K4); reserved, so no plugin can take them. */
+export const FILE_KEYS = {
+  new: 'Ctrl+N',
+  open: 'Ctrl+O',
+  save: 'Ctrl+S',
+  saveAs: 'Ctrl+Shift+S',
+} as const;
 
 /** D3: tap with two fingers undoes, with three fingers redoes. */
 export const UNDO_TAP_FINGERS = 2;
@@ -154,7 +161,11 @@ export class Board {
   readonly history = new History();
   readonly notices = new Notices();
   readonly tools = new ToolRegistry();
-  readonly shortcuts = new ShortcutRegistry([...UNDO_KEYS, ...REDO_KEYS]);
+  readonly shortcuts = new ShortcutRegistry([
+    ...UNDO_KEYS,
+    ...REDO_KEYS,
+    ...Object.values(FILE_KEYS),
+  ]);
   readonly panels = new PanelRegistry();
   /** Input pipeline: pen, fingers, mouse and keyboard (WEJ-01–06, NF-04). */
   readonly input: InputRouter = new InputRouter(this);
@@ -162,10 +173,13 @@ export class Board {
   readonly plugins: PluginManager;
   private host: LayerHost | undefined;
   private readonly translate: BoardOptions['translate'];
+  /** Changes of layer settings kept outside the history (visibility, lock; D12). */
+  private settingEdits = 0;
 
   constructor(options: BoardOptions) {
     this.translate = options.translate;
     this.document = new BoardDocument(options.document);
+    this.setView(options.document);
     this.plugins = new PluginManager(this.notices, {
       addTranslations: options.addTranslations,
       activate: (manifest, plugin) => this.activatePlugin(manifest, plugin),
@@ -179,6 +193,33 @@ export class Board {
    */
   async loadLayers(): Promise<void> {
     await Promise.all(this.document.layers.map((record) => this.prepareLayer(record)));
+  }
+
+  /**
+   * Replaces the lesson on the board with another one (DAN-01 K4: New, Open, Recent files): the
+   * layers, the view and an empty history. Plugins stay loaded; the new layers are prepared.
+   */
+  async openDocument(serialized: SerializedDocument): Promise<void> {
+    this.history.clear();
+    this.document.reset(serialized);
+    this.setView(serialized);
+    await this.loadLayers();
+  }
+
+  private setView(serialized: SerializedDocument | undefined): void {
+    try {
+      this.camera.set(serialized?.view ?? { x: 0, y: 0, zoom: 1 });
+    } catch {
+      this.camera.set({ x: 0, y: 0, zoom: 1 });
+    }
+  }
+
+  /**
+   * Grows with every change of the document: undoable steps and changes of visibility and lock.
+   * The view (camera) is saved with the lesson but moving it is not a change of the lesson.
+   */
+  get revision(): number {
+    return this.history.version + this.settingEdits;
   }
 
   /**
@@ -225,6 +266,13 @@ export class Board {
       return;
     }
     const { data, schemaVersion } = record.stored;
+    // Data written by a newer version of the plugin: the installed one could misread it and the
+    // next save would lose what it does not know. The layer keeps its data unchanged (ADR-009).
+    if (data !== null && schemaVersion !== null && schemaVersion > plugin.schemaVersion) {
+      this.document.setRecordStatus(record, 'broken');
+      this.notices.add('notice.layerNewer', record.pluginId, { number: record.number });
+      return;
+    }
     try {
       record.data =
         data === null
@@ -313,11 +361,16 @@ export class Board {
 
   /** WAR-02: shows or hides a layer. A view setting, not recorded in the history (D12). */
   setLayerVisible(layerId: string, visible: boolean): void {
+    if (this.document.getLayer(layerId)?.visible === visible) return;
+    // Counted first: listeners of the document change read the new revision.
+    this.settingEdits += 1;
     this.document.setVisible(layerId, visible);
   }
 
   /** WAR-03: locks or unlocks a layer. A view setting, not recorded in the history (D12). */
   setLayerLocked(layerId: string, locked: boolean): void {
+    if (this.document.getLayer(layerId)?.locked === locked) return;
+    this.settingEdits += 1;
     this.document.setLocked(layerId, locked);
   }
 
@@ -471,9 +524,16 @@ export class Board {
     };
   }
 
-  /** Serializes the lesson. Broken and missing layers keep their last known data. */
+  /**
+   * Serializes the lesson with the current view (DAN-01 K1). Broken and missing layers keep their
+   * last known data.
+   */
   serialize(): SerializedDocument {
-    return this.document.serialize((record) => this.serializeLayer(record));
+    const { x, y, zoom } = this.camera.state;
+    return {
+      ...this.document.serialize((record) => this.serializeLayer(record)),
+      view: { x, y, zoom },
+    };
   }
 
   private serializeLayer(record: LayerRecord): SerializedLayer {

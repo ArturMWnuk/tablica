@@ -7,14 +7,54 @@
   import { savePenDisablesFingerDrawing } from '../lib/settings/input';
   import { themeState } from '../lib/theme/theme.svelte';
   import { isThemePreference, THEME_PREFERENCES } from '../lib/theme/tokens';
+  import type { LessonSession } from '../lib/files/session';
+  import {
+    clampAutosaveMinutes,
+    DEFAULT_AUTOSAVE_MINUTES,
+    MAX_AUTOSAVE_MINUTES,
+    MIN_AUTOSAVE_MINUTES,
+    saveAutosaveMinutes,
+  } from '../lib/settings/recent-files';
+  import FileMenu from './FileMenu.svelte';
   import HistoryButtons from './HistoryButtons.svelte';
   import ToolBar from './ToolBar.svelte';
 
   interface Props {
     board: Board;
+    session: LessonSession;
   }
 
-  const { board }: Props = $props();
+  const { board, session }: Props = $props();
+  let autosaveMinutes: number | null = $state(null);
+  /** Interval shown while the autosave is off, so switching it on keeps the last value. */
+  let lastMinutes = $state(DEFAULT_AUTOSAVE_MINUTES);
+
+  $effect(() => {
+    const update = () => {
+      autosaveMinutes = session.autosaveMinutes;
+      if (autosaveMinutes !== null) lastMinutes = autosaveMinutes;
+    };
+    update();
+    return session.changed.subscribe(update);
+  });
+
+  /** DAN-02 K1, D7: autosave every 1–60 minutes or off, remembered on this device. */
+  function setAutosave(minutes: number | null) {
+    session.setAutosaveMinutes(minutes);
+    saveAutosaveMinutes(minutes);
+  }
+
+  function onAutosaveToggle(event: Event) {
+    setAutosave((event.currentTarget as HTMLInputElement).checked ? lastMinutes : null);
+  }
+
+  function onAutosaveMinutesChange(event: Event) {
+    const input = event.currentTarget as HTMLInputElement;
+    const minutes = clampAutosaveMinutes(Number(input.value));
+    input.value = String(minutes);
+    lastMinutes = minutes;
+    if (autosaveMinutes !== null) setAutosave(minutes);
+  }
   let historyLimit = $state(0);
   let penDisablesFinger = $derived(board.input.settings.penDisablesFingerDrawing);
 
@@ -56,6 +96,8 @@
 
 <header class="bar">
   <h1 class="title">{t('app.title')}</h1>
+  <FileMenu {session} />
+  <span class="spacer"></span>
   <ToolBar {board} />
   <HistoryButtons {board} />
   <label class="field" title={t('settings.penDisablesFingerHint')}>
@@ -81,6 +123,30 @@
       value={historyLimit}
       onchange={onHistoryLimitChange}
     />
+  </label>
+  <label
+    class="field"
+    title={t('settings.autosaveHint', { min: MIN_AUTOSAVE_MINUTES, max: MAX_AUTOSAVE_MINUTES })}
+  >
+    <input
+      type="checkbox"
+      data-testid="autosave-enabled"
+      checked={autosaveMinutes !== null}
+      onchange={onAutosaveToggle}
+    />
+    <span>{t('settings.autosave')}</span>
+    <input
+      type="number"
+      data-testid="autosave-minutes"
+      aria-label={t('settings.autosaveInterval')}
+      min={MIN_AUTOSAVE_MINUTES}
+      max={MAX_AUTOSAVE_MINUTES}
+      step="1"
+      value={autosaveMinutes ?? lastMinutes}
+      disabled={autosaveMinutes === null}
+      onchange={onAutosaveMinutesChange}
+    />
+    <span>{t('settings.autosaveMinutes')}</span>
   </label>
   <label class="field">
     <span>{t('settings.language')}</span>
@@ -110,8 +176,12 @@
     border-bottom: 1px solid var(--color-border);
   }
 
+  .spacer {
+    flex: 1;
+  }
+
   .title {
-    margin: 0 auto 0 0;
+    margin: 0;
     font-size: 16px;
     font-weight: 600;
   }

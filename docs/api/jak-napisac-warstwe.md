@@ -82,6 +82,8 @@ Lekcja może mieć dowolną liczbę warstw jednego typu. Wtyczka nie może trzym
 - `serialize(data)` zwraca JSON zapisywany w pliku lekcji. Nie może zmieniać `data`.
 - `deserialize(json, schemaVersion)` odtwarza dane. `schemaVersion` to wersja formatu, w której dane zapisano.
 - `schemaVersion` wtyczki to bieżąca wersja formatu. Gdy zmieniasz format, zwiększ ją i obsłuż starsze wersje w `deserialize` (migracja). Przykład: wtyczka testowa (`packages/test-fixture-layer`) w wersji 2 czyta też format z wersji 1.
+- Dane zapisane w **nowszej** wersji formatu, niż zna wtyczka (lekcja z nowszej wersji wtyczki), nie trafiają do `deserialize`: program oznacza warstwę jako uszkodzoną, informuje użytkownika i zapisuje jej dane bez zmian, żeby nie zgubić tego, czego starsza wtyczka nie rozumie.
+- W pliku lekcji `.tablica` (archiwum ZIP) dane każdej warstwy leżą we własnym wpisie `layers/<id>.json`. Wtyczka nie czyta ani nie zapisuje pliku sama: dostaje i oddaje wyłącznie swoje dane JSON.
 
 ## 4. Kontener i kamera
 Każda warstwa dostaje własny kontener (`layer.container`), który pokrywa całą tablicę. Wtyczka sama wybiera technikę: canvas, SVG albo elementy HTML. Kolejność kontenerów odpowiada kolejności warstw w lekcji.

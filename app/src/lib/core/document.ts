@@ -51,9 +51,18 @@ export function normalizeOpacity(value: number): number {
   return Number((steps * OPACITY_STEP).toFixed(2));
 }
 
+/** View of the board saved with the lesson (DAN-01 K1): shift and zoom of the shared camera. */
+export interface SerializedView {
+  x: number;
+  y: number;
+  zoom: number;
+}
+
 export interface SerializedDocument {
   schemaVersion: number;
   layers: SerializedLayer[];
+  /** Camera when the lesson was saved; the default view when omitted. */
+  view?: SerializedView;
 }
 
 export interface LayerRecord extends LayerInfo, LayerSettings {
@@ -93,6 +102,22 @@ export class BoardDocument {
     if (serialized) {
       for (const layer of serialized.layers) this.insert({ ...layer });
     }
+  }
+
+  /**
+   * Replaces the whole content with another lesson (DAN-01 K4: New, Open): layers, numbers given
+   * out (P20) and active layers start from scratch.
+   */
+  reset(serialized: SerializedDocument): void {
+    const ids = new Set(serialized.layers.map((layer) => layer.id));
+    if (ids.size !== serialized.layers.length) throw new Error('Duplicate layer id');
+    this.records = [];
+    this.activeByPlugin.clear();
+    this.activeId = undefined;
+    this.highestNumber.clear();
+    this.bareTaken.clear();
+    for (const layer of serialized.layers) this.records.push(this.recordOf({ ...layer }));
+    this.changed.emit();
   }
 
   /** Layers from the bottom to the top. */

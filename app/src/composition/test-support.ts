@@ -3,6 +3,7 @@ import type { PluginManifest } from '@tablica/plugin-api';
 import { Board } from '../lib/core/board';
 import type { SerializedDocument, SerializedLayer } from '../lib/core/document';
 import type { PluginSource } from '../lib/core/plugin-manager';
+import type { LessonPlatform, RecoveryInfo } from '../lib/files/platform';
 import { coreCatalogs } from '../lib/i18n/catalogs';
 import { addNamespaceIfFree, type Catalogs, type Locale, translate } from '../lib/i18n/core';
 
@@ -32,6 +33,67 @@ export function createTestBoard(
       return true;
     },
   });
+}
+
+/**
+ * Files, dialogs and the recovery folder kept in memory (DAN-01, DAN-02 tests). Dialog answers
+ * and confirmations are queued by the test; `failWrites` makes every write fail.
+ */
+export class MemoryPlatform implements LessonPlatform {
+  readonly files = new Map<string, Uint8Array>();
+  readonly questions: string[] = [];
+  openAnswers: Array<string | null> = [];
+  saveAnswers: Array<string | null> = [];
+  confirmAnswers: boolean[] = [];
+  failWrites = false;
+  recovery: { bytes: Uint8Array; info: RecoveryInfo } | null = null;
+  recoveryWrites = 0;
+
+  chooseOpenPath(): Promise<string | null> {
+    return Promise.resolve(this.openAnswers.shift() ?? null);
+  }
+
+  chooseSavePath(): Promise<string | null> {
+    return Promise.resolve(this.saveAnswers.shift() ?? null);
+  }
+
+  read(path: string): Promise<Uint8Array> {
+    const bytes = this.files.get(path);
+    return bytes ? Promise.resolve(bytes.slice()) : Promise.reject(new Error(`ENOENT ${path}`));
+  }
+
+  writeAtomic(path: string, bytes: Uint8Array): Promise<void> {
+    if (this.failWrites) return Promise.reject(new Error('EACCES'));
+    this.files.set(path, bytes.slice());
+    return Promise.resolve();
+  }
+
+  confirm(message: string): Promise<boolean> {
+    this.questions.push(message);
+    return Promise.resolve(this.confirmAnswers.shift() ?? false);
+  }
+
+  writeRecovery(bytes: Uint8Array, info: RecoveryInfo): Promise<void> {
+    if (this.failWrites) return Promise.reject(new Error('EACCES'));
+    this.recovery = { bytes: bytes.slice(), info };
+    this.recoveryWrites += 1;
+    return Promise.resolve();
+  }
+
+  readRecoveryInfo(): Promise<RecoveryInfo | null> {
+    return Promise.resolve(this.recovery?.info ?? null);
+  }
+
+  readRecovery(): Promise<Uint8Array> {
+    return this.recovery
+      ? Promise.resolve(this.recovery.bytes.slice())
+      : Promise.reject(new Error('no recovery copy'));
+  }
+
+  clearRecovery(): Promise<void> {
+    this.recovery = null;
+    return Promise.resolve();
+  }
 }
 
 /** Mounts the board in a fresh element of the document body. */

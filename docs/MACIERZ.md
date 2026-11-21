@@ -6,12 +6,12 @@
 ## Podsumowanie
 | Etap | Wymagań | ZAIMPL. | ZWERYF. | Status etapu |
 |---|---|---|---|---|
-| 1 | 73 | 13 | 0 | REALIZACJA |
+| 1 | 73 | 15 | 0 | REALIZACJA |
 | 2 | 6 | 0 | 0 | NIEROZPOCZĘTY |
 | 3 | 13 | 0 | 0 | NIEROZPOCZĘTY |
 | 4 | 15 | 0 | 0 | NIEROZPOCZĘTY |
 | 5 | 3 | 0 | 0 | NIEROZPOCZĘTY |
-| **Razem** | **110** | **13** | **0** | |
+| **Razem** | **110** | **15** | **0** | |
 
 Wykluczenia WYK-01 – WYK-05 nie są implementowane. Audytor sprawdza w każdym etapie, czy nie zostały naruszone.
 
@@ -80,8 +80,8 @@ Wykluczenia WYK-01 – WYK-05 nie są implementowane. Audytor sprawdza w każdym
 | UI-06 | Tryb prezentacji | — | | |
 | UI-07 | Jeden ekran | — | | |
 | UI-08 | Dwa monitory | — | | |
-| DAN-01 | Zapis lekcji | — | | |
-| DAN-02 | Autozapis | — | | |
+| DAN-01 | Zapis lekcji | ZAIMPL. | `app/src/lib/files/lesson-format.test.ts` (DAN-01); `app/src/composition/lesson-file.test.ts` (DAN-01); `app/src/lib/core/history.test.ts` (DAN-01); `e2e/lesson-file.spec.ts` (DAN-01); `src-tauri/src/files.rs` (dan_01_*); ręczny: zapis i odczyt w aplikacji Tauri, Q4 i ostatnia część P2 | Krok 1.5: K1 (plik `.tablica` = ZIP: `manifest.json`, `document.json`, `layers/<id>.json`, `assets/`; round-trip warstw, ich ustawień i numerów, kresek pióra i zakreślacza, danych wtyczki testowej i widoku; strony, tła, multimedia i notatki powstaną w krokach 1.8, 1.9, 1.12 i dostaną test round-trip jako kryterium dziedziczone), K2 (wersja układu w `manifest.json`, wersja schematu `document.json` z migracjami krok po kroku; plik z nowszej wersji daje komunikat; dane nowszej wersji wtyczki zachowane bez zmian), K3 (zapis atomowy w Rust: plik tymczasowy, `sync_all`, zamiana; uszkodzony plik daje komunikat), K4 (menu Plik: Nowa, Otwórz, Zapisz, Zapisz jako, Ostatnie pliki; Ctrl+N, Ctrl+O, Ctrl+S, Ctrl+Shift+S zarezerwowane dla programu). Dane nieznanych wtyczek i nieznane wpisy archiwum przechodzą bez zmian |
+| DAN-02 | Autozapis | ZAIMPL. | `app/src/composition/lesson-file.test.ts` (DAN-02); ręczny: przywrócenie po zabiciu procesu w aplikacji Tauri | Krok 1.5: K1 (domyślnie co 2 min, test z kontrolowanym zegarem; 1–60 min albo wyłączony, D7, zapamiętywane na urządzeniu), K2 (P5: osobna kopia `autosave.tablica` w katalogu odzyskiwania danych aplikacji, plik lekcji zmienia się tylko przy „Zapisz”; zapis usuwa kopię), K3 (kopia pozostawiona przez sesję bez prawidłowego zamknięcia: przy starcie pytanie o przywrócenie; zamknięcie okna pyta o niezapisane zmiany i usuwa kopię) |
 | DAN-03 | Cofanie/ponawianie (50) | ZAIMPL. | `app/src/lib/core/history.test.ts` (DAN-03); `app/src/composition/history-layers.test.ts` (DAN-03); `e2e/layers-history.spec.ts` (DAN-03) | Krok 1.3: K1 (Ctrl+Z, Ctrl+Y, Ctrl+Shift+Z, przyciski, gesty D3), K2 (limit 50, test 50/51, ustawienie 10–500 wg D6), K3 (wspólna historia chronologiczna wg P4), K4 (wtyczka testowa tylko przez wspólną historię; skróty cofania zarezerwowane). Krok 1.3-poprawka (P17): dodawanie i usuwanie warstw w panelu przez historię (dane, także uszkodzonej warstwy, wracają bez strat), wstrzymanie cofania na zablokowanej i ukrytej warstwie z komunikatem, suwak bez pustego kroku; progi stuknięcia D18 do zatwierdzenia. Weryfikacja poprawki (WARUNKOWO): przypadki brzegowe (awaria wtyczki przy usuniętej warstwie, cofnięcie dodania przed wczytaniem) i luki w testach; domknięte w kroku 1.3-poprawka-2: awaria wtyczki zachowuje najnowsze dane i stan „uszkodzona” także warstw usuniętych, które da się przywrócić cofnięciem; warstwa dodana i cofnięta przed wczytaniem wtyczki dostaje właściwy stan (także przy nieudanym wczytaniu); testy ponowienia dodania i usunięcia (także warstwy uszkodzonej i bez wtyczki) z porównaniem serializacji; e2e wyłączonego usuwania ostatniej warstwy |
 | DAN-04 | Eksport PDF | — | | |
 | DAN-05 | Eksport PNG | — | | |
