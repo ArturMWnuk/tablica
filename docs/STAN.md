@@ -52,7 +52,7 @@ Statusy: OCZEKUJE, W TOKU, UKOŃCZONY.
 ## Następne działania
 1. Po zakończeniu sesji testów ręcznych: `/realizuj-krok 1.5`. Testy W5, W5a–W5c (WEJ-04 K1, WebView2) zaliczone 2026-11-21; W5d (Android) i W5e (Linux) po P12.
 2. Scalić kroki 1.3-poprawka-3, 1.4-poprawka-2 i 1.3-poprawka-4 z gałęzi `testy-reczne-etap1` do `etap-1` (przewinięcie, dopóki `etap-1` się nie ruszy).
-3. Trwa sesja testów ręcznych właściciela (gałąź `testy-reczne-etap1`): 39 zaległych testów z raportów weryfikacji, w tym 23 wykonalne na Windows od razu, 13 po P12. Wyniki odznaczane w raportach w `docs/raporty/`.
+3. Testy ręczne wykonalne na laptopie referencyjnym są zrobione (24 zaliczone, podsumowanie w dzienniku). Pozostaje 13 po P12, Q4 i ostatnia część P2 po kroku 1.5, P7 po kroku 1.6. Przy planowaniu kroku 1.5 uwzględnić deweloperski sposób wywołania awarii wtyczki (Q4).
 4. Właściciel: naprawić środowisko laptopa: Visual Studio Installer → Build Tools 2022 → Napraw (w `lib\x64` brak `oldnames.lib`; obejściem jest pusta biblioteka x64 z `lib.exe /DEF` podana w zmiennej `LIB`). Playwright Chromium naprawiony 2026-11-21 (`playwright install chromium --force`). Polecenia projektu uruchamiać Node 26 z `C:\Users\artur\AppData\Local\Programs\nodejs-portable\node-v26.13.0-win-x64` (Node w PATH to 20.12.2, za stary: pnpm pomija wtedy natywne bindingi).
 5. Właściciel: podać brakujące dane sprzętu (P12), potem dokończyć krok 1.1 (Linux, Android, tablet graficzny).
 6. Po P12: `/realizuj-krok 1.1` (Linux, Android, tablet graficzny); kroki 1.9 i 1.10 dopiero po domknięciu 1.1.
@@ -65,6 +65,15 @@ Statusy: OCZEKUJE, W TOKU, UKOŃCZONY.
 Brak.
 
 ## Dziennik sesji
+### 2026-11-21: Sesja testów ręcznych właściciela — podsumowanie
+- Przejrzane wszystkie zaległe testy ręczne z pięciu raportów weryfikacji: **39 pozycji** (test P5 z raportu kroku 1.3-poprawka zastąpiony przez Q1, test W5 z raportu kroku 1.4 przez W5 z raportu kroku 1.4-poprawka).
+- **24 zaliczone** na laptopie referencyjnym (Windows 11, aplikacja Tauri / WebView2): M2–M6, M8, P1–P4, P6, P8, P11, Q1–Q3, Q5, Q6, Q8, W5, W5a–W5c, W8. Wyniki odznaczone w raportach w `docs/raporty/` z datą i opisem tego, co zaobserwowano.
+- **2 odłożone z braku mechanizmu w programie:** Q4 (wywołanie awarii wtyczki; wrócić w kroku 1.5, dołożyć deweloperski sposób) i P7 (polecenie wtyczki na ukrytej warstwie; żadna wbudowana wtyczka nie ma dziś polecenia zmieniającego dane warstwy, wrócić w kroku 1.6 z gumką i zaznaczaniem). Oba mechanizmy pokryte testami jednostkowymi ze wtyczką testową.
+- **13 czeka na sprzęt z P12:** M1, M7, P9, P10, Q7, W1–W4, W6, W7, W5d, W5e; dodatkowo części dotykowe i rysikowe M3, M4 i P8 oraz ostatnia część P2 (zapis lekcji, po kroku 1.5).
+- Testy wykryły **trzy usterki**, wszystkie poprawione w tej sesji: pętla efektów w panelu warstw (krok 1.3-poprawka-3), Spacja po użyciu suwaka i pola wyboru (krok 1.4-poprawka-2, potwierdzone testami W5b i W5c) oraz nazwa warstwy zmieniająca się przy przesuwaniu w stosie (decyzja P20, krok 1.3-poprawka-4, z testu Q3).
+- Świadome ustępstwo przyjęte przez właściciela przy teście M4: po kliknięciu suwaka myszą fokus wraca do strony (wymóg WEJ-04 K1), więc strzałki klawiatury działają na suwaku po dojściu do niego Tabem.
+- Kroki 1.3-poprawka-3, 1.4-poprawka-2 i 1.3-poprawka-4 leżą na gałęzi `testy-reczne-etap1` i czekają na scalenie w `etap-1`.
+
 ### 2026-11-21: Testy ręczne W8, Q1–Q3, decyzja P20 i krok 1.3-poprawka-4
 - Testy ręczne właściciela (WebView2): **W8 zaliczony** (tekst pod zakreśleniem czytelny, zawrot kreski bez ciemniejszej plamy, wygląd kreski nie zmienia się przy puszczeniu przycisku), **Q1 i Q2 zaliczone** (komunikat P17 a podaje nazwę warstwy dokładnie jak panel, z numerem i bez, po polsku i po angielsku; kolejne Ctrl+Z nie mnożą komunikatu).
 - **Q3 rozstrzygnięty inaczej, niż pytał raport.** Zachowanie potwierdzone (komunikat zachowuje numer z chwili pokazania), ale właściciel wskazał źródło problemu: numer warstwy liczył jej położenie w stosie, więc **przesunięcie warstwy zmieniało jej nazwę**, co samo w sobie wprowadza w błąd. Decyzja P20 (plan, tabela pytań): numer nadawany trwale przy dodaniu, pierwsza warstwa typu bez numeru, kolejne 2, 3, …, numery zwolnione nieużywane ponownie, numer zapisywany w lekcji. Dokumentacja nie opisuje nazw ani numerów warstw, więc to decyzja projektowa, nie zmiana wymagań.
