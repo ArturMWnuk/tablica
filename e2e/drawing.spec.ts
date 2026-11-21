@@ -211,6 +211,60 @@ test.describe('WEJ-04: every tool works with the mouse', () => {
       await expect(page.getByTestId('undo')).toBeDisabled();
     });
   }
+
+  test('WEJ-04: after moving the width slider, Space + drag moves the view and does not draw', async ({
+    page,
+  }) => {
+    await openBoard(page);
+    await mouseStroke(page, [
+      [100, 120],
+      [300, 120],
+    ]);
+    expect((await pixel(page, 200, 120))[3]).toBeGreaterThan(0);
+    // The slider does not type text, so a mouse click must not keep the focus either: its Space
+    // would move the slider instead of the view (manual test W5b, WebView2).
+    await page.getByTestId('drawing-style-pen').getByTestId('drawing-width').click();
+    expect(await page.evaluate(() => document.activeElement?.tagName)).not.toBe('INPUT');
+    await page.keyboard.down('Space');
+    await mouseStroke(page, [
+      [100, 300],
+      [300, 300],
+    ]);
+    await page.keyboard.up('Space');
+    // No second stroke; the first one moved 200 px to the right with the view.
+    expect((await pixel(page, 200, 300))[3]).toBe(0);
+    expect((await pixel(page, 200, 120))[3]).toBe(0);
+    expect((await pixel(page, 400, 120))[3]).toBeGreaterThan(0);
+    await page.getByTestId('undo').click();
+    expect((await pixel(page, 400, 120))[3]).toBe(0);
+    await expect(page.getByTestId('undo')).toBeDisabled();
+  });
+
+  test('WEJ-04: after clicking the D4 switch, Space + drag moves the view and does not toggle it', async ({
+    page,
+  }) => {
+    await openBoard(page);
+    await mouseStroke(page, [
+      [100, 120],
+      [300, 120],
+    ]);
+    const switchBox = page.getByTestId('pen-disables-finger');
+    await switchBox.click();
+    const state = await switchBox.isChecked();
+    expect(await page.evaluate(() => document.activeElement?.tagName)).not.toBe('INPUT');
+    await page.keyboard.down('Space');
+    await mouseStroke(page, [
+      [100, 300],
+      [300, 300],
+    ]);
+    await page.keyboard.up('Space');
+    // Space moved the view: no second stroke, the switch keeps the state set by the click
+    // (manual test W5c, WebView2: Space drew a stroke and toggled the switch back).
+    expect(await switchBox.isChecked()).toBe(state);
+    expect((await pixel(page, 200, 300))[3]).toBe(0);
+    expect((await pixel(page, 200, 120))[3]).toBe(0);
+    expect((await pixel(page, 400, 120))[3]).toBeGreaterThan(0);
+  });
 });
 
 test.describe('RYS-01: pen', () => {

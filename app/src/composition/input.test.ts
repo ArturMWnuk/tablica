@@ -302,6 +302,44 @@ describe('WEJ-04: mouse and keyboard', () => {
       document.body.innerHTML = '';
     }
   });
+
+  it('WEJ-04: a slider or a checkbox clicked with the mouse does not keep Space', () => {
+    document.body.innerHTML =
+      '<input type="range" min="1" max="50" /><label><input type="checkbox" /><span>D4</span></label><select><option>pl</option></select><input type="text" />';
+    const slider = document.querySelector<HTMLInputElement>('input[type=range]');
+    const check = document.querySelector<HTMLInputElement>('input[type=checkbox]');
+    const label = document.querySelector('span');
+    const list = document.querySelector('select');
+    const field = document.querySelector<HTMLInputElement>('input[type=text]');
+    if (!slider || !check || !label || !list || !field) throw new Error('No test controls');
+    window.addEventListener('click', releasePointerFocus);
+    try {
+      // The slider moved with the mouse gives the focus back, so Space reaches the board.
+      slider.focus();
+      slider.dispatchEvent(new MouseEvent('click', { bubbles: true, detail: 1 }));
+      expect(document.activeElement).toBe(document.body);
+      expect(isControl(document.activeElement)).toBe(false);
+      // The same for a checkbox, also when the click lands on its label (the browser moves the
+      // focus to the checkbox, so the click reports the label as its target).
+      check.focus();
+      label.dispatchEvent(new MouseEvent('click', { bubbles: true, detail: 1 }));
+      expect(document.activeElement).toBe(document.body);
+      // Keyboard use is unchanged: the control keeps the focus and its own Space.
+      slider.focus();
+      slider.dispatchEvent(new MouseEvent('click', { bubbles: true, detail: 0 }));
+      expect(document.activeElement).toBe(slider);
+      // A list keeps the focus, because Space opens it; a text field keeps its own keys.
+      list.focus();
+      list.dispatchEvent(new MouseEvent('click', { bubbles: true, detail: 1 }));
+      expect(document.activeElement).toBe(list);
+      field.focus();
+      field.dispatchEvent(new MouseEvent('click', { bubbles: true, detail: 1 }));
+      expect(document.activeElement).toBe(field);
+    } finally {
+      window.removeEventListener('click', releasePointerFocus);
+      document.body.innerHTML = '';
+    }
+  });
 });
 
 describe('WEJ-05: pressure, tilt and the eraser end', () => {

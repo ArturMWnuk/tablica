@@ -10,7 +10,7 @@
 | Bieżący etap | 1 |
 | Status etapu | REALIZACJA |
 | Plan etapu | `docs/etapy/ETAP-1-plan.md` (ZATWIERDZONY 2026-11-01) |
-| Bieżący krok | 1.3-poprawka-3 (wykonany, do scalenia w `etap-1`); 1.5 następny; 1.1 W TOKU (Linux i Android czekają na P12) |
+| Bieżący krok | 1.3-poprawka-3 i 1.4-poprawka-2 (wykonane, do scalenia w `etap-1`); 1.5 następny; 1.1 W TOKU (Linux i Android czekają na P12) |
 | Gałąź robocza | `etap-1`; krok 1.3-poprawka-3 na `testy-reczne-etap1` (sesja testów ręcznych) |
 
 ## Etapy
@@ -36,6 +36,7 @@ Statusy: OCZEKUJE, W TOKU, UKOŃCZONY.
 | 1.3-poprawka-3 | Pętla efektów w panelu warstw | WAR-01 (K3) | UKOŃCZONY (kontrole zielone, bez weryfikacji audytora; wykonany 2026-11-21 przy przygotowaniu testów ręcznych) | d644f02 |
 | 1.4 | Wejście i pisanie | WEJ-01–06, RYS-01, RYS-02, NF-04 | UKOŃCZONY (weryfikacja: WARUNKOWO, `docs/raporty/ETAP-1-krok-1.4-weryfikacja.md`; WEJ-04 K1 do poprawki; WEJ-05 K3 domknięcie w 1.6, P18; WEJ-02 po R11) | c1ee23b |
 | 1.4-poprawka | Spacja z przeciąganiem po weryfikacji | WEJ-04 (K1) | UKOŃCZONY (weryfikacja: WARUNKOWO, `docs/raporty/ETAP-1-krok-1.4-poprawka-weryfikacja.md`; w Edge suwak grubości i pole wyboru D4 nadal zatrzymują fokus) | 07d4ce6 |
+| 1.4-poprawka-2 | Spacja po użyciu suwaka i pola wyboru | WEJ-04 (K1) | UKOŃCZONY (kontrole zielone, bez weryfikacji audytora; W5b i W5c do powtórzenia przez właściciela) | (ten commit) |
 | 1.5 | Zapis i odczyt lekcji | DAN-01, DAN-02 | OCZEKUJE | |
 | 1.6 | Edycja rysunku | RYS-03, RYS-04, RYS-12–14, domknięcie WAR-06 (K1, P16) | OCZEKUJE | |
 | 1.7 | Figury, przyrządy, narzędzia matematyczne | RYS-05–11 | OCZEKUJE | |
@@ -48,8 +49,8 @@ Statusy: OCZEKUJE, W TOKU, UKOŃCZONY.
 | 1.14 | Wydanie i wydajność | NF-02, NF-03, NF-05, domknięcie PLAT-01–03, NF-01 | OCZEKUJE | |
 
 ## Następne działania
-1. Właściciel: decyzja w sprawie ustaleń weryfikacji kroku 1.4-poprawka (WEJ-04 K1 w Edge: po użyciu myszą suwaka grubości lub pola wyboru D4 Spacja + przeciągnięcie rysuje, a pole wyboru przełącza się Spacją): (a) krok **1.4-poprawka-2** (zwalnianie fokusu po kliknięciu myszą także z suwaków, pól wyboru i selektora koloru, e2e w Edge) albo (b) przyjęcie jako znane ograniczenie. Po zgodzie na (a) dopisać krok do planu i tabeli kroków, potem `/realizuj-krok 1.4-poprawka-2`, następnie `/realizuj-krok 1.5`. Właściciel: testy ręczne W5, W5a–W5c z raportu `docs/raporty/ETAP-1-krok-1.4-poprawka-weryfikacja.md` (Windows, WebView2).
-2. Scalić krok 1.3-poprawka-3 z gałęzi `testy-reczne-etap1` do `etap-1` (przewinięcie, dopóki `etap-1` się nie ruszy).
+1. Właściciel: powtórzyć testy ręczne W5b i W5c (raport `docs/raporty/ETAP-1-krok-1.4-poprawka-weryfikacja.md`, Windows, WebView2) po kroku 1.4-poprawka-2. Potem `/realizuj-krok 1.5`.
+2. Scalić kroki 1.3-poprawka-3 i 1.4-poprawka-2 z gałęzi `testy-reczne-etap1` do `etap-1` (przewinięcie, dopóki `etap-1` się nie ruszy).
 3. Trwa sesja testów ręcznych właściciela (gałąź `testy-reczne-etap1`): 39 zaległych testów z raportów weryfikacji, w tym 23 wykonalne na Windows od razu, 13 po P12. Wyniki odznaczane w raportach w `docs/raporty/`.
 4. Właściciel: naprawić środowisko laptopa: Visual Studio Installer → Build Tools 2022 → Napraw (w `lib\x64` brak `oldnames.lib`; obejściem jest pusta biblioteka x64 z `lib.exe /DEF` podana w zmiennej `LIB`). Playwright Chromium naprawiony 2026-11-21 (`playwright install chromium --force`). Polecenia projektu uruchamiać Node 26 z `C:\Users\artur\AppData\Local\Programs\nodejs-portable\node-v26.13.0-win-x64` (Node w PATH to 20.12.2, za stary: pnpm pomija wtedy natywne bindingi).
 5. Właściciel: podać brakujące dane sprzętu (P12), potem dokończyć krok 1.1 (Linux, Android, tablet graficzny).
@@ -63,6 +64,14 @@ Statusy: OCZEKUJE, W TOKU, UKOŃCZONY.
 Brak.
 
 ## Dziennik sesji
+### 2026-11-21: Testy ręczne W5, W5a–W5c i krok 1.4-poprawka-2
+- Testy ręczne właściciela w aplikacji Tauri (Windows 11, WebView2): **W5 i W5a zaliczone** (po kliknięciu narzędzia myszą Spacja + przeciągnięcie przesuwa widok i jedno cofnięcie usuwa jedyną kreskę; kółko, Ctrl + kółko i środkowy przycisk działają; przycisk uruchomiony z klawiatury zachowuje fokus). **W5b i W5c niezaliczone**, zgodnie z sondą audytora: po użyciu myszą suwaka grubości albo pola wyboru D4 Spacja + przeciągnięcie rysuje kreskę, a przy polu wyboru Spacja dodatkowo przestawia ustawienie. Ograniczenie potwierdzone na platformie docelowej, nie tylko w zastępczym Edge. Wyniki odznaczone w raporcie kroku 1.4-poprawka.
+- Właściciel wybrał wariant (a) z zalecenia 1 tego raportu: krok **1.4-poprawka-2** (dopisany do planu, sekcja 4).
+- WEJ-04 K1: `releasePointerFocus` patrzy teraz na element z fokusem, nie na kliknięty, i oddaje fokus stronie po kliknięciu każdej kontrolki, która nie służy do pisania (przycisk, suwak, pole wyboru, przełącznik, selektor koloru). Pola tekstowe zachowują swoje klawisze (Spacja, Ctrl+Z, strzałki), listy rozwijane też, bo Spacja je otwiera. Kontrolka uruchomiona z klawiatury (`detail` 0) nadal zachowuje fokus. Dzięki odczytowi elementu z fokusem obsłużone jest też kliknięcie w etykietę pola wyboru (przeglądarka przenosi wtedy fokus na pole, a zdarzenie `click` wskazuje etykietę).
+- Testy: jednostkowy „WEJ-04: a slider or a checkbox clicked with the mouse does not keep Space” (suwak, pole wyboru przez etykietę, aktywacja z klawiatury, lista i pole tekstowe bez zmian); e2e „WEJ-04: after moving the width slider…” i „WEJ-04: after clicking the D4 switch…” (widok przesuwa się bez nowej kreski, pole wyboru nie zmienia stanu). Sprawdzone, że bez poprawki jednostkowy pada, a oba e2e padają w Chromium (w WebKit przechodziły już wcześniej, inny model fokusu).
+- Kontrole: lint, prettier, typy (346 plików, 0 błędów), Vitest 207/207, licencje npm 232, build web, Playwright 70/70 (35 Chromium + 35 WebKit), cargo fmt, clippy, cargo test 2/2.
+- MACIERZ: WEJ-04 z W TOKU na ZAIMPL. (podsumowanie etapu 1: 13 ZAIMPL.). W5b i W5c do powtórzenia przez właściciela; W5d i W5e po P12.
+
 ### 2026-11-21: Krok 1.3-poprawka-3 — pętla efektów w panelu warstw (sesja testów ręcznych)
 - Przygotowanie środowiska do testów ręcznych właściciela: zależności zainstalowane Node 26 (przenośny, `nodejs-portable\node-v26.13.0-win-x64`) — Node 20.12.2 w PATH jest za stary, pnpm pomijał wtedy natywny binding `@rolldown/binding-win32-x64-msvc` i Vitest nie startował. Playwright Chromium naprawiony (`playwright install chromium --force`), więc pełne e2e działa po raz pierwszy w obu silnikach. Linkowanie Rust: w `lib\x64` Build Tools nadal brak `oldnames.lib`, obejście to pusta biblioteka x64 wygenerowana `lib.exe /DEF` i podana w `LIB` (trwale: naprawa Build Tools).
 - Usterka wykryta po uruchomieniu aplikacji (`pnpm tauri dev`, WebView2; potwierdzona też w przeglądarce na Chromium): przy każdym wczytaniu wtyczek panel warstw zgłaszał `effect_update_depth_exceeded` i na moment blokował interfejs. Przyczyna: `snapshot()` w `LayersPanel.svelte` zapisywał stan `types` i zaraz go czytał (`types.includes(newType)`), więc efekt wywołujący `snapshot()` zależał od własnych zapisów i planował kolejne przebiegi aż do limitu Svelte. Po przerwaniu pętli program działał dalej, dlatego kontrole tego nie wychwytywały.

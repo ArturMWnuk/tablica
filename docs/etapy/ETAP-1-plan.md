@@ -575,6 +575,13 @@ Każdy krok to jedna sesja (`/realizuj-krok`), kończy się działającym progra
   1. Spacja przytrzymana z przeciąganiem przesuwa widok także wtedy, gdy fokus został na przycisku paska narzędzi po jego kliknięciu (dziś w Chromium/Edge, czyli silniku WebView2 i Android WebView, rysuje kreskę). Naprawa fokusu albo obsługi Spacji, bez zmiany zachowania Spacji w polach tekstowych i innych kontrolkach, które jej potrzebują.
 - **Testy:** e2e w Chromium (lub systemowym Edge, dopóki Chromium Playwright nie startuje) i WebKit: kliknięcie narzędzia na pasku, kreska, potem Spacja + przeciągnięcie przesuwa widok bez nowej kreski, a jedno cofnięcie usuwa tylko pierwszą kreskę; test jednostkowy przypadku fokusu na przycisku.
 
+### Krok 1.4-poprawka-2: Spacja po użyciu suwaka i pola wyboru
+- **Podstawa:** raport `docs/raporty/ETAP-1-krok-1.4-poprawka-weryfikacja.md` (zalecenie 1) oraz testy ręczne właściciela W5b i W5c (niezaliczone 2026-11-21, WebView2); zgoda właściciela 2026-11-21.
+- **ID:** WEJ-04 (K1).
+- **Zakres prac:**
+  1. Spacja przytrzymana z przeciąganiem przesuwa widok także po użyciu myszą kontrolki, która nie służy do pisania (suwak grubości, pole wyboru, przełącznik, selektor koloru), a Spacja nie przełącza wtedy tej kontrolki. Pola tekstowe i listy rozwijane zachowują swoje klawisze bez zmian; kontrolka uruchomiona z klawiatury nadal zachowuje fokus i swoją Spację.
+- **Testy:** jednostkowe: kliknięta myszą kontrolka nietekstowa (suwak, pole wyboru) oddaje fokus stronie, a uruchomiona z klawiatury go zachowuje; pole tekstowe zachowuje fokus. e2e w Chromium i WebKit: po przesunięciu suwaka grubości myszą oraz po kliknięciu pola wyboru D4 Spacja + przeciągnięcie przesuwa widok bez nowej kreski, a pole wyboru nie zmienia stanu.
+
 ### Krok 1.5: Zapis i odczyt lekcji
 - **ID:** DAN-01, DAN-02.
 - **Zakres prac:** `Serializer`, ZIP, migracje, zapis atomowy, autozapis i przywracanie, menu Plik, ostatnie pliki, zachowanie danych nieznanych wtyczek.

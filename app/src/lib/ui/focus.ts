@@ -20,16 +20,24 @@ export function isControl(target: EventTarget | null): boolean {
 }
 
 /**
- * A button clicked with a mouse, pen or finger gives the focus back to the page, so that Space
- * held afterwards moves the view instead of pressing the button again (WEJ-04 K1). Chromium
- * (WebView2, Android WebView) leaves the focus on a clicked button, and a press on the board does
- * not take it away (the board prevents the default action of the press). A button activated from
- * the keyboard (click with `detail` 0) keeps the focus, so keyboard use stays unchanged.
+ * A control clicked with a mouse, pen or finger gives the focus back to the page, so that Space
+ * held afterwards moves the view instead of pressing that control again (WEJ-04 K1). Chromium
+ * (WebView2, Android WebView) leaves the focus on a clicked control, and a press on the board does
+ * not take it away (the board prevents the default action of the press). This covers buttons and
+ * the controls that do not type text (slider, checkbox, radio, colour picker): their Space would
+ * press or toggle them instead of moving the view. Text fields keep the focus, because Space,
+ * Ctrl+Z and the arrows belong to typing; lists (`select`) keep it too, because Space opens them.
+ * A control activated from the keyboard (click with `detail` 0) keeps the focus, so keyboard use
+ * stays unchanged.
  */
 export function releasePointerFocus(event: MouseEvent): void {
   if (event.detail === 0) return;
   const target = event.target;
   if (!(target instanceof Element)) return;
-  const button = target.closest('button');
-  if (button && button.ownerDocument.activeElement === button) button.blur();
+  // The focused element, not the clicked one: a click on the label of a checkbox focuses the
+  // checkbox itself, and a press on the board leaves the focus where it was.
+  const focused = target.ownerDocument.activeElement;
+  if (!(focused instanceof HTMLButtonElement || focused instanceof HTMLInputElement)) return;
+  if (isTextField(focused)) return;
+  focused.blur();
 }
