@@ -38,7 +38,7 @@ Statusy: OCZEKUJE, W TOKU, UKOŃCZONY.
 | 1.4 | Wejście i pisanie | WEJ-01–06, RYS-01, RYS-02, NF-04 | UKOŃCZONY (weryfikacja: WARUNKOWO, `docs/raporty/ETAP-1-krok-1.4-weryfikacja.md`; WEJ-04 K1 do poprawki; WEJ-05 K3 domknięcie w 1.6, P18; WEJ-02 po R11) | c1ee23b |
 | 1.4-poprawka | Spacja z przeciąganiem po weryfikacji | WEJ-04 (K1) | UKOŃCZONY (weryfikacja: WARUNKOWO, `docs/raporty/ETAP-1-krok-1.4-poprawka-weryfikacja.md`; w Edge suwak grubości i pole wyboru D4 nadal zatrzymują fokus) | 07d4ce6 |
 | 1.4-poprawka-2 | Spacja po użyciu suwaka i pola wyboru | WEJ-04 (K1) | UKOŃCZONY (kontrole zielone, bez weryfikacji audytora; W5b i W5c powtórzone przez właściciela: zaliczone) | 1110dc0 |
-| 1.5 | Zapis i odczyt lekcji | DAN-01, DAN-02 | UKOŃCZONY (kontrole zielone, bez weryfikacji audytora) | (ten commit) |
+| 1.5 | Zapis i odczyt lekcji | DAN-01, DAN-02 | UKOŃCZONY (kontrole zielone, bez weryfikacji audytora) | bea75b5 |
 | 1.6 | Edycja rysunku | RYS-03, RYS-04, RYS-12–14, domknięcie WAR-06 (K1, P16) | OCZEKUJE | |
 | 1.7 | Figury, przyrządy, narzędzia matematyczne | RYS-05–11 | OCZEKUJE | |
 | 1.8 | Obszar tablicy i tła | OBS-01, OBS-02, TLO-01, TLO-04–08 | OCZEKUJE | |
