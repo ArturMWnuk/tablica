@@ -561,6 +561,13 @@ Każdy krok to jedna sesja (`/realizuj-krok`), kończy się działającym progra
 - **Zakres prac:** `InputRouter` (nacisk, nachylenie, gumka rysika, odrzucanie dłoni, gesty, mysz), pióro i zakreślacz, wybór koloru i grubości, instrumentacja opóźnienia (T10).
 - **Testy:** zdarzenia syntetyczne (pen/touch/mouse), testy obrazu kresek, pomiar ≤ 4 ms.
 
+### Krok 1.4-poprawka: Spacja z przeciąganiem po weryfikacji kroku 1.4
+- **Podstawa:** raport `docs/raporty/ETAP-1-krok-1.4-weryfikacja.md` (wynik WARUNKOWO); zgoda właściciela 2026-11-21.
+- **ID:** WEJ-04 (K1).
+- **Zakres prac:**
+  1. Spacja przytrzymana z przeciąganiem przesuwa widok także wtedy, gdy fokus został na przycisku paska narzędzi po jego kliknięciu (dziś w Chromium/Edge, czyli silniku WebView2 i Android WebView, rysuje kreskę). Naprawa fokusu albo obsługi Spacji, bez zmiany zachowania Spacji w polach tekstowych i innych kontrolkach, które jej potrzebują.
+- **Testy:** e2e w Chromium (lub systemowym Edge, dopóki Chromium Playwright nie startuje) i WebKit: kliknięcie narzędzia na pasku, kreska, potem Spacja + przeciągnięcie przesuwa widok bez nowej kreski, a jedno cofnięcie usuwa tylko pierwszą kreskę; test jednostkowy przypadku fokusu na przycisku.
+
 ### Krok 1.5: Zapis i odczyt lekcji
 - **ID:** DAN-01, DAN-02.
 - **Zakres prac:** `Serializer`, ZIP, migracje, zapis atomowy, autozapis i przywracanie, menu Plik, ostatnie pliki, zachowanie danych nieznanych wtyczek.

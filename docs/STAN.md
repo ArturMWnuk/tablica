@@ -34,6 +34,7 @@ Statusy: OCZEKUJE, W TOKU, UKOŃCZONY.
 | 1.3-poprawka | Domknięcie WAR-02 i DAN-03 po weryfikacji | WAR-02 (K1), WAR-03 (P17 a), DAN-03 (P17 b: dodawanie i usuwanie warstw), WAR-01 K3 (interfejs) | UKOŃCZONY (weryfikacja: WARUNKOWO, `docs/raporty/ETAP-1-krok-1.3-poprawka-weryfikacja.md`) | f6fd8e4 |
 | 1.3-poprawka-2 | Przypadki brzegowe historii warstw | DAN-03 (P17 b), WAR-03 (P17 a) | UKOŃCZONY (weryfikacja: ZALICZONY, `docs/raporty/ETAP-1-krok-1.3-poprawka-2-weryfikacja.md`) | 9e477e1 |
 | 1.4 | Wejście i pisanie | WEJ-01–06, RYS-01, RYS-02, NF-04 | UKOŃCZONY (weryfikacja: WARUNKOWO, `docs/raporty/ETAP-1-krok-1.4-weryfikacja.md`; WEJ-04 K1 do poprawki; WEJ-05 K3 domknięcie w 1.6, P18; WEJ-02 po R11) | c1ee23b |
+| 1.4-poprawka | Spacja z przeciąganiem po weryfikacji | WEJ-04 (K1) | OCZEKUJE | |
 | 1.5 | Zapis i odczyt lekcji | DAN-01, DAN-02 | OCZEKUJE | |
 | 1.6 | Edycja rysunku | RYS-03, RYS-04, RYS-12–14, domknięcie WAR-06 (K1, P16) | OCZEKUJE | |
 | 1.7 | Figury, przyrządy, narzędzia matematyczne | RYS-05–11 | OCZEKUJE | |
@@ -46,7 +47,7 @@ Statusy: OCZEKUJE, W TOKU, UKOŃCZONY.
 | 1.14 | Wydanie i wydajność | NF-02, NF-03, NF-05, domknięcie PLAT-01–03, NF-01 | OCZEKUJE | |
 
 ## Następne działania
-1. Właściciel: zgoda na krok **1.4-poprawka** (WEJ-04 K1: Spacja + przeciągnięcie po kliknięciu narzędzia na pasku, test e2e w Chromium/Edge); po zgodzie dopisać go do planu i tabeli kroków, potem `/realizuj-krok 1.4-poprawka`, następnie `/realizuj-krok 1.5`.
+1. W **nowym wątku**: `/realizuj-krok 1.4-poprawka` (WEJ-04 K1, zgoda właściciela 2026-11-21), potem `/realizuj-krok 1.5`.
 2. Właściciel: naprawić środowisko laptopa: Visual Studio Installer → Build Tools 2022 → Napraw (brak `oldnames.lib`) oraz `pnpm exec playwright install chromium --force` (brak `icudtl.dat`).
 3. Właściciel: podać brakujące dane sprzętu (P12), potem dokończyć krok 1.1 (Linux, Android, tablet graficzny).
 4. Po P12: `/realizuj-krok 1.1` (Linux, Android, tablet graficzny); kroki 1.9 i 1.10 dopiero po domknięciu 1.1.
@@ -59,6 +60,9 @@ Statusy: OCZEKUJE, W TOKU, UKOŃCZONY.
 Brak.
 
 ## Dziennik sesji
+### 2026-11-21: Zgoda na krok 1.4-poprawka
+- Właściciel zgodził się na krok poprawkowy 1.4-poprawka (WEJ-04 K1: Spacja + przeciągnięcie po kliknięciu narzędzia na pasku). Dopisany do planu etapu (sekcja 4) i tabeli kroków.
+
 ### 2026-11-20: Weryfikacja kroku 1.4
 - Audytor: wynik **WARUNKOWO** (`docs/raporty/ETAP-1-krok-1.4-weryfikacja.md`). OK: WEJ-01, WEJ-03, WEJ-06, RYS-01, RYS-02, NF-04; CZĘŚCIOWO: WEJ-04 (K1); ODSTĘPSTWO według P18: WEJ-02, WEJ-05. Kontrole zielone (lint, typy, Vitest 205/205, WebKit 30/30, Edge 30/30 zamiast Chromium, licencje 232, build, rustfmt, clippy, cargo test 2/2).
 - WEJ-04 K1: po kliknięciu przycisku narzędzia fokus zostaje na pasku (`preventDefault()` w `onPointerDown` tablicy), więc w Chromium/Edge (silnik WebView2 i Android WebView) Spacja + przeciągnięcie rysuje zamiast przesuwać widok. MACIERZ: WEJ-04 z ZAIMPL. na W TOKU. Proponowany krok 1.4-poprawka czeka na zgodę właściciela.
