@@ -34,7 +34,7 @@ Statusy: OCZEKUJE, W TOKU, UKOŃCZONY.
 | 1.3-poprawka | Domknięcie WAR-02 i DAN-03 po weryfikacji | WAR-02 (K1), WAR-03 (P17 a), DAN-03 (P17 b: dodawanie i usuwanie warstw), WAR-01 K3 (interfejs) | UKOŃCZONY (weryfikacja: WARUNKOWO, `docs/raporty/ETAP-1-krok-1.3-poprawka-weryfikacja.md`) | f6fd8e4 |
 | 1.3-poprawka-2 | Przypadki brzegowe historii warstw | DAN-03 (P17 b), WAR-03 (P17 a) | UKOŃCZONY (weryfikacja: ZALICZONY, `docs/raporty/ETAP-1-krok-1.3-poprawka-2-weryfikacja.md`) | 9e477e1 |
 | 1.4 | Wejście i pisanie | WEJ-01–06, RYS-01, RYS-02, NF-04 | UKOŃCZONY (weryfikacja: WARUNKOWO, `docs/raporty/ETAP-1-krok-1.4-weryfikacja.md`; WEJ-04 K1 do poprawki; WEJ-05 K3 domknięcie w 1.6, P18; WEJ-02 po R11) | c1ee23b |
-| 1.4-poprawka | Spacja z przeciąganiem po weryfikacji | WEJ-04 (K1) | UKOŃCZONY | (ten commit) |
+| 1.4-poprawka | Spacja z przeciąganiem po weryfikacji | WEJ-04 (K1) | UKOŃCZONY (weryfikacja: WARUNKOWO, `docs/raporty/ETAP-1-krok-1.4-poprawka-weryfikacja.md`; w Edge suwak grubości i pole wyboru D4 nadal zatrzymują fokus) | 07d4ce6 |
 | 1.5 | Zapis i odczyt lekcji | DAN-01, DAN-02 | OCZEKUJE | |
 | 1.6 | Edycja rysunku | RYS-03, RYS-04, RYS-12–14, domknięcie WAR-06 (K1, P16) | OCZEKUJE | |
 | 1.7 | Figury, przyrządy, narzędzia matematyczne | RYS-05–11 | OCZEKUJE | |
@@ -47,7 +47,7 @@ Statusy: OCZEKUJE, W TOKU, UKOŃCZONY.
 | 1.14 | Wydanie i wydajność | NF-02, NF-03, NF-05, domknięcie PLAT-01–03, NF-01 | OCZEKUJE | |
 
 ## Następne działania
-1. W **nowym wątku**: `/weryfikuj-etap 1 krok 1.4-poprawka`, potem `/realizuj-krok 1.5`. Właściciel: test ręczny W5 z raportu kroku 1.4 (Windows, WebView2) potwierdzi poprawkę na właściwej platformie.
+1. Właściciel: decyzja w sprawie ustaleń weryfikacji kroku 1.4-poprawka (WEJ-04 K1 w Edge: po użyciu myszą suwaka grubości lub pola wyboru D4 Spacja + przeciągnięcie rysuje, a pole wyboru przełącza się Spacją): (a) krok **1.4-poprawka-2** (zwalnianie fokusu po kliknięciu myszą także z suwaków, pól wyboru i selektora koloru, e2e w Edge) albo (b) przyjęcie jako znane ograniczenie. Po zgodzie na (a) dopisać krok do planu i tabeli kroków, potem `/realizuj-krok 1.4-poprawka-2`, następnie `/realizuj-krok 1.5`. Właściciel: testy ręczne W5, W5a–W5c z raportu `docs/raporty/ETAP-1-krok-1.4-poprawka-weryfikacja.md` (Windows, WebView2).
 2. Właściciel: naprawić środowisko laptopa: Visual Studio Installer → Build Tools 2022 → Napraw (brak `oldnames.lib`) oraz `pnpm exec playwright install chromium --force` (brak `icudtl.dat`).
 3. Właściciel: podać brakujące dane sprzętu (P12), potem dokończyć krok 1.1 (Linux, Android, tablet graficzny).
 4. Po P12: `/realizuj-krok 1.1` (Linux, Android, tablet graficzny); kroki 1.9 i 1.10 dopiero po domknięciu 1.1.
@@ -60,6 +60,11 @@ Statusy: OCZEKUJE, W TOKU, UKOŃCZONY.
 Brak.
 
 ## Dziennik sesji
+### 2026-11-21: Weryfikacja kroku 1.4-poprawka
+- Audytor: wynik **WARUNKOWO** (`docs/raporty/ETAP-1-krok-1.4-poprawka-weryfikacja.md`). Poprawka spełnia kryterium kroku: przycisk kliknięty myszą oddaje fokus, przycisk uruchomiony z klawiatury go zachowuje; brak regresji. Kontrole zielone (lint, typy, Vitest 206/206, Edge 32/32 zamiast Chromium, WebKit 32/32, licencje 232, build, cargo fmt, clippy, cargo test 2/2).
+- Ustalenie: w Edge (silnik WebView2) ta sama ścieżka błędu WEJ-04 K1 zostaje po użyciu myszą suwaka grubości i pola wyboru „palec nie rysuje po użyciu rysika” (Spacja + przeciągnięcie rysuje; pole wyboru dodatkowo przełącza się Spacją). W WebKit poprawnie. MACIERZ: WEJ-04 z ZAIMPL. na W TOKU do decyzji właściciela (krok 1.4-poprawka-2 albo znane ograniczenie).
+- Ryzyko na później: globalne zwalnianie fokusu przycisków może wyprowadzić fokus z okien dialogowych z pułapką fokusu (kroki 1.5, 1.12), uwzględnić w ich planach. Nadal otwarte z raportu 1.4: e2e kółka, Ctrl + kółka i środkowego przycisku w komponencie tablicy.
+- Poprawiono hash commitu kroku 1.4-poprawka w tabeli kroków (`07d4ce6`).
 ### 2026-11-21: Krok 1.4-poprawka — Spacja z przeciąganiem
 - WEJ-04 K1: przycisk kliknięty myszą, rysikiem lub palcem (zdarzenie `click` z `detail` > 0) oddaje fokus stronie (`releasePointerFocus` w `app/src/lib/ui/focus.ts`, podpięte w `Board.svelte` na poziomie okna, więc dotyczy wszystkich przycisków, także paska narzędzi i cofania). Spacja trafia wtedy do tablicy i z przeciąganiem przesuwa widok. Przycisk uruchomiony z klawiatury (`detail` 0) zachowuje fokus i swoją Spację; pola tekstowe i pozostałe kontrolki bez zmian. Kliknięcie, które samo przeniosło fokus (np. do pola tekstowego), nie jest ruszane. Funkcje `isTextField` i `isControl` przeniesione z `Board.svelte` do tego samego modułu bez zmian.
 - Testy: jednostkowy `WEJ-04: a toolbar button clicked with the mouse does not keep Space (focus on the button)`; e2e `WEJ-04: after clicking … on the toolbar, Space + drag moves the view and does not draw` dla pióra i zakreślacza (kreska, Spacja + przeciągnięcie przesuwa kreskę o 200 px bez nowej, jedno cofnięcie usuwa jedyną kreskę). Sprawdzone, że bez poprawki oba testy e2e padają w Edge.
