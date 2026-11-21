@@ -57,6 +57,63 @@ describe('WAR-01: document layer list', () => {
     ).toThrow();
   });
 
+  it('WAR-01: a layer keeps its number when it is moved in the stack (P20)', () => {
+    const doc = new BoardDocument();
+    const first = doc.addLayer('p');
+    const second = doc.addLayer('p');
+    const other = doc.addLayer('q');
+    // The first layer of a type keeps the bare name (0); the next ones are 2, 3, …
+    expect([doc.numberOf(first), doc.numberOf(second), doc.numberOf(other)]).toEqual([0, 2, 0]);
+    doc.moveLayer(second, 0);
+    expect(doc.layers.map((layer) => layer.id)).toEqual([second, first, other]);
+    // Moving renames nothing: both layers keep the numbers they were given.
+    expect([doc.numberOf(first), doc.numberOf(second)]).toEqual([0, 2]);
+  });
+
+  it('WAR-01: numbers of one type are not reused after a removal (P20)', () => {
+    const doc = new BoardDocument();
+    const first = doc.addLayer('p');
+    const second = doc.addLayer('p');
+    const taken = doc.removeLayer(second);
+    // The freed number stays taken, so one name never stands for two layers in a lesson.
+    const third = doc.addLayer('p');
+    expect(doc.numberOf(third)).toBe(3);
+    // An undone removal puts the layer back with its own number.
+    doc.restoreLayer(taken.record, taken.index);
+    expect([doc.numberOf(first), doc.numberOf(second), doc.numberOf(third)]).toEqual([0, 2, 3]);
+    // The first layer of a type is numbered 0, and that counts as used: a layer added after it
+    // was removed does not take the bare name again.
+    doc.removeLayer(first);
+    expect(doc.numberOf(doc.addLayer('p'))).toBe(4);
+  });
+
+  it('WAR-01: the lesson keeps the numbers; a lesson saved without them is numbered from the bottom (P20)', () => {
+    const doc = new BoardDocument();
+    doc.addLayer('p');
+    const second = doc.addLayer('p');
+    const serialized = doc.serialize((record) => record.stored);
+    expect(serialized.layers.map((layer) => layer.number)).toEqual([0, 2]);
+    // Reopening keeps every number, also after the layers were reordered before saving.
+    doc.moveLayer(second, 0);
+    const reopened = new BoardDocument(doc.serialize((record) => record.stored));
+    expect(reopened.layers.map((layer) => [layer.id, layer.number])).toEqual([
+      [second, 2],
+      [doc.layers[1]!.id, 0],
+    ]);
+    // A lesson from before P20 has no numbers: they are given from the bottom of the stack.
+    const old = new BoardDocument({
+      schemaVersion: 1,
+      layers: ['a', 'b', 'c'].map((id) => ({
+        id,
+        pluginId: 'p',
+        pluginVersion: null,
+        schemaVersion: null,
+        data: null,
+      })),
+    });
+    expect(old.layers.map((layer) => layer.number)).toEqual([0, 2, 3]);
+  });
+
   it('WAR-06: the active layer of a type is the last activated one, else the topmost', () => {
     const doc = new BoardDocument();
     const p1 = doc.addLayer('p');

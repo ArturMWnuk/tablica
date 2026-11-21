@@ -10,7 +10,7 @@
 | Bieżący etap | 1 |
 | Status etapu | REALIZACJA |
 | Plan etapu | `docs/etapy/ETAP-1-plan.md` (ZATWIERDZONY 2026-11-01) |
-| Bieżący krok | 1.3-poprawka-3 i 1.4-poprawka-2 (wykonane, do scalenia w `etap-1`); 1.5 następny; 1.1 W TOKU (Linux i Android czekają na P12) |
+| Bieżący krok | 1.3-poprawka-3, 1.4-poprawka-2 i 1.3-poprawka-4 (wykonane, do scalenia w `etap-1`); 1.5 następny; 1.1 W TOKU (Linux i Android czekają na P12) |
 | Gałąź robocza | `etap-1`; krok 1.3-poprawka-3 na `testy-reczne-etap1` (sesja testów ręcznych) |
 
 ## Etapy
@@ -34,6 +34,7 @@ Statusy: OCZEKUJE, W TOKU, UKOŃCZONY.
 | 1.3-poprawka | Domknięcie WAR-02 i DAN-03 po weryfikacji | WAR-02 (K1), WAR-03 (P17 a), DAN-03 (P17 b: dodawanie i usuwanie warstw), WAR-01 K3 (interfejs) | UKOŃCZONY (weryfikacja: WARUNKOWO, `docs/raporty/ETAP-1-krok-1.3-poprawka-weryfikacja.md`) | f6fd8e4 |
 | 1.3-poprawka-2 | Przypadki brzegowe historii warstw | DAN-03 (P17 b), WAR-03 (P17 a) | UKOŃCZONY (weryfikacja: ZALICZONY, `docs/raporty/ETAP-1-krok-1.3-poprawka-2-weryfikacja.md`) | 9e477e1 |
 | 1.3-poprawka-3 | Pętla efektów w panelu warstw | WAR-01 (K3) | UKOŃCZONY (kontrole zielone, bez weryfikacji audytora; wykonany 2026-11-21 przy przygotowaniu testów ręcznych) | d644f02 |
+| 1.3-poprawka-4 | Trwałe numery warstw (P20) | WAR-01 (K3), WAR-04 (K1) | UKOŃCZONY (kontrole zielone, bez weryfikacji audytora; Q3 do powtórzenia przez właściciela) | (ten commit) |
 | 1.4 | Wejście i pisanie | WEJ-01–06, RYS-01, RYS-02, NF-04 | UKOŃCZONY (weryfikacja: WARUNKOWO, `docs/raporty/ETAP-1-krok-1.4-weryfikacja.md`; WEJ-04 K1 do poprawki; WEJ-05 K3 domknięcie w 1.6, P18; WEJ-02 po R11) | c1ee23b |
 | 1.4-poprawka | Spacja z przeciąganiem po weryfikacji | WEJ-04 (K1) | UKOŃCZONY (weryfikacja: WARUNKOWO, `docs/raporty/ETAP-1-krok-1.4-poprawka-weryfikacja.md`; w Edge suwak grubości i pole wyboru D4 nadal zatrzymują fokus) | 07d4ce6 |
 | 1.4-poprawka-2 | Spacja po użyciu suwaka i pola wyboru | WEJ-04 (K1) | UKOŃCZONY (kontrole zielone, bez weryfikacji audytora; W5b i W5c powtórzone przez właściciela: zaliczone) | 1110dc0 |
@@ -50,7 +51,7 @@ Statusy: OCZEKUJE, W TOKU, UKOŃCZONY.
 
 ## Następne działania
 1. Po zakończeniu sesji testów ręcznych: `/realizuj-krok 1.5`. Testy W5, W5a–W5c (WEJ-04 K1, WebView2) zaliczone 2026-11-21; W5d (Android) i W5e (Linux) po P12.
-2. Scalić kroki 1.3-poprawka-3 i 1.4-poprawka-2 z gałęzi `testy-reczne-etap1` do `etap-1` (przewinięcie, dopóki `etap-1` się nie ruszy).
+2. Scalić kroki 1.3-poprawka-3, 1.4-poprawka-2 i 1.3-poprawka-4 z gałęzi `testy-reczne-etap1` do `etap-1` (przewinięcie, dopóki `etap-1` się nie ruszy).
 3. Trwa sesja testów ręcznych właściciela (gałąź `testy-reczne-etap1`): 39 zaległych testów z raportów weryfikacji, w tym 23 wykonalne na Windows od razu, 13 po P12. Wyniki odznaczane w raportach w `docs/raporty/`.
 4. Właściciel: naprawić środowisko laptopa: Visual Studio Installer → Build Tools 2022 → Napraw (w `lib\x64` brak `oldnames.lib`; obejściem jest pusta biblioteka x64 z `lib.exe /DEF` podana w zmiennej `LIB`). Playwright Chromium naprawiony 2026-11-21 (`playwright install chromium --force`). Polecenia projektu uruchamiać Node 26 z `C:\Users\artur\AppData\Local\Programs\nodejs-portable\node-v26.13.0-win-x64` (Node w PATH to 20.12.2, za stary: pnpm pomija wtedy natywne bindingi).
 5. Właściciel: podać brakujące dane sprzętu (P12), potem dokończyć krok 1.1 (Linux, Android, tablet graficzny).
@@ -64,6 +65,13 @@ Statusy: OCZEKUJE, W TOKU, UKOŃCZONY.
 Brak.
 
 ## Dziennik sesji
+### 2026-11-21: Testy ręczne W8, Q1–Q3, decyzja P20 i krok 1.3-poprawka-4
+- Testy ręczne właściciela (WebView2): **W8 zaliczony** (tekst pod zakreśleniem czytelny, zawrot kreski bez ciemniejszej plamy, wygląd kreski nie zmienia się przy puszczeniu przycisku), **Q1 i Q2 zaliczone** (komunikat P17 a podaje nazwę warstwy dokładnie jak panel, z numerem i bez, po polsku i po angielsku; kolejne Ctrl+Z nie mnożą komunikatu).
+- **Q3 rozstrzygnięty inaczej, niż pytał raport.** Zachowanie potwierdzone (komunikat zachowuje numer z chwili pokazania), ale właściciel wskazał źródło problemu: numer warstwy liczył jej położenie w stosie, więc **przesunięcie warstwy zmieniało jej nazwę**, co samo w sobie wprowadza w błąd. Decyzja P20 (plan, tabela pytań): numer nadawany trwale przy dodaniu, pierwsza warstwa typu bez numeru, kolejne 2, 3, …, numery zwolnione nieużywane ponownie, numer zapisywany w lekcji. Dokumentacja nie opisuje nazw ani numerów warstw, więc to decyzja projektowa, nie zmiana wymagań.
+- Krok **1.3-poprawka-4**: `LayerRecord.number` i opcjonalne pole `number` w serializacji warstwy; `BoardDocument` pilnuje najwyższego wydanego numeru i zajętej nazwy bez numeru dla każdego typu, więc numer nie wraca po usunięciu warstwy ani po cofnięciu usunięcia. `numberOf` oddaje teraz zapisany numer, a nie położenie. Lekcja bez numerów dostaje je przy wczytaniu, licząc od dołu stosu. Uboczny skutek decyzji: po usunięciu jedynej warstwy danego typu nowa dostaje numer 2 (nazwa bez numeru zostaje zajęta na stałe) — zgodne z „nie używać ponownie”, do zmiany, jeśli właściciel uzna to za niewygodne.
+- Testy: trzy nowe w `core.test.ts` (przesunięcie nie zmienia numerów; numery nieużywane ponownie, cofnięte usunięcie wraca z własnym numerem; numery przechodzą przez zapis i otwarcie, lekcja bez numerów numerowana od dołu); nowy e2e „WAR-01: moving a layer in the panel does not rename it (P20)”; zaktualizowane oczekiwania dwóch istniejących testów (pierwsza warstwa typu ma numer 0, a warstwa dodana jako druga numer 2 niezależnie od miejsca w stosie).
+- Kontrole: lint, prettier, typy (346 plików, 0 błędów), Vitest 210/210, licencje npm 232, build web, Playwright 72/72 (36 Chromium + 36 WebKit), cargo fmt. Jeden przebieg e2e pokazał przekroczenie progu NF-04 (p95 > 4 ms) przy równoległym buildzie; w kolejnych przebiegach zielony.
+
 ### 2026-11-21: Testy ręczne W5, W5a–W5c i krok 1.4-poprawka-2
 - Testy ręczne właściciela w aplikacji Tauri (Windows 11, WebView2): **W5 i W5a zaliczone** (po kliknięciu narzędzia myszą Spacja + przeciągnięcie przesuwa widok i jedno cofnięcie usuwa jedyną kreskę; kółko, Ctrl + kółko i środkowy przycisk działają; przycisk uruchomiony z klawiatury zachowuje fokus). **W5b i W5c niezaliczone**, zgodnie z sondą audytora: po użyciu myszą suwaka grubości albo pola wyboru D4 Spacja + przeciągnięcie rysuje kreskę, a przy polu wyboru Spacja dodatkowo przestawia ustawienie. Ograniczenie potwierdzone na platformie docelowej, nie tylko w zastępczym Edge. Wyniki odznaczone w raporcie kroku 1.4-poprawka.
 - Właściciel wybrał wariant (a) z zalecenia 1 tego raportu: krok **1.4-poprawka-2** (dopisany do planu, sekcja 4).

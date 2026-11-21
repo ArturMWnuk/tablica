@@ -12,6 +12,12 @@ export interface SerializedLayer {
   pluginVersion: string | null;
   schemaVersion: number | null;
   data: JsonValue | null;
+  /**
+   * Number shown with the layer name ("Rysunek 2"), given once when the layer is added and kept
+   * for its whole life (P20): 0 or omitted for the first layer of its type, which keeps the bare
+   * name. Lessons saved before P20 have no numbers; they are numbered from the bottom on loading.
+   */
+  number?: number;
   /** Layer settings kept by the core (WAR-02, WAR-03, WAR-05); defaults when omitted. */
   visible?: boolean;
   locked?: boolean;
@@ -52,6 +58,11 @@ export interface SerializedDocument {
 
 export interface LayerRecord extends LayerInfo, LayerSettings {
   status: LayerStatus;
+  /**
+   * Number shown with the name (P20): 0 for the first layer of its type (bare name), 2, 3, … for
+   * the ones added later. It never changes, so moving a layer in the stack does not rename it.
+   */
+  number: number;
   /** Live data, owned by the plugin; `undefined` until the layer is ready. */
   data: unknown;
   /**
@@ -69,6 +80,13 @@ export class BoardDocument {
   private records: LayerRecord[] = [];
   private activeByPlugin = new Map<string, string>();
   private activeId: string | undefined;
+  /**
+   * Highest number ever given to a layer of each type (P20). Numbers are not reused, so a name
+   * never stands for two different layers in one lesson, not even after an undone removal.
+   */
+  private highestNumber = new Map<string, number>();
+  /** Types whose first layer (the one with the bare name, number 0) has already been given out. */
+  private bareTaken = new Set<string>();
   readonly changed = new Emitter();
 
   constructor(serialized?: SerializedDocument) {
@@ -98,7 +116,7 @@ export class BoardDocument {
 
   /** A new, empty layer of the plugin that is not yet part of the document. */
   createLayer(pluginId: string): LayerRecord {
-    return BoardDocument.recordOf({
+    return this.recordOf({
       id: newLayerId(),
       pluginId,
       pluginVersion: null,
@@ -109,15 +127,41 @@ export class BoardDocument {
 
   private insert(stored: SerializedLayer, index = this.records.length): void {
     if (this.getLayer(stored.id)) throw new Error(`Duplicate layer id ${stored.id}`);
-    this.records.splice(index, 0, BoardDocument.recordOf(stored));
+    this.records.splice(index, 0, this.recordOf(stored));
     this.changed.emit();
   }
 
-  private static recordOf(stored: SerializedLayer): LayerRecord {
+  /**
+   * Number for a layer being created or loaded (P20): the stored one when the lesson has it,
+   * otherwise 0 for the first layer of its type and the next free number for the following ones.
+   */
+  private numberFor(stored: SerializedLayer): number {
+    const given =
+      typeof stored.number === 'number' && Number.isInteger(stored.number) && stored.number > 1
+        ? stored.number
+        : undefined;
+    const number = given ?? (this.bareTaken.has(stored.pluginId) ? this.highest(stored) + 1 : 0);
+    this.use(stored.pluginId, number);
+    return number;
+  }
+
+  private highest(stored: SerializedLayer): number {
+    return this.highestNumber.get(stored.pluginId) ?? 0;
+  }
+
+  /** Marks the number as given out for the type, so no later layer can take it again (P20). */
+  private use(pluginId: string, number: number): void {
+    if (number === 0) this.bareTaken.add(pluginId);
+    const highest = this.highestNumber.get(pluginId) ?? 0;
+    this.highestNumber.set(pluginId, Math.max(highest, number === 0 ? 1 : number));
+  }
+
+  private recordOf(stored: SerializedLayer): LayerRecord {
     return {
       id: stored.id,
       pluginId: stored.pluginId,
       status: 'loading',
+      number: this.numberFor(stored),
       visible:
         typeof stored.visible === 'boolean' ? stored.visible : DEFAULT_LAYER_SETTINGS.visible,
       locked: typeof stored.locked === 'boolean' ? stored.locked : DEFAULT_LAYER_SETTINGS.locked,
@@ -154,6 +198,8 @@ export class BoardDocument {
   /** Puts back a layer taken out by {@link BoardDocument.removeLayer} at `index`. */
   restoreLayer(record: LayerRecord, index: number): void {
     if (this.getLayer(record.id)) throw new Error(`Duplicate layer id ${record.id}`);
+    // The layer keeps the number it was given (P20); the document only remembers that it is used.
+    this.use(record.pluginId, record.number);
     this.records.splice(Math.max(0, Math.min(index, this.records.length)), 0, record);
     this.changed.emit();
   }
@@ -219,15 +265,13 @@ export class BoardDocument {
   }
 
   /**
-   * Number of the layer among layers of the same type, from the bottom (1, 2, …); 0 when its
-   * type occurs once or the layer is not in the document. The layer panel and the messages name
-   * layers with it ("Drawing 2").
+   * Number given to the layer when it was added (2, 3, …); 0 for the first layer of its type,
+   * which keeps the bare name, and for a layer that is not in the document. The layer panel and
+   * the messages name layers with it ("Drawing 2"). The number never changes, so moving a layer
+   * in the stack does not rename it and does not rename the others (P20).
    */
   numberOf(id: string): number {
-    const record = this.getLayer(id);
-    if (!record) return 0;
-    const same = this.records.filter((layer) => layer.pluginId === record.pluginId);
-    return same.length > 1 ? same.indexOf(record) + 1 : 0;
+    return this.getLayer(id)?.number ?? 0;
   }
 
   /** Makes the layer active; it also becomes the active layer of its type (WAR-06 K2). */
@@ -267,6 +311,7 @@ export class BoardDocument {
       schemaVersion: DOCUMENT_SCHEMA_VERSION,
       layers: this.records.map((record) => ({
         ...serializeLayer(record),
+        number: record.number,
         visible: record.visible,
         locked: record.locked,
         opacity: record.opacity,

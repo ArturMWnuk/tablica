@@ -292,12 +292,43 @@ test.describe('DAN-03: adding and removing layers in the panel (P17 b)', () => {
     const added = panel(page).locator('li.active');
     await expect(added).toHaveAttribute('data-plugin-id', 'layer-drawing');
     const name = (await added.getByTestId('layer-select').innerText()).trim();
-    // Two drawing layers: the panel numbers them; the new one is the lower one.
-    expect(name).toMatch(/ 1$/);
+    // Two drawing layers: the number comes from the moment a layer was added, not from its place
+    // in the stack (P20), so the layer added second is "2" even though it lies lower.
+    expect(name).toMatch(/ 2$/);
     await added.getByTestId('layer-locked').click();
     await page.getByTestId('undo').click();
     const notice = page.locator('[data-notice="notice.historyLocked"]');
     await expect(notice).toHaveCount(1);
     await expect(notice).toContainText(name);
+  });
+
+  test('WAR-01: moving a layer in the panel does not rename it (P20)', async ({ page }) => {
+    await openBoard(page);
+    await panel(page).getByTestId('layer-add-type').selectOption('layer-drawing');
+    await panel(page).getByTestId('layer-add').click();
+    await expect.poll(() => panelOrder(page)).toHaveLength(4);
+    const names = (): Promise<[string, string][]> =>
+      panel(page)
+        .locator('li')
+        .evaluateAll((items) =>
+          items.map((item): [string, string] => [
+            (item as HTMLElement).dataset['layerId'] ?? '',
+            (
+              item.querySelector('[data-testid=layer-select]') as HTMLElement | null
+            )?.innerText.trim() ?? '',
+          ]),
+        );
+    const before = await names();
+    // The first drawing layer keeps the bare name, the one added later is numbered (P20).
+    expect(before.map(([, name]) => name).filter((name) => /\d$/.test(name))).toHaveLength(1);
+    const ids = before.map(([id]) => id);
+    await panel(page)
+      .locator('li[data-plugin-id="layer-drawing"]')
+      .first()
+      .getByTestId('layer-down')
+      .click();
+    await expect.poll(async () => (await names()).map(([id]) => id)).not.toEqual(ids);
+    // Every layer kept its name, only the order changed.
+    expect(new Map(await names())).toEqual(new Map(before));
   });
 });

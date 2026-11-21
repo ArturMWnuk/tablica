@@ -31,5 +31,6 @@ Każdy wpis zawiera identyfikatory wymagań z `docs/DOKUMENTACJA.md`.
 - Warstwa dodana i cofnięta, zanim wtyczka zdążyła się wczytać, po ponowieniu nie zostaje w stanie „Wczytywanie”, także gdy wczytanie się nie powiedzie (DAN-03).
 - Komunikat o wstrzymanym cofaniu na zablokowanej lub ukrytej warstwie podaje nazwę warstwy tak jak panel warstw, z numerem przy kilku warstwach jednego typu (WAR-03).
 - Spacja z przeciąganiem przesuwa widok także po kliknięciu przycisku paska narzędzi (w WebView2 i Android WebView fokus zostawał na przycisku i przeciągnięcie rysowało kreskę); przyciski obsługiwane z klawiatury działają jak dotąd (WEJ-04).
+- Nazwa warstwy nie zmienia się przy przesuwaniu jej w stosie: numer jest nadawany raz, przy dodaniu warstwy (pierwsza warstwa danego typu bez numeru, kolejne 2, 3, …), nie jest używany ponownie po usunięciu warstwy i zapisuje się w lekcji (WAR-01, WAR-04).
 - Spacja z przeciąganiem przesuwa widok także po użyciu myszą suwaka grubości, pola wyboru lub selektora koloru, a Spacja nie przełącza wtedy tej kontrolki; pola tekstowe i listy rozwijane działają jak dotąd (WEJ-04).
 - Panel warstw nie zapętla się przy wczytywaniu wtyczek: wcześniej interfejs zamierał na moment i zgłaszał błąd, bo odczyt stanu panelu czytał stan, który sam zapisuje (WAR-01).

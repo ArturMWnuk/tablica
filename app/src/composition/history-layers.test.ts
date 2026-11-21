@@ -820,7 +820,8 @@ describe('WAR-03: messages about held-back steps name the layer (P17 a)', () => 
     addBoxOn(board, 'b');
     board.setLayerLocked('b', true);
     expect(board.undo()).toBe(false);
-    // "a" is the first and "b" the second test layer from the bottom, as in the layer panel.
+    // "a" is the first test layer of the lesson, so it keeps the bare name (number 0) and "b",
+    // loaded after it, is number 2 — the same names the layer panel shows (P20).
     expect(board.notices.list.map((notice) => [notice.key, notice.params])).toEqual([
       ['notice.historyLocked', { number: 2 }],
     ]);
@@ -830,7 +831,7 @@ describe('WAR-03: messages about held-back steps name the layer (P17 a)', () => 
     expect(board.undo()).toBe(false);
     expect(board.notices.list.map((notice) => [notice.key, notice.params])).toEqual([
       ['notice.historyLocked', { number: 2 }],
-      ['notice.historyHidden', { number: 1 }],
+      ['notice.historyHidden', { number: 0 }],
     ]);
   });
 

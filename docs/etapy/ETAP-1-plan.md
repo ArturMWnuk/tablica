@@ -563,6 +563,14 @@ Każdy krok to jedna sesja (`/realizuj-krok`), kończy się działającym progra
   1. Odczyt stanu panelu warstw (`snapshot`) nie czyta stanu, który sam zapisuje, więc efekt nie planuje kolejnych przebiegów. Dziś przy każdym wczytaniu wtyczek panel zapętla się do limitu Svelte (`effect_update_depth_exceeded`), na moment blokuje interfejs i zgłasza błąd w konsoli; po przerwaniu pętli program działa dalej, dlatego testy automatyczne tego nie wychwytywały.
 - **Testy:** e2e w Chromium i WebKit: po otwarciu tablicy panel wymienia typy warstw do dodania, a przy starcie nie pojawia się błąd strony ani konsoli o przekroczeniu głębokości efektów.
 
+### Krok 1.3-poprawka-4: Trwałe numery warstw
+- **Podstawa:** test ręczny właściciela Q3 (raport `docs/raporty/ETAP-1-krok-1.3-poprawka-2-weryfikacja.md`) i decyzja P20 z 2026-11-21.
+- **ID:** WAR-01 (K3), WAR-04 (K1: przesunięcie nie zmienia nazwy).
+- **Zakres prac:**
+  1. Numer warstwy jest nadawany raz, przy dodaniu, i nie zmienia się przez całe życie warstwy: pierwsza warstwa danego typu zostaje bez numeru (sama nazwa typu), kolejne dostają 2, 3, … Numery zwolnione przez usunięcie warstwy nie są używane ponownie, także po cofnięciu usunięcia, więc jedna nazwa nigdy nie oznacza w lekcji dwóch różnych warstw. Przesunięcie warstwy w stosie nie zmienia żadnej nazwy, a komunikaty P17 a nie mogą już wskazywać cudzej warstwy.
+  2. Numer jest zapisywany w lekcji (nowe, opcjonalne pole serializacji warstwy). Lekcja zapisana wcześniej numerów nie ma: warstwy dostają je przy wczytaniu, licząc od dołu stosu (pierwsza danego typu bez numeru, kolejne 2, 3, …).
+- **Testy:** przesunięcie warstwy nie zmienia numerów; numer zwolniony przez usunięcie nie wraca, a cofnięcie usunięcia przywraca warstwę z jej numerem; numery przechodzą przez zapis i ponowne otwarcie lekcji, także po zmianie kolejności; lekcja bez numerów dostaje je od dołu; e2e: nazwy wierszy panelu nie zmieniają się po przesunięciu warstwy, a warstwa dodana jako druga ma numer 2 niezależnie od miejsca w stosie.
+
 ### Krok 1.4: Wejście i pisanie
 - **ID:** WEJ-01–06, RYS-01, RYS-02, NF-04.
 - **Zakres prac:** `InputRouter` (nacisk, nachylenie, gumka rysika, odrzucanie dłoni, gesty, mysz), pióro i zakreślacz, wybór koloru i grubości, instrumentacja opóźnienia (T10).
@@ -688,6 +696,8 @@ Szczegółowe procedury audytor przeniesie do raportu weryfikacji.
 | P16 | WAR-06 K1 wymaga testu gumki i zaznaczania, które powstają dopiero w kroku 1.6. Kiedy domknąć WAR-06? | W kroku 1.2 mechanizm izolacji sprawdzony narzędziem wtyczki testowej; test K1 z gumką i zaznaczaniem w kroku 1.6, wtedy WAR-06 dostaje ZAIMPL. | Przyjęto rekomendację (2026-11-19) |
 | P17 | (a) Czy cofanie i ponawianie ma działać na zablokowanej i ukrytej warstwie? (b) W którym kroku dodawanie i usuwanie warstw z cofaniem (P3, DAN-03 K1)? | (a) Nie: krok zmieniający zawartość takiej warstwy jest wstrzymany z komunikatem, chronologia historii zostaje; (b) w kroku 1.3-poprawka, w panelu warstw | (a) Nie (właściciel, 2026-11-19); (b) właściciel powierzył decyzję, przyjęto rekomendację (2026-11-19) |
 | P18 | (a) WEJ-05 K3 i przycisk gumki rysika z D4 (WEJ-02) wymagają gumki, która powstaje dopiero w kroku 1.6 (RYS-03/04). Kiedy domknąć WEJ-05? (b) D4 mówi, że po użyciu rysika palec „nie rysuje (tylko gesty)”. Co robi wtedy pojedynczy palec? (c) D2 „do 1,5×”: jak rośnie poszerzenie? | (a) Jak P16: w kroku 1.4 mechanizm przełączania sprawdzony narzędziem testowym; w kroku 1.6 podłączenie gumki warstwy rysunkowej i test z nią, wtedy WEJ-05 dostaje ZAIMPL. (WEJ-02 po R11). (b) Pojedynczy palec przesuwa widok (dwa palce: przesuwanie i pinch). (c) Liniowo od 1× przy 45° do 1,5× przy 90° | Przyjęto rekomendację (właściciel, 2026-11-20) |
+| P19 | Zakreślacz mnoży kolory tylko w obrębie warstwy rysunkowej. Czy nad obrazem lub PDF z innej warstwy (krok 1.9, MM-08) ma też mnożyć, czy wystarczy półprzezroczysta nakładka 40 %? | — | Otwarte, do rozstrzygnięcia przed krokiem 1.9 |
+| P20 | Numer warstwy w panelu liczył jej położenie w stosie, więc przesunięcie warstwy zmieniało jej nazwę (test ręczny Q3). Jak numerować warstwy? | Numer nadawany trwale przy dodaniu: pierwsza warstwa typu bez numeru, kolejne 2, 3, …; numery zwolnione przez usunięcie nie są używane ponownie; numer zapisywany w lekcji | Przyjęto rekomendację (właściciel, 2026-11-21): nazwa warstwy nie może się zmieniać przy zmianie miejsca w stosie |
 
 ### Tabela D: parametry domyślne (zatwierdzone 2026-11-01)
 | Nr | Dotyczy | Propozycja |
