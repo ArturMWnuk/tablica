@@ -10,8 +10,8 @@
 | Bieżący etap | 1 |
 | Status etapu | REALIZACJA |
 | Plan etapu | `docs/etapy/ETAP-1-plan.md` (ZATWIERDZONY 2026-11-01) |
-| Bieżący krok | 1.3-poprawka-3, 1.4-poprawka-2 i 1.3-poprawka-4 (wykonane, do scalenia w `etap-1`); 1.5 następny; 1.1 W TOKU (Linux i Android czekają na P12) |
-| Gałąź robocza | `etap-1`; krok 1.3-poprawka-3 na `testy-reczne-etap1` (sesja testów ręcznych) |
+| Bieżący krok | 1.5 (następny); 1.1 W TOKU (Linux i Android czekają na P12) |
+| Gałąź robocza | `etap-1` |
 
 ## Etapy
 | Etap | Status | Plan | Raport weryfikacji | Wersja |
@@ -50,12 +50,11 @@ Statusy: OCZEKUJE, W TOKU, UKOŃCZONY.
 | 1.14 | Wydanie i wydajność | NF-02, NF-03, NF-05, domknięcie PLAT-01–03, NF-01 | OCZEKUJE | |
 
 ## Następne działania
-1. Po zakończeniu sesji testów ręcznych: `/realizuj-krok 1.5`. Testy W5, W5a–W5c (WEJ-04 K1, WebView2) zaliczone 2026-11-21; W5d (Android) i W5e (Linux) po P12.
-2. Scalić kroki 1.3-poprawka-3, 1.4-poprawka-2 i 1.3-poprawka-4 z gałęzi `testy-reczne-etap1` do `etap-1` (przewinięcie, dopóki `etap-1` się nie ruszy).
-3. Testy ręczne wykonalne na laptopie referencyjnym są zrobione (24 zaliczone, podsumowanie w dzienniku). Pozostaje 13 po P12, Q4 i ostatnia część P2 po kroku 1.5, P7 po kroku 1.6. Przy planowaniu kroku 1.5 uwzględnić deweloperski sposób wywołania awarii wtyczki (Q4).
-4. Właściciel: naprawić środowisko laptopa: Visual Studio Installer → Build Tools 2022 → Napraw (w `lib\x64` brak `oldnames.lib`; obejściem jest pusta biblioteka x64 z `lib.exe /DEF` podana w zmiennej `LIB`). Playwright Chromium naprawiony 2026-11-21 (`playwright install chromium --force`). Polecenia projektu uruchamiać Node 26 z `C:\Users\artur\AppData\Local\Programs\nodejs-portable\node-v26.13.0-win-x64` (Node w PATH to 20.12.2, za stary: pnpm pomija wtedy natywne bindingi).
-5. Właściciel: podać brakujące dane sprzętu (P12), potem dokończyć krok 1.1 (Linux, Android, tablet graficzny).
-6. Po P12: `/realizuj-krok 1.1` (Linux, Android, tablet graficzny); kroki 1.9 i 1.10 dopiero po domknięciu 1.1.
+1. `/realizuj-krok 1.5`. Testy W5, W5a–W5c (WEJ-04 K1, WebView2) zaliczone 2026-11-21; W5d (Android) i W5e (Linux) po P12.
+2. Testy ręczne wykonalne na laptopie referencyjnym są zrobione (24 zaliczone, podsumowanie w dzienniku). Pozostaje 13 po P12, Q4 i ostatnia część P2 po kroku 1.5, P7 po kroku 1.6. Przy planowaniu kroku 1.5 uwzględnić deweloperski sposób wywołania awarii wtyczki (Q4).
+3. Właściciel: naprawić środowisko laptopa: Visual Studio Installer → Build Tools 2022 → Napraw (w `lib\x64` brak `oldnames.lib`; obejściem jest pusta biblioteka x64 z `lib.exe /DEF` podana w zmiennej `LIB`). Playwright Chromium naprawiony 2026-11-21 (`playwright install chromium --force`). Polecenia projektu uruchamiać Node 26 z `C:\Users\artur\AppData\Local\Programs\nodejs-portable\node-v26.13.0-win-x64` (Node w PATH to 20.12.2, za stary: pnpm pomija wtedy natywne bindingi).
+4. Właściciel: podać brakujące dane sprzętu (P12), potem dokończyć krok 1.1 (Linux, Android, tablet graficzny).
+5. Po P12: `/realizuj-krok 1.1` (Linux, Android, tablet graficzny); kroki 1.9 i 1.10 dopiero po domknięciu 1.1.
 
 ## Otwarte pytania
 - P12 (sprzęt testowy), część otwarta: dystrybucja Linuksa i sesja (X11/Wayland), tablet z Androidem i wersja systemu, model tabletu graficznego, urządzenie z ekranem dotykowym do R12 (laptop referencyjny go nie ma). Laptop referencyjny zapisany w planie (P12). **Potrzebne do dokończenia kroku 1.1** (część Windows wykonana 2026-11-10 za zgodą właściciela).
@@ -65,6 +64,9 @@ Statusy: OCZEKUJE, W TOKU, UKOŃCZONY.
 Brak.
 
 ## Dziennik sesji
+### 2026-11-21: Porządki w stanie
+- Kroki 1.3-poprawka-3, 1.4-poprawka-2 i 1.3-poprawka-4 są już w `etap-1` (gałąź `testy-reczne-etap1` wskazuje ten sam commit c67522c), więc usunięto nieaktualne wpisy o scalaniu. Następny krok: 1.5.
+
 ### 2026-11-21: Sesja testów ręcznych właściciela — podsumowanie
 - Przejrzane wszystkie zaległe testy ręczne z pięciu raportów weryfikacji: **39 pozycji** (test P5 z raportu kroku 1.3-poprawka zastąpiony przez Q1, test W5 z raportu kroku 1.4 przez W5 z raportu kroku 1.4-poprawka).
 - **24 zaliczone** na laptopie referencyjnym (Windows 11, aplikacja Tauri / WebView2): M2–M6, M8, P1–P4, P6, P8, P11, Q1–Q3, Q5, Q6, Q8, W5, W5a–W5c, W8. Wyniki odznaczone w raportach w `docs/raporty/` z datą i opisem tego, co zaobserwowano.
